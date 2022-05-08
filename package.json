@@ -3,5 +3,11 @@
   "version": "0.0.0",
   "main": "index.js",
   "author": "Allysson <allyssonmgs@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "husky": "^7.0.4"
+  },
+  "scripts": {
+    "prepare": "husky install"
+  }
 }
