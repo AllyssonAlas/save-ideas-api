@@ -1,7 +1,7 @@
 import { User } from '@/domain/models';
 import { SignUpError } from '@/domain/errors';
 
-namespace SignUp {
+export namespace SignUp {
   export type Params = {
     name: string;
     email: string;
