@@ -1,12 +1,5 @@
 import { SignUp } from '@/domain/usecases';
-
-interface Hasher {
-  hash(plaintext: Hasher.Params): void;
-}
-
-namespace Hasher {
-  export type Params = { plaintext: string };
-}
+import { Hasher } from '@/data/protocols';
 
 class HasherSpy implements Hasher {
   plaintext?: string;
