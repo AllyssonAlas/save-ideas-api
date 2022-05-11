@@ -10,8 +10,10 @@ namespace Hasher {
 
 class HasherSpy implements Hasher {
   plaintext?: string;
+  callsCount = 0;
 
   hash(params: Hasher.Params): void {
+    this.callsCount++;
     this.plaintext = params.plaintext;
   }
 }
@@ -36,5 +38,6 @@ describe('SignUpUsecase', () => {
 
     await sut.perform(userData);
     expect(hasherSpy.plaintext).toBe(userData.password);
+    expect(hasherSpy.callsCount).toBe(1);
   });
 });
