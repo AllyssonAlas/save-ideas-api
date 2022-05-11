@@ -1,5 +1,5 @@
-import { SignUp } from '@/domain/usecases';
 import { Hasher } from '@/data/protocols';
+import { SignUpUsecase } from '@/data/usecases';
 
 class HasherSpy implements Hasher {
   plaintext?: string;
@@ -8,14 +8,6 @@ class HasherSpy implements Hasher {
   hash(params: Hasher.Params): void {
     this.callsCount++;
     this.plaintext = params.plaintext;
-  }
-}
-
-class SignUpUsecase {
-  constructor(private readonly hasher: Hasher) {}
-
-  async perform(params: SignUp.Params): Promise<void> {
-    await this.hasher.hash({ plaintext: params.password });
   }
 }
 
