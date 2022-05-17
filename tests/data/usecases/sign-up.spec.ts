@@ -1,4 +1,4 @@
-import { Hasher } from '@/data/protocols';
+import { Hasher } from '@/data/protocols/gateways';
 import { SignUpUsecase } from '@/data/usecases';
 
 class HasherSpy implements Hasher {
