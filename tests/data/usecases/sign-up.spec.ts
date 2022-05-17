@@ -25,4 +25,20 @@ describe('SignUpUsecase', () => {
     expect(hasherSpy.plaintext).toBe(userData.password);
     expect(hasherSpy.callsCount).toBe(1);
   });
+
+  it('Should throw if Hasher throws', async () => {
+    const hasherSpy = new HasherSpy();
+    jest.spyOn(hasherSpy, 'hash').mockImplementationOnce(() => {
+      throw new Error();
+    });
+    const sut = new SignUpUsecase(hasherSpy);
+    const userData = {
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      password: 'any_password',
+    };
+
+    const promise = sut.perform(userData);
+    await expect(promise).rejects.toThrow();
+  });
 });
