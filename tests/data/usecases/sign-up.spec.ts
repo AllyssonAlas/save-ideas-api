@@ -11,10 +11,21 @@ class HasherSpy implements Hasher {
   }
 }
 
+interface SutTypes {
+  hasherSpy: HasherSpy;
+  sut: SignUpUsecase;
+}
+
+const makeSut = (): SutTypes => {
+  const hasherSpy = new HasherSpy();
+  const sut = new SignUpUsecase(hasherSpy);
+
+  return { sut, hasherSpy };
+};
+
 describe('SignUpUsecase', () => {
   it('Should call Hasher with correct value', async () => {
-    const hasherSpy = new HasherSpy();
-    const sut = new SignUpUsecase(hasherSpy);
+    const { sut, hasherSpy } = makeSut();
     const userData = {
       name: 'any_name',
       email: 'any_email@mail.com',
@@ -27,11 +38,11 @@ describe('SignUpUsecase', () => {
   });
 
   it('Should throw if Hasher throws', async () => {
-    const hasherSpy = new HasherSpy();
+    const { sut, hasherSpy } = makeSut();
+
     jest.spyOn(hasherSpy, 'hash').mockImplementationOnce(() => {
       throw new Error();
     });
-    const sut = new SignUpUsecase(hasherSpy);
     const userData = {
       name: 'any_name',
       email: 'any_email@mail.com',
