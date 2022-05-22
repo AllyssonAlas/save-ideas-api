@@ -1,4 +1,5 @@
 import { Hasher } from '@/data/protocols/gateways';
+import { LoadUserRepository } from '@/data/protocols/repositories';
 import { SignUpUsecase } from '@/data/usecases';
 
 const mockUserData = () => ({
@@ -17,16 +18,29 @@ class HasherSpy implements Hasher {
   }
 }
 
+class LoadUserRepositorySpy implements LoadUserRepository {
+  email?: string;
+  callsCount = 0;
+
+  async load(params: LoadUserRepository.Params): Promise<void> {
+    this.callsCount++;
+    this.email = params.email;
+    return Promise.resolve();
+  }
+}
+
 interface SutTypes {
   hasherSpy: HasherSpy;
+  loadUserRepositorySpy: LoadUserRepositorySpy;
   sut: SignUpUsecase;
 }
 
 const makeSut = (): SutTypes => {
   const hasherSpy = new HasherSpy();
-  const sut = new SignUpUsecase(hasherSpy);
+  const loadUserRepositorySpy = new LoadUserRepositorySpy();
+  const sut = new SignUpUsecase(hasherSpy, loadUserRepositorySpy);
 
-  return { sut, hasherSpy };
+  return { sut, hasherSpy, loadUserRepositorySpy };
 };
 
 describe('SignUpUsecase', () => {
@@ -45,5 +59,13 @@ describe('SignUpUsecase', () => {
     });
     const promise = sut.perform(mockUserData());
     await expect(promise).rejects.toThrow();
+  });
+
+  it('Should call LoadUserRepository with correct value', async () => {
+    const { sut, loadUserRepositorySpy } = makeSut();
+    const userData = mockUserData();
+    await sut.perform(userData);
+    expect(loadUserRepositorySpy.email).toBe(userData.email);
+    expect(loadUserRepositorySpy.callsCount).toBe(1);
   });
 });
