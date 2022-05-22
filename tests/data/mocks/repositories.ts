@@ -1,7 +1,7 @@
 import { CreateUserRepository, LoadUserRepository } from '@/data/protocols/repositories';
 
 export class LoadUserRepositorySpy implements LoadUserRepository {
-  email?: string;
+  params?: LoadUserRepository.Params;
   result = {
     id: 'any_id',
     name: 'any_name',
@@ -13,7 +13,7 @@ export class LoadUserRepositorySpy implements LoadUserRepository {
 
   async load(params: LoadUserRepository.Params): Promise<LoadUserRepository.Result> {
     this.callsCount++;
-    this.email = params.email;
+    this.params = params;
     return Promise.resolve(this.result);
   }
 }

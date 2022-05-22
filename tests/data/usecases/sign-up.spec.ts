@@ -29,7 +29,7 @@ describe('SignUpUsecase', () => {
     const { sut, hasherSpy } = makeSut();
     const userData = mockUserData();
     await sut.perform(userData);
-    expect(hasherSpy.plaintext).toBe(userData.password);
+    expect(hasherSpy.params).toEqual({ plaintext: userData.password });
     expect(hasherSpy.callsCount).toBe(1);
   });
 
@@ -46,7 +46,7 @@ describe('SignUpUsecase', () => {
     const { sut, loadUserRepositorySpy } = makeSut();
     const userData = mockUserData();
     await sut.perform(userData);
-    expect(loadUserRepositorySpy.email).toBe(userData.email);
+    expect(loadUserRepositorySpy.params).toEqual({ email: userData.email });
     expect(loadUserRepositorySpy.callsCount).toBe(1);
   });
 
