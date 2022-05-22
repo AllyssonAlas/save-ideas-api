@@ -1,3 +1,4 @@
+import { SignUpError } from '@/domain/errors';
 import { Hasher } from '@/data/protocols/gateways';
 import { LoadUserRepository } from '@/data/protocols/repositories';
 import { SignUpUsecase } from '@/data/usecases';
@@ -76,5 +77,11 @@ describe('SignUpUsecase', () => {
     });
     const promise = sut.perform(mockUserData());
     await expect(promise).rejects.toThrow();
+  });
+
+  it('Should return SignUpError when LoadUserRepository returns user data', async () => {
+    const { sut } = makeSut();
+    const signUpResult = await sut.perform(mockUserData());
+    expect(signUpResult).toEqual(new SignUpError());
   });
 });
