@@ -76,5 +76,6 @@ describe('SignUpUsecase', () => {
       email: 'any_email@mail.com',
       password: 'hashed_password',
     });
+    expect(createUserRepositorySpy.callsCount).toBe(1);
   });
 });
