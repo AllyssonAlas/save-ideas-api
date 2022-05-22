@@ -1,54 +1,12 @@
 import { SignUpError } from '@/domain/errors';
-import { Hasher } from '@/data/protocols/gateways';
-import { CreateUserRepository, LoadUserRepository } from '@/data/protocols/repositories';
 import { SignUpUsecase } from '@/data/usecases';
+import { HasherSpy, CreateUserRepositorySpy, LoadUserRepositorySpy } from '@/tests/data/mocks';
 
 const mockUserData = () => ({
   name: 'any_name',
   email: 'any_email@mail.com',
   password: 'any_password',
 });
-
-class HasherSpy implements Hasher {
-  plaintext?: string;
-  result = { ciphertext: 'hashed_password' };
-  callsCount = 0;
-
-  async hash(params: Hasher.Params): Promise<Hasher.Result> {
-    this.callsCount++;
-    this.plaintext = params.plaintext;
-    return Promise.resolve(this.result);
-  }
-}
-
-class LoadUserRepositorySpy implements LoadUserRepository {
-  email?: string;
-  result = {
-    id: 'any_id',
-    name: 'any_name',
-    email: 'any_email@mail.com',
-    accessToken: 'any_access_token',
-  };
-
-  callsCount = 0;
-
-  async load(params: LoadUserRepository.Params): Promise<LoadUserRepository.Result> {
-    this.callsCount++;
-    this.email = params.email;
-    return Promise.resolve(this.result);
-  }
-}
-
-class CreateUserRepositorySpy implements CreateUserRepository {
-  params?: CreateUserRepository.Params;
-  callsCount = 0;
-
-  async create(params: CreateUserRepository.Params): Promise<void> {
-    this.callsCount++;
-    this.params = params;
-    return Promise.resolve();
-  }
-}
 
 interface SutTypes {
   hasherSpy: HasherSpy;
