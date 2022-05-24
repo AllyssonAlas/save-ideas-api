@@ -16,7 +16,7 @@ export namespace LoadUserRepository {
 }
 
 export interface CreateUserRepository {
-  create: (params: CreateUserRepository.Params) => Promise<void>;
+  create: (params: CreateUserRepository.Params) => Promise<CreateUserRepository.Result>;
 }
 
 export namespace CreateUserRepository {
@@ -24,5 +24,10 @@ export namespace CreateUserRepository {
     name: string;
     email: string;
     password: string;
+  };
+
+  export type Result = {
+    name: string;
+    email: string;
   };
 }

@@ -16,7 +16,12 @@ export class SignUpUsecase implements SignUp {
     const accountData = await this.loadUserRepository.load({ email });
 
     if (!accountData) {
-      await this.createUserRepository.create({ ...params, password: ciphertext });
+      const newAccountData = await this.createUserRepository.create({
+        ...params,
+        password: ciphertext,
+      });
+
+      return newAccountData;
     }
 
     return new SignUpError();
