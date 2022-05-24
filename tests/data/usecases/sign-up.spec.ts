@@ -78,4 +78,16 @@ describe('SignUpUsecase', () => {
     });
     expect(createUserRepositorySpy.callsCount).toBe(1);
   });
+
+  it('Should throw if CreateUserRepository throws', async () => {
+    const { sut, loadUserRepositorySpy, createUserRepositorySpy } = makeSut();
+    jest
+      .spyOn(loadUserRepositorySpy, 'load')
+      .mockImplementationOnce(async () => Promise.resolve(null));
+    jest.spyOn(createUserRepositorySpy, 'create').mockImplementationOnce(() => {
+      throw new Error();
+    });
+    const promise = sut.perform(mockUserData());
+    await expect(promise).rejects.toThrow();
+  });
 });
