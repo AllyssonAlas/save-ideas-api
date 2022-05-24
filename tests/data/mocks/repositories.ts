@@ -20,11 +20,16 @@ export class LoadUserRepositorySpy implements LoadUserRepository {
 
 export class CreateUserRepositorySpy implements CreateUserRepository {
   params?: CreateUserRepository.Params;
+  result = {
+    name: 'any_name',
+    email: 'any_email@mail.com',
+  };
+
   callsCount = 0;
 
-  async create(params: CreateUserRepository.Params): Promise<void> {
+  async create(params: CreateUserRepository.Params): Promise<CreateUserRepository.Result> {
     this.callsCount++;
     this.params = params;
-    return Promise.resolve();
+    return Promise.resolve(this.result);
   }
 }

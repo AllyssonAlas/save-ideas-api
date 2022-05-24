@@ -61,14 +61,21 @@ describe('SignUpUsecase', () => {
   });
 
   it('Should return SignUpError when LoadUserRepository returns user data', async () => {
-    const { sut } = makeSut();
+    const { sut, loadUserRepositorySpy } = makeSut();
+    jest.spyOn(loadUserRepositorySpy, 'load').mockReturnValueOnce(
+      Promise.resolve({
+        id: 'any_id',
+        name: 'any_name',
+        email: 'any_email@mail.com',
+        accessToken: 'any_access_token',
+      }),
+    );
     const signUpResult = await sut.perform(mockUserData());
     expect(signUpResult).toEqual(new SignUpError());
   });
 
   it('Should call CreateUserRepository with correct values if LoadUserRepository returns null', async () => {
     const { sut, createUserRepositorySpy } = makeSut();
-
     await sut.perform(mockUserData());
     expect(createUserRepositorySpy.params).toEqual({
       name: 'any_name',
@@ -85,5 +92,11 @@ describe('SignUpUsecase', () => {
     });
     const promise = sut.perform(mockUserData());
     await expect(promise).rejects.toThrow();
+  });
+
+  it('Should return the name and email from created user', async () => {
+    const { sut } = makeSut();
+    const accountData = await sut.perform(mockUserData());
+    expect(accountData).toEqual({ name: 'any_name', email: 'any_email@mail.com' });
   });
 });
