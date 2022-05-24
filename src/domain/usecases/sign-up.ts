@@ -1,4 +1,3 @@
-import { User } from '@/domain/models';
 import { SignUpError } from '@/domain/errors';
 
 export namespace SignUp {
@@ -8,7 +7,7 @@ export namespace SignUp {
     password: string;
   };
 
-  export type Result = User | SignUpError;
+  export type Result = { name: string; email: string } | SignUpError;
 }
 
 export interface SignUp {
