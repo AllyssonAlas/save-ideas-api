@@ -18,6 +18,7 @@ interface SutTypes {
 const makeSut = (): SutTypes => {
   const hasherSpy = new HasherSpy();
   const loadUserRepositorySpy = new LoadUserRepositorySpy();
+  loadUserRepositorySpy.result = null;
   const createUserRepositorySpy = new CreateUserRepositorySpy();
   const sut = new SignUpUsecase(hasherSpy, loadUserRepositorySpy, createUserRepositorySpy);
 
@@ -66,10 +67,8 @@ describe('SignUpUsecase', () => {
   });
 
   it('Should call CreateUserRepository with correct values if LoadUserRepository returns null', async () => {
-    const { sut, loadUserRepositorySpy, createUserRepositorySpy } = makeSut();
-    jest
-      .spyOn(loadUserRepositorySpy, 'load')
-      .mockImplementationOnce(async () => Promise.resolve(null));
+    const { sut, createUserRepositorySpy } = makeSut();
+
     await sut.perform(mockUserData());
     expect(createUserRepositorySpy.params).toEqual({
       name: 'any_name',
@@ -80,10 +79,7 @@ describe('SignUpUsecase', () => {
   });
 
   it('Should throw if CreateUserRepository throws', async () => {
-    const { sut, loadUserRepositorySpy, createUserRepositorySpy } = makeSut();
-    jest
-      .spyOn(loadUserRepositorySpy, 'load')
-      .mockImplementationOnce(async () => Promise.resolve(null));
+    const { sut, createUserRepositorySpy } = makeSut();
     jest.spyOn(createUserRepositorySpy, 'create').mockImplementationOnce(() => {
       throw new Error();
     });

@@ -2,7 +2,7 @@ import { CreateUserRepository, LoadUserRepository } from '@/data/protocols/repos
 
 export class LoadUserRepositorySpy implements LoadUserRepository {
   params?: LoadUserRepository.Params;
-  result = {
+  result: LoadUserRepository.Result = {
     id: 'any_id',
     name: 'any_name',
     email: 'any_email@mail.com',
