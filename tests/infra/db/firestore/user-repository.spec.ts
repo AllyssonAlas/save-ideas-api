@@ -1,12 +1,18 @@
 import { FirestoreHelper, UserRepository } from '@/infra/db';
+import { CollectionReference } from 'firebase-admin/firestore';
+
+import { mockCreateUserParams } from '@/tests/domain/mocks';
 
 const makeSut = (): UserRepository => {
   return new UserRepository();
 };
 
 describe('UsersRepository', () => {
+  let usersCollection: CollectionReference;
+
   beforeAll(() => {
     FirestoreHelper.connect();
+    usersCollection = FirestoreHelper.getCollection('users');
   });
 
   afterEach(async () => {
@@ -23,7 +29,7 @@ describe('UsersRepository', () => {
   });
 
   describe('create()', () => {
-    test('Should return an user name and email on success', async () => {
+    test('Should return true on success', async () => {
       const sut = makeSut();
 
       const user = await sut.create({
@@ -33,6 +39,21 @@ describe('UsersRepository', () => {
       });
 
       expect(user).toBeTruthy();
+    });
+  });
+
+  describe('load()', () => {
+    test('Should return an user if email is valid', async () => {
+      const sut = makeSut();
+      const createUserParams = mockCreateUserParams();
+
+      await usersCollection.add(createUserParams);
+      const user = await sut.load({ email: createUserParams.email });
+
+      expect(user).toBeTruthy();
+      expect(user?.id).toBeTruthy();
+      expect(user?.name).toBe(createUserParams.name);
+      expect(user?.email).toBe(createUserParams.email);
     });
   });
 });
