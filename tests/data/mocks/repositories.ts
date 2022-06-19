@@ -30,6 +30,6 @@ export class CreateUserRepositorySpy implements CreateUserRepository {
   async create(params: CreateUserRepository.Params): Promise<CreateUserRepository.Result> {
     this.callsCount++;
     this.params = params;
-    return Promise.resolve(this.result);
+    return Promise.resolve(!!this.result);
   }
 }

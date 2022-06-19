@@ -7,7 +7,7 @@ export namespace SignUp {
     password: string;
   };
 
-  export type Result = { name: string; email: string } | SignUpError;
+  export type Result = boolean | SignUpError;
 }
 
 export interface SignUp {

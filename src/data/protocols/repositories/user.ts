@@ -26,8 +26,5 @@ export namespace CreateUserRepository {
     password: string;
   };
 
-  export type Result = {
-    name: string;
-    email: string;
-  };
+  export type Result = boolean;
 }
