@@ -1,5 +1,6 @@
 import { resolve } from 'path';
 import { initializeApp, cert, App as FirebaseClient, deleteApp } from 'firebase-admin/app';
+import { getFirestore, CollectionReference } from 'firebase-admin/firestore';
 
 export const FirestoreHelper = {
   client: null as unknown as FirebaseClient,
@@ -14,5 +15,9 @@ export const FirestoreHelper = {
 
   async disconnect(): Promise<void> {
     await deleteApp(this.client);
+  },
+
+  getCollection(name: string): CollectionReference {
+    return getFirestore(this.client).collection(name);
   },
 };
