@@ -20,10 +20,7 @@ export class LoadUserRepositorySpy implements LoadUserRepository {
 
 export class CreateUserRepositorySpy implements CreateUserRepository {
   params?: CreateUserRepository.Params;
-  result = {
-    name: 'any_name',
-    email: 'any_email@mail.com',
-  };
+  result = true;
 
   callsCount = 0;
 
