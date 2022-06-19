@@ -11,6 +11,7 @@ export class UserRepository implements CreateUserRepository, LoadUserRepository 
   async load(params: LoadUserRepository.Params): Promise<LoadUserRepository.Result> {
     const usersCollection = FirestoreHelper.getCollection('users');
     const usersSnapshot = await usersCollection.where('email', '==', params.email).get();
+    if (usersSnapshot.empty) return null;
     const users = FirestoreHelper.collectionMapper(usersSnapshot);
     return users[0];
   }
