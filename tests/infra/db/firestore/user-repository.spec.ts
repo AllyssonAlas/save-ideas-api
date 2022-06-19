@@ -22,7 +22,7 @@ describe('UsersRepository', () => {
     await FirestoreHelper.disconnect();
   });
 
-  describe('add()', () => {
+  describe('create()', () => {
     test('Should return an user name and email on success', async () => {
       const sut = makeSut();
 
