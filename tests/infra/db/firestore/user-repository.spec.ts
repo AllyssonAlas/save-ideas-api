@@ -9,6 +9,15 @@ describe('UsersRepository', () => {
     FirestoreHelper.connect();
   });
 
+  afterEach(async () => {
+    const userCollection = FirestoreHelper.getCollection('users');
+    const users = await userCollection.listDocuments();
+
+    for (let index = 0; index < users.length; index++) {
+      await users[index].delete();
+    }
+  });
+
   afterAll(async () => {
     await FirestoreHelper.disconnect();
   });
