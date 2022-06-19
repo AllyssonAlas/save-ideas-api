@@ -55,5 +55,13 @@ describe('UsersRepository', () => {
       expect(user?.name).toBe(createUserParams.name);
       expect(user?.email).toBe(createUserParams.email);
     });
+
+    test('Should return null if email is invalid', async () => {
+      const sut = makeSut();
+
+      const user = await sut.load({ email: 'invalid_email@mail.com' });
+
+      expect(user).toBeNull();
+    });
   });
 });
