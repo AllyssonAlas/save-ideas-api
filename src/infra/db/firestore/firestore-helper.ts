@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 import { initializeApp, cert, App as FirebaseClient, deleteApp } from 'firebase-admin/app';
-import { getFirestore, CollectionReference } from 'firebase-admin/firestore';
+import { getFirestore, CollectionReference, QuerySnapshot } from 'firebase-admin/firestore';
 
 export const FirestoreHelper = {
   client: null as unknown as FirebaseClient,
@@ -19,5 +19,15 @@ export const FirestoreHelper = {
 
   getCollection(name: string): CollectionReference {
     return getFirestore(this.client).collection(name);
+  },
+
+  collectionMapper(snapshot: QuerySnapshot): any[] {
+    const documents: any[] = [];
+
+    snapshot.forEach((doc) => {
+      documents.push({ id: doc.id, ...doc.data() });
+    });
+
+    return documents;
   },
 };
