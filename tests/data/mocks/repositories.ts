@@ -21,7 +21,6 @@ export class LoadUserRepositorySpy implements LoadUserRepository {
 export class CreateUserRepositorySpy implements CreateUserRepository {
   params?: CreateUserRepository.Params;
   result = true;
-
   callsCount = 0;
 
   async create(params: CreateUserRepository.Params): Promise<CreateUserRepository.Result> {

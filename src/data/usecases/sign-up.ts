@@ -1,6 +1,6 @@
 import { SignUp } from '@/domain/usecases';
 import { SignUpError } from '@/domain/errors';
-import { Hasher } from '@/data/protocols';
+import { Hasher } from '@/data/protocols/gateways';
 import { CreateUserRepository, LoadUserRepository } from '@/data/protocols/repositories';
 
 export class SignUpUsecase implements SignUp {
@@ -14,16 +14,13 @@ export class SignUpUsecase implements SignUp {
     const { email, password } = params;
     const { ciphertext } = await this.hasher.hash({ plaintext: password });
     const accountData = await this.loadUserRepository.load({ email });
-
     if (!accountData) {
       const newAccountData = await this.createUserRepository.create({
         ...params,
         password: ciphertext,
       });
-
       return newAccountData;
     }
-
     return new SignUpError();
   }
 }

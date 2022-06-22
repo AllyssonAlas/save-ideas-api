@@ -23,11 +23,9 @@ export const FirestoreHelper = {
 
   collectionMapper(snapshot: QuerySnapshot): any[] {
     const documents: any[] = [];
-
     snapshot.forEach((doc) => {
       documents.push({ id: doc.id, ...doc.data() });
     });
-
     return documents;
   },
 };
