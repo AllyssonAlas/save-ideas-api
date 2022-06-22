@@ -11,7 +11,6 @@ interface SutTypes {
 const makeSut = (): SutTypes => {
   const emailValidatorSpy = new EmailValidatorSpy();
   const sut = new SignUpController(emailValidatorSpy);
-
   return { sut, emailValidatorSpy };
 };
 
@@ -25,7 +24,9 @@ describe('SignUpController', () => {
         passwordConfirmation: 'any_password',
       },
     };
+
     const httpResponse = sut.handle(httpRequest);
+
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError('name'));
   });
@@ -39,7 +40,9 @@ describe('SignUpController', () => {
         passwordConfirmation: 'any_password',
       },
     };
+
     const httpResponse = sut.handle(httpRequest);
+
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError('email'));
   });
@@ -53,7 +56,9 @@ describe('SignUpController', () => {
         passwordConfirmation: 'any_password',
       },
     };
+
     const httpResponse = sut.handle(httpRequest);
+
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError('password'));
   });
@@ -67,7 +72,9 @@ describe('SignUpController', () => {
         password: 'any_password',
       },
     };
+
     const httpResponse = sut.handle(httpRequest);
+
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError('passwordConfirmation'));
   });
@@ -83,7 +90,9 @@ describe('SignUpController', () => {
         passwordConfirmation: 'any_password',
       },
     };
+
     const httpResponse = sut.handle(httpRequest);
+
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new InvalidParamError('email'));
   });
@@ -98,7 +107,9 @@ describe('SignUpController', () => {
         passwordConfirmation: 'any_password',
       },
     };
+
     sut.handle(httpRequest);
+
     expect(emailValidatorSpy.email).toBe(httpRequest.body.email);
     expect(emailValidatorSpy.callsCount).toBe(1);
   });
@@ -116,7 +127,9 @@ describe('SignUpController', () => {
         passwordConfirmation: 'any_password',
       },
     };
+
     const httpResponse = sut.handle(httpRequest);
+
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new ServerError());
   });

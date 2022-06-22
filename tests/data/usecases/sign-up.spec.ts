@@ -1,5 +1,6 @@
 import { SignUpError } from '@/domain/errors';
 import { SignUpUsecase } from '@/data/usecases';
+
 import { HasherSpy, CreateUserRepositorySpy, LoadUserRepositorySpy } from '@/tests/data/mocks';
 
 const mockUserData = () => ({
@@ -29,7 +30,9 @@ describe('SignUpUsecase', () => {
   it('Should call Hasher with correct value', async () => {
     const { sut, hasherSpy } = makeSut();
     const userData = mockUserData();
+
     await sut.perform(userData);
+
     expect(hasherSpy.params).toEqual({ plaintext: userData.password });
     expect(hasherSpy.callsCount).toBe(1);
   });
@@ -39,14 +42,18 @@ describe('SignUpUsecase', () => {
     jest.spyOn(hasherSpy, 'hash').mockImplementationOnce(() => {
       throw new Error();
     });
+
     const promise = sut.perform(mockUserData());
+
     await expect(promise).rejects.toThrow();
   });
 
   it('Should call LoadUserRepository with correct value', async () => {
     const { sut, loadUserRepositorySpy } = makeSut();
     const userData = mockUserData();
+
     await sut.perform(userData);
+
     expect(loadUserRepositorySpy.params).toEqual({ email: userData.email });
     expect(loadUserRepositorySpy.callsCount).toBe(1);
   });
@@ -56,7 +63,9 @@ describe('SignUpUsecase', () => {
     jest.spyOn(loadUserRepositorySpy, 'load').mockImplementationOnce(() => {
       throw new Error();
     });
+
     const promise = sut.perform(mockUserData());
+
     await expect(promise).rejects.toThrow();
   });
 
@@ -71,12 +80,15 @@ describe('SignUpUsecase', () => {
       }),
     );
     const signUpResult = await sut.perform(mockUserData());
+
     expect(signUpResult).toEqual(new SignUpError());
   });
 
   it('Should call CreateUserRepository with correct values if LoadUserRepository returns null', async () => {
     const { sut, createUserRepositorySpy } = makeSut();
+
     await sut.perform(mockUserData());
+
     expect(createUserRepositorySpy.params).toEqual({
       name: 'any_name',
       email: 'any_email@mail.com',
@@ -90,13 +102,17 @@ describe('SignUpUsecase', () => {
     jest.spyOn(createUserRepositorySpy, 'create').mockImplementationOnce(() => {
       throw new Error();
     });
+
     const promise = sut.perform(mockUserData());
+
     await expect(promise).rejects.toThrow();
   });
 
   it('Should return the name and email from created user', async () => {
     const { sut } = makeSut();
+
     const userData = await sut.perform(mockUserData());
+
     expect(userData).toBeTruthy();
   });
 });
