@@ -87,4 +87,19 @@ describe('SignUpController', () => {
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new InvalidParamError('email'));
   });
+
+  test('Should call EmailValidator with correct value', () => {
+    const { sut, emailValidatorSpy } = makeSut();
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'valid_email@mail',
+        password: 'any_password',
+        passwordConfirmation: 'any_password',
+      },
+    };
+    sut.handle(httpRequest);
+    expect(emailValidatorSpy.email).toBe(httpRequest.body.email);
+    expect(emailValidatorSpy.callsCount).toBe(1);
+  });
 });
