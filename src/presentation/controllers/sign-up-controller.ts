@@ -1,7 +1,7 @@
 import { SignUp } from '@/domain/usecases';
 import { HttpRequest, HttpResponse, Controller, EmailValidator } from '@/presentation/protocols';
-import { MissingParamError, InvalidParamError } from '@/presentation/errors';
-import { badRequest, serverError, noContent } from '@/presentation/helpers';
+import { MissingParamError, InvalidParamError, EmailInUseError } from '@/presentation/errors';
+import { badRequest, serverError, noContent, forbidden } from '@/presentation/helpers';
 
 export class SignUpController implements Controller {
   constructor(private readonly emailValidator: EmailValidator, private readonly signUp: SignUp) {}
@@ -19,7 +19,8 @@ export class SignUpController implements Controller {
       const isEmailValid = this.emailValidator.isValid(email);
       if (!isEmailValid) return badRequest(new InvalidParamError('email'));
       const isUserValid = await this.signUp.perform({ name, email, password });
-      if (isUserValid) return noContent();
+      if (!isUserValid) return forbidden(new EmailInUseError());
+      return noContent();
     } catch (error) {
       return serverError();
     }
