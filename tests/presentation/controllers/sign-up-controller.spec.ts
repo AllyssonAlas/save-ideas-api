@@ -1,5 +1,10 @@
 import { SignUpController } from '@/presentation/controllers';
-import { InvalidParamError, MissingParamError, ServerError } from '@/presentation/errors';
+import {
+  InvalidParamError,
+  MissingParamError,
+  ServerError,
+  EmailInUseError,
+} from '@/presentation/errors';
 
 import { EmailValidatorSpy, SignUpSpy } from '@/tests/presentation/mocks';
 
@@ -209,5 +214,23 @@ describe('SignUpController', () => {
 
     expect(httpResponse.statusCode).toBe(204);
     expect(httpResponse.body).toBeNull();
+  });
+
+  test('Should return 403 if invalid is provided', async () => {
+    const { sut, signUpSpy } = makeSut();
+    signUpSpy.result = false;
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email@mail',
+        password: 'any_password',
+        passwordConfirmation: 'any_password',
+      },
+    };
+
+    const httpResponse = await sut.handle(httpRequest);
+
+    expect(httpResponse.statusCode).toBe(403);
+    expect(httpResponse.body).toEqual(new EmailInUseError());
   });
 });
