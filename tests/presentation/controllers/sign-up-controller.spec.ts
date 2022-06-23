@@ -153,9 +153,8 @@ describe('SignUpController', () => {
     expect(httpResponse.body).toEqual(new ServerError());
   });
 
-  test('Should call SignUpUSecase with correct values', async () => {
+  test('Should call SignUpUsecase with correct values', async () => {
     const { sut, signUpSpy } = makeSut();
-
     const httpRequest = {
       body: {
         name: 'any_name',
@@ -173,5 +172,25 @@ describe('SignUpController', () => {
       password: 'any_password',
     });
     expect(signUpSpy.callsCount).toBe(1);
+  });
+
+  test('Should return 500 if SignUpUsecase throws', async () => {
+    const { sut, signUpSpy } = makeSut();
+    jest.spyOn(signUpSpy, 'perform').mockImplementationOnce(() => {
+      throw new Error();
+    });
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email@mail',
+        password: 'any_password',
+        passwordConfirmation: 'any_password',
+      },
+    };
+
+    const httpResponse = await sut.handle(httpRequest);
+
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
   });
 });
