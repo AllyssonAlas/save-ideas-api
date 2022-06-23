@@ -1,4 +1,3 @@
-import { SignUpError } from '@/domain/errors';
 import { SignUpUsecase } from '@/data/usecases';
 
 import { HasherSpy, CreateUserRepositorySpy, LoadUserRepositorySpy } from '@/tests/data/mocks';
@@ -79,9 +78,10 @@ describe('SignUpUsecase', () => {
         accessToken: 'any_access_token',
       }),
     );
+
     const signUpResult = await sut.perform(mockUserData());
 
-    expect(signUpResult).toEqual(new SignUpError());
+    expect(signUpResult).toBe(false);
   });
 
   it('Should call CreateUserRepository with correct values if LoadUserRepository returns null', async () => {
