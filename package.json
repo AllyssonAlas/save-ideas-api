@@ -42,7 +42,9 @@
     "start": "node dist/main/server.js",
     "test": "DOTENV_CONFIG_PATH=./.env.test jest --passWithNoTests --no-cache --runInBand",
     "test:coverage": "yarn test --coverage",
+    "test:integration": "yarn test --watch -c jest-integration-config.js",
     "test:staged": "yarn test --findRelatedTests",
+    "test:unit": "yarn test --watch -c jest-unit-config.js",
     "test:watch": "yarn test --watch"
   },
   "engines": {
