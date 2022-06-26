@@ -37,12 +37,12 @@
   "scripts": {
     "build": "rimraf dist && tsc -p tsconfig-build.json",
     "firebase": "firebase",
-    "firebase:emulators-start": "firebase emulators:start",
     "lint": "eslint . --ext ts",
     "lint:fix": "yarn lint --fix",
     "prepare": "husky install",
     "start": "node dist/main/server.js",
     "test": "DOTENV_CONFIG_PATH=./.env.test jest --passWithNoTests --no-cache --runInBand",
+    "test:prepare": "firebase emulators:start",
     "test:coverage": "yarn test --coverage",
     "test:integration": "yarn test --watch -c jest-integration-config.js",
     "test:staged": "yarn test --findRelatedTests",
