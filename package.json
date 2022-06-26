@@ -5,11 +5,16 @@
   "author": "Allysson <allyssonmgs@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/express": "^4.17.13",
     "@types/jest": "^27.5.0",
     "@types/module-alias": "^2.0.1",
     "@types/node": "^17.0.31",
+    "@types/supertest": "^2.0.12",
+    "@types/validator": "^13.7.3",
     "@typescript-eslint/eslint-plugin": "^5.22.0",
     "@typescript-eslint/parser": "^5.22.0",
+    "dotenv": "^16.0.1",
     "eslint": "^8.15.0",
     "eslint-config-prettier": "6.15.0",
     "eslint-config-standard": "^17.0.0",
@@ -19,30 +24,43 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "3.2.0",
     "eslint-plugin-promise": "^6.0.0",
+    "firebase-tools": "^11.0.1",
     "git-commit-msg-linter": "^4.1.2",
     "husky": "^7.0.4",
     "jest": "^28.1.0",
     "lint-staged": "^12.4.1",
     "prettier": "^2.6.2",
+    "supertest": "^6.2.3",
     "ts-jest": "^28.0.2",
     "typescript": "^4.6.4"
   },
   "scripts": {
     "build": "rimraf dist && tsc -p tsconfig-build.json",
+    "firebase": "firebase",
     "lint": "eslint . --ext ts",
     "lint:fix": "yarn lint --fix",
     "prepare": "husky install",
-    "start": "node dist/main/api",
-    "test": "jest --passWithNoTests --no-cache --runInBand",
+    "start": "node dist/main/server.js",
+    "test": "DOTENV_CONFIG_PATH=./.env.test jest --passWithNoTests --no-cache --runInBand",
+    "test:prepare": "firebase emulators:start",
     "test:coverage": "yarn test --coverage",
+    "test:integration": "yarn test --watch -c jest-integration-config.js",
     "test:staged": "yarn test --findRelatedTests",
+    "test:unit": "yarn test --watch -c jest-unit-config.js",
     "test:watch": "yarn test --watch"
   },
   "engines": {
     "node": "16.x"
   },
   "dependencies": {
+    "bcrypt": "^5.0.1",
+    "express": "^4.18.1",
+    "firebase-admin": "^10.2.0",
     "module-alias": "^2.2.2",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "validator": "^13.7.0"
+  },
+  "_moduleAliases": {
+    "@": "dist"
   }
 }

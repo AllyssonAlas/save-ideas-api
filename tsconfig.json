@@ -10,7 +10,7 @@
       "@/*": ["*"],
       "@/tests/*": ["../tests/*"],
     },
-    "rootDir": "src",
+    "rootDirs": ["src", "tests"],
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
