@@ -1,13 +1,24 @@
 import { SignUp } from '@/domain/usecases';
-import { HttpRequest, HttpResponse, Controller, EmailValidator } from '@/presentation/protocols';
+import {
+  HttpRequest,
+  HttpResponse,
+  Controller,
+  EmailValidator,
+  Validation,
+} from '@/presentation/protocols';
 import { MissingParamError, InvalidParamError, EmailInUseError } from '@/presentation/errors';
 import { badRequest, serverError, noContent, forbidden } from '@/presentation/helpers';
 
 export class SignUpController implements Controller {
-  constructor(private readonly emailValidator: EmailValidator, private readonly signUp: SignUp) {}
+  constructor(
+    private readonly emailValidator: EmailValidator,
+    private readonly signUp: SignUp,
+    private readonly validation: Validation,
+  ) {}
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
+      this.validation.validate(httpRequest.body);
       const requiredFields = ['name', 'email', 'password', 'passwordConfirmation'];
       for (const field of requiredFields) {
         if (!httpRequest.body[field]) return badRequest(new MissingParamError(field));
