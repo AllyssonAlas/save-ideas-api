@@ -252,4 +252,22 @@ describe('SignUpController', () => {
     expect(validationSpy.input).toEqual(httpRequest.body);
     expect(validationSpy.callsCount).toBe(1);
   });
+
+  test('Should return 400 if Validation returns an error', async () => {
+    const { sut, validationSpy } = makeSut();
+    validationSpy.error = new MissingParamError('any_field');
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email@mail',
+        password: 'any_password',
+        passwordConfirmation: 'any_password',
+      },
+    };
+
+    const httpResponse = await sut.handle(httpRequest);
+
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new MissingParamError('any_field'));
+  });
 });
