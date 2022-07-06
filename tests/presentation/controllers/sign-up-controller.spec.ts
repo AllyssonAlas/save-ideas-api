@@ -6,19 +6,21 @@ import {
   EmailInUseError,
 } from '@/presentation/errors';
 
-import { EmailValidatorSpy, SignUpSpy } from '@/tests/presentation/mocks';
+import { EmailValidatorSpy, SignUpSpy, ValidationSpy } from '@/tests/presentation/mocks';
 
 interface SutTypes {
   sut: SignUpController;
   emailValidatorSpy: EmailValidatorSpy;
   signUpSpy: SignUpSpy;
+  validationSpy: ValidationSpy;
 }
 
 const makeSut = (): SutTypes => {
   const emailValidatorSpy = new EmailValidatorSpy();
   const signUpSpy = new SignUpSpy();
-  const sut = new SignUpController(emailValidatorSpy, signUpSpy);
-  return { sut, emailValidatorSpy, signUpSpy };
+  const validationSpy = new ValidationSpy();
+  const sut = new SignUpController(emailValidatorSpy, signUpSpy, validationSpy);
+  return { sut, emailValidatorSpy, signUpSpy, validationSpy };
 };
 
 describe('SignUpController', () => {
@@ -232,5 +234,22 @@ describe('SignUpController', () => {
 
     expect(httpResponse.statusCode).toBe(403);
     expect(httpResponse.body).toEqual(new EmailInUseError());
+  });
+
+  test('Should call Validation with correct value', async () => {
+    const { sut, validationSpy } = makeSut();
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'valid_email@mail',
+        password: 'any_password',
+        passwordConfirmation: 'any_password',
+      },
+    };
+
+    await sut.handle(httpRequest);
+
+    expect(validationSpy.input).toEqual(httpRequest.body);
+    expect(validationSpy.callsCount).toBe(1);
   });
 });
