@@ -4,7 +4,7 @@ import { EmailInUseError } from '@/presentation/errors';
 import { badRequest, serverError, noContent, forbidden } from '@/presentation/helpers';
 
 export class SignUpController implements Controller {
-  constructor(private readonly signUp: SignUp, private readonly validation: Validation) {}
+  constructor(private readonly validation: Validation, private readonly signUp: SignUp) {}
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {

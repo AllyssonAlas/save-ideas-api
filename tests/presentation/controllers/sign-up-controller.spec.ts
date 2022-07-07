@@ -12,7 +12,7 @@ interface SutTypes {
 const makeSut = (): SutTypes => {
   const signUpSpy = new SignUpSpy();
   const validationSpy = new ValidationSpy();
-  const sut = new SignUpController(signUpSpy, validationSpy);
+  const sut = new SignUpController(validationSpy, signUpSpy);
   return { sut, signUpSpy, validationSpy };
 };
 
