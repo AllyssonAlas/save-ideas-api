@@ -1,5 +1,6 @@
 import { SignUpController } from '@/presentation/controllers';
-import { MissingParamError, ServerError, EmailInUseError } from '@/presentation/errors';
+import { badRequest, serverError, forbidden, noContent } from '@/presentation/helpers';
+import { MissingParamError, EmailInUseError } from '@/presentation/errors';
 
 import { SignUpSpy, ValidationSpy } from '@/tests/presentation/mocks';
 
@@ -45,8 +46,7 @@ describe('SignUpController', () => {
 
     const httpResponse = await sut.handle(mockRequest());
 
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
+    expect(httpResponse).toEqual(serverError());
   });
 
   test('Should return 200 if valid is provided', async () => {
@@ -54,8 +54,7 @@ describe('SignUpController', () => {
 
     const httpResponse = await sut.handle(mockRequest());
 
-    expect(httpResponse.statusCode).toBe(204);
-    expect(httpResponse.body).toBeNull();
+    expect(httpResponse).toEqual(noContent());
   });
 
   test('Should return 403 if invalid is provided', async () => {
@@ -64,8 +63,7 @@ describe('SignUpController', () => {
 
     const httpResponse = await sut.handle(mockRequest());
 
-    expect(httpResponse.statusCode).toBe(403);
-    expect(httpResponse.body).toEqual(new EmailInUseError());
+    expect(httpResponse).toEqual(forbidden(new EmailInUseError()));
   });
 
   test('Should call Validation with correct value', async () => {
@@ -84,7 +82,6 @@ describe('SignUpController', () => {
 
     const httpResponse = await sut.handle(mockRequest());
 
-    expect(httpResponse.statusCode).toBe(400);
-    expect(httpResponse.body).toEqual(new MissingParamError('any_field'));
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('any_field')));
   });
 });
