@@ -31,4 +31,12 @@ describe('LogControllerDecorator', () => {
 
     expect(controllerSpy.request).toEqual({ value: 'any_value' });
   });
+
+  test('Should return the same result of the controller handle', async () => {
+    const { sut } = makeSut();
+
+    const httpResponse = await sut.handle({ value: 'any_value' });
+
+    expect(httpResponse).toEqual(noContent());
+  });
 });
