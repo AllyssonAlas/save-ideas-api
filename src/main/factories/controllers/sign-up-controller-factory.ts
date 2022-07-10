@@ -1,12 +1,10 @@
+import { Controller } from '@/presentation/protocols';
 import { SignUpController } from '@/presentation/controllers';
 import { makeSignUpUseCase } from '@/main/factories/usecases';
 import { makeSignUpValidation } from '@/main/factories/validations';
-import { Controller } from '@/presentation/protocols';
-import { LogControllerDecorator } from '@/main/decorators/log';
-import { LogRepository } from '@/infra/db';
+import { makeLogErrorDecorator } from '@/main/factories/decorators';
 
 export const makeSignUpController = (): Controller => {
-  const logRepository = new LogRepository();
   const signUpController = new SignUpController(makeSignUpValidation(), makeSignUpUseCase());
-  return new LogControllerDecorator(signUpController, logRepository);
+  return makeLogErrorDecorator(signUpController);
 };
