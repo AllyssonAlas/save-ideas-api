@@ -27,7 +27,7 @@ describe('LogRepository', () => {
   test('Should create an error log on success', async () => {
     const sut = makeSut();
 
-    await sut.log({ stack: 'any_error' });
+    await sut.logError({ stack: 'any_error' });
     const errorsSnapshot = await errorsCollection.get();
     const errors = FirestoreHelper.collectionMapper(errorsSnapshot);
 

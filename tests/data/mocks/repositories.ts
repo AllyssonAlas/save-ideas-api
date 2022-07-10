@@ -37,7 +37,7 @@ export class CreateUserRepositorySpy implements CreateUserRepository {
 export class LogErrorRepositorySpy implements LogErrorRepository {
   params?: LogErrorRepository.Params;
 
-  async log(params: LogErrorRepository.Params): Promise<void> {
+  async logError(params: LogErrorRepository.Params): Promise<void> {
     this.params = params;
     return Promise.resolve();
   }
