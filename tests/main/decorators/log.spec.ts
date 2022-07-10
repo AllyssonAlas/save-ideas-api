@@ -1,6 +1,8 @@
 import { Controller, HttpResponse } from '@/presentation/protocols';
 import { LogControllerDecorator } from '@/main/decorators';
-import { noContent } from '@/presentation/helpers';
+import { noContent, serverError } from '@/presentation/helpers';
+
+import { LogErrorRepositorySpy } from '@/tests/data/mocks';
 
 class ControllerSpy implements Controller {
   httpResponse = noContent();
@@ -12,15 +14,23 @@ class ControllerSpy implements Controller {
   }
 }
 
+const mockServerError = (): HttpResponse => {
+  const fakeError = new Error();
+  fakeError.stack = 'any_stack';
+  return serverError(fakeError);
+};
+
 interface SutTypes {
   sut: LogControllerDecorator;
   controllerSpy: ControllerSpy;
+  logErrorRepositorySpy: LogErrorRepositorySpy;
 }
 
 const makeSut = (): SutTypes => {
   const controllerSpy = new ControllerSpy();
-  const sut = new LogControllerDecorator(controllerSpy);
-  return { sut, controllerSpy };
+  const logErrorRepositorySpy = new LogErrorRepositorySpy();
+  const sut = new LogControllerDecorator(controllerSpy, logErrorRepositorySpy);
+  return { sut, controllerSpy, logErrorRepositorySpy };
 };
 
 describe('LogControllerDecorator', () => {
@@ -38,5 +48,15 @@ describe('LogControllerDecorator', () => {
     const httpResponse = await sut.handle({ value: 'any_value' });
 
     expect(httpResponse).toEqual(noContent());
+  });
+
+  test('Should call LogErrorRepository with correct error if controller returns a server error', async () => {
+    const { sut, controllerSpy, logErrorRepositorySpy } = makeSut();
+    const serverError = mockServerError();
+    controllerSpy.httpResponse = serverError;
+
+    await sut.handle({ value: 'any_value' });
+
+    expect(logErrorRepositorySpy.params?.stack).toEqual(serverError.body.stack);
   });
 });
