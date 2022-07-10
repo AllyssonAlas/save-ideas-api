@@ -15,6 +15,7 @@
     "sourceMap": true,
     "strict": true,
     "target": "es2021",
+    "useUnknownInCatchVariables": false
   },
   "include": ["src", "tests"]
 }
