@@ -15,7 +15,7 @@ export class SignUpController implements Controller {
       if (!isUserValid) return forbidden(new EmailInUseError());
       return noContent();
     } catch (error) {
-      return serverError();
+      return serverError(error);
     }
   }
 }

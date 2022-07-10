@@ -1,4 +1,8 @@
-import { CreateUserRepository, LoadUserRepository } from '@/data/protocols/repositories';
+import {
+  CreateUserRepository,
+  LoadUserRepository,
+  LogErrorRepository,
+} from '@/data/protocols/repositories';
 
 export class LoadUserRepositorySpy implements LoadUserRepository {
   params?: LoadUserRepository.Params;
@@ -27,5 +31,14 @@ export class CreateUserRepositorySpy implements CreateUserRepository {
     this.callsCount++;
     this.params = params;
     return Promise.resolve(!!this.result);
+  }
+}
+
+export class LogErrorRepositorySpy implements LogErrorRepository {
+  params?: LogErrorRepository.Params;
+
+  async logError(params: LogErrorRepository.Params): Promise<void> {
+    this.params = params;
+    return Promise.resolve();
   }
 }
