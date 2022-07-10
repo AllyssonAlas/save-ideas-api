@@ -1,6 +1,8 @@
 import { CollectionReference } from 'firebase-admin/firestore';
 import { FirestoreHelper, LogRepository } from '@/infra/db';
 
+const makeSut = (): LogRepository => new LogRepository();
+
 describe('LogRepository', () => {
   let errorsCollection: CollectionReference;
 
@@ -23,7 +25,7 @@ describe('LogRepository', () => {
   });
 
   test('Should create an error log on success', async () => {
-    const sut = new LogRepository();
+    const sut = makeSut();
 
     await sut.log({ stack: 'any_error' });
     const errorsSnapshot = await errorsCollection.get();
