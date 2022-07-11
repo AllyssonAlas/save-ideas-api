@@ -45,7 +45,7 @@ describe('AuthenticationUsecase', () => {
     await expect(promise).rejects.toThrow();
   });
 
-  test('Should return null if LoadUserRepository return null', async () => {
+  test('Should return null if LoadUserRepository returns null', async () => {
     const { sut, loadUserRepositorySpy } = makeSut();
     loadUserRepositorySpy.result = null;
     const authenticationParams = {
@@ -87,5 +87,18 @@ describe('AuthenticationUsecase', () => {
     const promise = sut.perform(authenticationParams);
 
     await expect(promise).rejects.toThrow();
+  });
+
+  test('Should return null if HasherComparer returns false', async () => {
+    const { sut, hasherComparerSpy } = makeSut();
+    hasherComparerSpy.result = false;
+    const authenticationParams = {
+      email: 'any_email@email.com',
+      password: 'any_password',
+    };
+
+    const authenticationResult = await sut.perform(authenticationParams);
+
+    expect(authenticationResult).toBeNull();
   });
 });
