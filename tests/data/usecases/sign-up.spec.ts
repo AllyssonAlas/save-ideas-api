@@ -75,6 +75,7 @@ describe('SignUpUsecase', () => {
         id: 'any_id',
         name: 'any_name',
         email: 'any_email@mail.com',
+        password: 'any_password',
         accessToken: 'any_access_token',
       }),
     );

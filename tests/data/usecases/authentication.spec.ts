@@ -1,17 +1,19 @@
 import { AuthenticationUsecase } from '@/data/usecases';
 
-import { LoadUserRepositorySpy } from '@/tests/data/mocks';
+import { LoadUserRepositorySpy, HasherComparerSpy } from '@/tests/data/mocks';
 
 interface SutTypes {
   sut: AuthenticationUsecase;
   loadUserRepositorySpy: LoadUserRepositorySpy;
+  hasherComparerSpy: HasherComparerSpy;
 }
 
 const makeSut = (): SutTypes => {
   const loadUserRepositorySpy = new LoadUserRepositorySpy();
-  const sut = new AuthenticationUsecase(loadUserRepositorySpy);
+  const hasherComparerSpy = new HasherComparerSpy();
+  const sut = new AuthenticationUsecase(loadUserRepositorySpy, hasherComparerSpy);
 
-  return { sut, loadUserRepositorySpy };
+  return { sut, loadUserRepositorySpy, hasherComparerSpy };
 };
 
 describe('AuthenticationUsecase', () => {
@@ -54,5 +56,21 @@ describe('AuthenticationUsecase', () => {
     const authenticationResult = await sut.perform(authenticationParams);
 
     expect(authenticationResult).toBeNull();
+  });
+
+  test('Should call HasherComparer with correct values', async () => {
+    const { sut, loadUserRepositorySpy, hasherComparerSpy } = makeSut();
+    const authenticationParams = {
+      email: 'any_email@email.com',
+      password: 'any_password',
+    };
+
+    await sut.perform(authenticationParams);
+
+    expect(hasherComparerSpy.params).toEqual({
+      plaintext: 'any_password',
+      digest: loadUserRepositorySpy.result?.password,
+    });
+    expect(hasherComparerSpy.callsCount).toBe(1);
   });
 });
