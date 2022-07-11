@@ -27,4 +27,19 @@ describe('AuthenticationUsecase', () => {
     expect(loadUserRepositorySpy.params).toEqual({ email: 'any_email@email.com' });
     expect(loadUserRepositorySpy.callsCount).toBe(1);
   });
+
+  test('Should throw if LoadUserRepository throws', async () => {
+    const { sut, loadUserRepositorySpy } = makeSut();
+    jest.spyOn(loadUserRepositorySpy, 'load').mockImplementationOnce(() => {
+      throw new Error();
+    });
+    const authenticationParams = {
+      email: 'any_email@email.com',
+      password: 'any_password',
+    };
+
+    const promise = sut.perform(authenticationParams);
+
+    await expect(promise).rejects.toThrow();
+  });
 });
