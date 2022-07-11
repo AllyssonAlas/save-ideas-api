@@ -73,4 +73,19 @@ describe('AuthenticationUsecase', () => {
     });
     expect(hasherComparerSpy.callsCount).toBe(1);
   });
+
+  test('Should throw if HasherComparer throws', async () => {
+    const { sut, hasherComparerSpy } = makeSut();
+    jest.spyOn(hasherComparerSpy, 'compare').mockImplementationOnce(() => {
+      throw new Error();
+    });
+    const authenticationParams = {
+      email: 'any_email@email.com',
+      password: 'any_password',
+    };
+
+    const promise = sut.perform(authenticationParams);
+
+    await expect(promise).rejects.toThrow();
+  });
 });
