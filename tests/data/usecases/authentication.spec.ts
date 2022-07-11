@@ -1,5 +1,6 @@
 import { AuthenticationUsecase } from '@/data/usecases';
 
+import { mockAuthenticationParams } from '@/tests/domain/mocks';
 import { LoadUserRepositorySpy, HasherComparerSpy } from '@/tests/data/mocks';
 
 interface SutTypes {
@@ -19,12 +20,8 @@ const makeSut = (): SutTypes => {
 describe('AuthenticationUsecase', () => {
   test('Should call LoadUserRepository with correct value', async () => {
     const { sut, loadUserRepositorySpy } = makeSut();
-    const authenticationParams = {
-      email: 'any_email@email.com',
-      password: 'any_password',
-    };
 
-    await sut.perform(authenticationParams);
+    await sut.perform(mockAuthenticationParams());
 
     expect(loadUserRepositorySpy.params).toEqual({ email: 'any_email@email.com' });
     expect(loadUserRepositorySpy.callsCount).toBe(1);
@@ -35,12 +32,8 @@ describe('AuthenticationUsecase', () => {
     jest.spyOn(loadUserRepositorySpy, 'load').mockImplementationOnce(() => {
       throw new Error();
     });
-    const authenticationParams = {
-      email: 'any_email@email.com',
-      password: 'any_password',
-    };
 
-    const promise = sut.perform(authenticationParams);
+    const promise = sut.perform(mockAuthenticationParams());
 
     await expect(promise).rejects.toThrow();
   });
@@ -48,24 +41,16 @@ describe('AuthenticationUsecase', () => {
   test('Should return null if LoadUserRepository returns null', async () => {
     const { sut, loadUserRepositorySpy } = makeSut();
     loadUserRepositorySpy.result = null;
-    const authenticationParams = {
-      email: 'any_email@email.com',
-      password: 'any_password',
-    };
 
-    const authenticationResult = await sut.perform(authenticationParams);
+    const authenticationResult = await sut.perform(mockAuthenticationParams());
 
     expect(authenticationResult).toBeNull();
   });
 
   test('Should call HasherComparer with correct values', async () => {
     const { sut, loadUserRepositorySpy, hasherComparerSpy } = makeSut();
-    const authenticationParams = {
-      email: 'any_email@email.com',
-      password: 'any_password',
-    };
 
-    await sut.perform(authenticationParams);
+    await sut.perform(mockAuthenticationParams());
 
     expect(hasherComparerSpy.params).toEqual({
       plaintext: 'any_password',
@@ -79,12 +64,8 @@ describe('AuthenticationUsecase', () => {
     jest.spyOn(hasherComparerSpy, 'compare').mockImplementationOnce(() => {
       throw new Error();
     });
-    const authenticationParams = {
-      email: 'any_email@email.com',
-      password: 'any_password',
-    };
 
-    const promise = sut.perform(authenticationParams);
+    const promise = sut.perform(mockAuthenticationParams());
 
     await expect(promise).rejects.toThrow();
   });
@@ -92,12 +73,8 @@ describe('AuthenticationUsecase', () => {
   test('Should return null if HasherComparer returns false', async () => {
     const { sut, hasherComparerSpy } = makeSut();
     hasherComparerSpy.result = false;
-    const authenticationParams = {
-      email: 'any_email@email.com',
-      password: 'any_password',
-    };
 
-    const authenticationResult = await sut.perform(authenticationParams);
+    const authenticationResult = await sut.perform(mockAuthenticationParams());
 
     expect(authenticationResult).toBeNull();
   });
