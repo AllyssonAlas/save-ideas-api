@@ -1,3 +1,5 @@
+import { User } from '@/domain/models';
+
 export interface LoadUserRepository {
   load: (params: LoadUserRepository.Params) => Promise<LoadUserRepository.Result>;
 }
@@ -7,12 +9,7 @@ export namespace LoadUserRepository {
     email: string;
   };
 
-  export type Result = null | {
-    id: string;
-    name: string;
-    email: string;
-    accessToken?: string;
-  };
+  export type Result = null | User;
 }
 
 export interface CreateUserRepository {
