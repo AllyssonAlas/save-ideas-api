@@ -10,9 +10,13 @@ export class AuthenticationUsecase {
 
   async perform(params: Authentication.Params): Promise<any> {
     const userData = await this.loadUserRepository.load({ email: params.email });
-    if (!userData) {
-      return null;
+    if (userData) {
+      await this.hasherComparer.compare({
+        plaintext: params.password,
+        digest: userData.password,
+      });
     }
-    await this.hasherComparer.compare({ plaintext: params.password, digest: userData.password });
+
+    return null;
   }
 }
