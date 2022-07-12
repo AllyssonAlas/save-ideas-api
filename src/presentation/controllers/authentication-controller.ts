@@ -1,6 +1,6 @@
 import { Authentication } from '@/domain/usecases';
 import { Controller, Validation } from '@/presentation/protocols';
-import { badRequest, serverError } from '@/presentation/helpers';
+import { badRequest, serverError, unauthorized } from '@/presentation/helpers';
 
 export class AuthenticationController implements Controller {
   constructor(
@@ -14,8 +14,10 @@ export class AuthenticationController implements Controller {
       if (error) {
         return badRequest(error);
       }
-      this.authentication.perform(request);
-      return Promise.resolve();
+      const isValid = await this.authentication.perform(request);
+      if (!isValid) {
+        return unauthorized();
+      }
     } catch (error) {
       return serverError(error);
     }
