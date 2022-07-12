@@ -2,17 +2,19 @@ import { AuthenticationController } from '@/presentation/controllers';
 import { MissingParamError } from '@/presentation/errors';
 import { badRequest, serverError } from '@/presentation/helpers';
 
-import { ValidationSpy } from '@/tests/presentation/mocks';
+import { AuthenticationUsecaseSpy, ValidationSpy } from '@/tests/presentation/mocks';
 
 interface SutTypes {
   sut: AuthenticationController;
   validationSpy: ValidationSpy;
+  authenticationUsecaseSpy: AuthenticationUsecaseSpy;
 }
 
 const makeSut = (): SutTypes => {
   const validationSpy = new ValidationSpy();
-  const sut = new AuthenticationController(validationSpy);
-  return { sut, validationSpy };
+  const authenticationUsecaseSpy = new AuthenticationUsecaseSpy();
+  const sut = new AuthenticationController(validationSpy, authenticationUsecaseSpy);
+  return { sut, validationSpy, authenticationUsecaseSpy };
 };
 
 describe('AuthenticationController', () => {
@@ -55,5 +57,18 @@ describe('AuthenticationController', () => {
     const httpResponse = await sut.handle(request);
 
     expect(httpResponse).toEqual(serverError(new Error()));
+  });
+
+  test('Should call AuthenticationUsecase with correct values', async () => {
+    const { sut, authenticationUsecaseSpy } = makeSut();
+    const request = {
+      email: 'any_email@mail.com',
+      password: 'any_password',
+    };
+
+    await sut.handle(request);
+
+    expect(authenticationUsecaseSpy.params).toEqual(request);
+    expect(authenticationUsecaseSpy.callsCount).toBe(1);
   });
 });
