@@ -21,7 +21,7 @@ const makeSut = (): SutTypes => {
 };
 
 describe('Hasher', () => {
-  it('Should call hash with correct params', async () => {
+  test('Should call hash with correct params', async () => {
     const { sut, salt } = makeSut();
     const hashSpy = jest.spyOn(bcrypt, 'hash');
 
@@ -30,7 +30,7 @@ describe('Hasher', () => {
     expect(hashSpy).toHaveBeenCalledWith('any_string', salt);
   });
 
-  it('Should return a result on succes', async () => {
+  test('Should return a result on succes', async () => {
     const { sut } = makeSut();
 
     const result = await sut.hash({ plaintext: 'any_string' });
@@ -38,7 +38,7 @@ describe('Hasher', () => {
     expect(result).toEqual({ ciphertext: 'hashed_string' });
   });
 
-  it('Should throw if hash throws', async () => {
+  test('Should throw if hash throws', async () => {
     const { sut } = makeSut();
     jest.spyOn(bcrypt, 'hash').mockImplementationOnce(() => {
       throw new Error();
