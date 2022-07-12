@@ -63,5 +63,16 @@ describe('Hasher', () => {
 
       expect(hashComparerSpy).toHaveBeenCalledWith('any_string', 'hashed_string');
     });
+
+    test('Should throw if compare throws', async () => {
+      const { sut } = makeSut();
+      jest.spyOn(bcrypt, 'compare').mockImplementationOnce(() => {
+        throw new Error();
+      });
+
+      const promise = sut.compare({ plaintext: 'any_string', digest: 'hashed_string' });
+
+      await expect(promise).rejects.toThrow();
+    });
   });
 });
