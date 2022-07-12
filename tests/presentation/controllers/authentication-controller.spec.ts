@@ -1,6 +1,6 @@
 import { AuthenticationController } from '@/presentation/controllers';
 import { MissingParamError } from '@/presentation/errors';
-import { badRequest, serverError, unauthorized } from '@/presentation/helpers';
+import { badRequest, serverError, unauthorized, ok } from '@/presentation/helpers';
 
 import { AuthenticationUsecaseSpy, ValidationSpy } from '@/tests/presentation/mocks';
 
@@ -85,5 +85,13 @@ describe('AuthenticationController', () => {
     const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(unauthorized());
+  });
+
+  test('Should return 200 on success', async () => {
+    const { sut, authenticationUsecaseSpy } = makeSut();
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(ok(authenticationUsecaseSpy.result));
   });
 });
