@@ -74,5 +74,14 @@ describe('Hasher', () => {
 
       await expect(promise).rejects.toThrow();
     });
+
+    test('Should return false on failure', async () => {
+      const { sut } = makeSut();
+      jest.spyOn(bcrypt, 'compare').mockImplementationOnce(async () => Promise.resolve(false));
+
+      const result = await sut.compare({ plaintext: 'any_string', digest: 'hashed_string' });
+
+      expect(result).toBe(false);
+    });
   });
 });
