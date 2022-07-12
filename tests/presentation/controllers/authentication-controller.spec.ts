@@ -4,6 +4,11 @@ import { badRequest, serverError } from '@/presentation/helpers';
 
 import { AuthenticationUsecaseSpy, ValidationSpy } from '@/tests/presentation/mocks';
 
+const mockRequest = (): AuthenticationController.Request => ({
+  email: 'any_email@mail.com',
+  password: 'any_password',
+});
+
 interface SutTypes {
   sut: AuthenticationController;
   validationSpy: ValidationSpy;
@@ -20,26 +25,21 @@ const makeSut = (): SutTypes => {
 describe('AuthenticationController', () => {
   test('Should call Validation with correct values', async () => {
     const { sut, validationSpy } = makeSut();
-    const request = {
+
+    await sut.handle(mockRequest());
+
+    expect(validationSpy.input).toEqual({
       email: 'any_email@mail.com',
       password: 'any_password',
-    };
-
-    await sut.handle(request);
-
-    expect(validationSpy.input).toEqual(request);
+    });
     expect(validationSpy.callsCount).toBe(1);
   });
 
   test('Should call return 400 if Validation returns an error', async () => {
     const { sut, validationSpy } = makeSut();
     validationSpy.error = new MissingParamError('field');
-    const request = {
-      email: 'any_email@mail.com',
-      password: 'any_password',
-    };
 
-    const httpResponse = await sut.handle(request);
+    const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(badRequest(new MissingParamError('field')));
   });
@@ -49,26 +49,21 @@ describe('AuthenticationController', () => {
     jest.spyOn(validationSpy, 'validate').mockImplementation(() => {
       throw new Error();
     });
-    const request = {
-      email: 'any_email@mail.com',
-      password: 'any_password',
-    };
 
-    const httpResponse = await sut.handle(request);
+    const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(serverError(new Error()));
   });
 
   test('Should call AuthenticationUsecase with correct values', async () => {
     const { sut, authenticationUsecaseSpy } = makeSut();
-    const request = {
+
+    await sut.handle(mockRequest());
+
+    expect(authenticationUsecaseSpy.params).toEqual({
       email: 'any_email@mail.com',
       password: 'any_password',
-    };
-
-    await sut.handle(request);
-
-    expect(authenticationUsecaseSpy.params).toEqual(request);
+    });
     expect(authenticationUsecaseSpy.callsCount).toBe(1);
   });
 
@@ -77,12 +72,8 @@ describe('AuthenticationController', () => {
     jest.spyOn(authenticationUsecaseSpy, 'perform').mockImplementation(() => {
       throw new Error();
     });
-    const request = {
-      email: 'any_email@mail.com',
-      password: 'any_password',
-    };
 
-    const httpResponse = await sut.handle(request);
+    const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(serverError(new Error()));
   });
