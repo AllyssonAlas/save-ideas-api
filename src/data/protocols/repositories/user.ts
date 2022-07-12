@@ -25,3 +25,25 @@ export namespace CreateUserRepository {
 
   export type Result = boolean;
 }
+
+export interface UpdateUserRepository {
+  update: (params: UpdateUserRepository.Params) => Promise<UpdateUserRepository.Result>;
+}
+
+export namespace UpdateUserRepository {
+  export type Params = {
+    id: string;
+    name: string;
+    email: string;
+    password: string;
+    accessToken: string;
+  };
+
+  export type Result = {
+    id: string;
+    name: string;
+    email: string;
+    password: string;
+    accessToken: string;
+  };
+}
