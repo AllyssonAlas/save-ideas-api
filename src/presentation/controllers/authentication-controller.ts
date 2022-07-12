@@ -1,8 +1,12 @@
+import { Authentication } from '@/domain/usecases';
 import { Controller, Validation } from '@/presentation/protocols';
 import { badRequest, serverError } from '@/presentation/helpers';
 
 export class AuthenticationController implements Controller {
-  constructor(private readonly validation: Validation) {}
+  constructor(
+    private readonly validation: Validation,
+    private readonly authentication: Authentication,
+  ) {}
 
   async handle(request: AuthenticationController.Request): Promise<any> {
     try {
@@ -10,6 +14,7 @@ export class AuthenticationController implements Controller {
       if (error) {
         return badRequest(error);
       }
+      this.authentication.perform(request);
       return Promise.resolve();
     } catch (error) {
       return serverError(error);
