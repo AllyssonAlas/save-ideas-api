@@ -56,5 +56,15 @@ describe('SignUp Routes', () => {
         })
         .expect(200);
     });
+
+    test('Should return 401 on failure', async () => {
+      await request(app)
+        .post('/api/login')
+        .send({
+          email: 'jhon_doe@mail.com',
+          password: 'jhon_doe@123',
+        })
+        .expect(401);
+    });
   });
 });
