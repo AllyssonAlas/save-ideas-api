@@ -4,7 +4,9 @@ export namespace HasherComparer {
     digest: string;
   };
 
-  export type Result = boolean;
+  export type Result = {
+    isValid: boolean;
+  };
 }
 
 export interface HasherComparer {

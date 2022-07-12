@@ -14,7 +14,7 @@ export class HasherSpy implements Hasher {
 
 export class HasherComparerSpy implements HasherComparer {
   params?: HasherComparer.Params;
-  result = true;
+  result = { isValid: true };
   callsCount = 0;
 
   async compare(params: HasherComparer.Params): Promise<HasherComparer.Result> {

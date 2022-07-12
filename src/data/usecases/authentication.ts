@@ -13,11 +13,11 @@ export class AuthenticationUsecase implements Authentication {
   async perform(params: Authentication.Params): Promise<Authentication.Result> {
     const userData = await this.loadUserRepository.load({ email: params.email });
     if (userData) {
-      const isPasswordValid = await this.hasherComparer.compare({
+      const { isValid } = await this.hasherComparer.compare({
         plaintext: params.password,
         digest: userData.password,
       });
-      if (isPasswordValid) {
+      if (isValid) {
         const { ciphertext } = await this.encrypter.encrypt({ plaintext: userData.id });
         await this.updateUserRepository.update({ ...userData, accessToken: ciphertext });
         return {

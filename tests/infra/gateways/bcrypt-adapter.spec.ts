@@ -81,7 +81,7 @@ describe('Hasher', () => {
 
       const result = await sut.compare({ plaintext: 'any_string', digest: 'hashed_string' });
 
-      expect(result).toBe(false);
+      expect(result).toEqual({ isValid: false });
     });
 
     test('Should return true on success', async () => {
@@ -89,7 +89,7 @@ describe('Hasher', () => {
 
       const result = await sut.compare({ plaintext: 'any_string', digest: 'hashed_string' });
 
-      expect(result).toBe(true);
+      expect(result).toEqual({ isValid: true });
     });
   });
 });

@@ -10,8 +10,8 @@ export class BcryptAdapter implements Hasher, HasherComparer {
     return { ciphertext };
   }
 
-  async compare(params: HasherComparer.Params): Promise<boolean> {
+  async compare(params: HasherComparer.Params): Promise<HasherComparer.Result> {
     const isValid = await bcrypt.compare(params.plaintext, params.digest);
-    return isValid;
+    return { isValid };
   }
 }

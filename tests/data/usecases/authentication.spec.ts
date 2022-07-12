@@ -87,7 +87,7 @@ describe('AuthenticationUsecase', () => {
 
   test('Should return null if HasherComparer returns false', async () => {
     const { sut, hasherComparerSpy } = makeSut();
-    hasherComparerSpy.result = false;
+    hasherComparerSpy.result = { isValid: false };
 
     const authenticationResult = await sut.perform(mockAuthenticationParams());
 
