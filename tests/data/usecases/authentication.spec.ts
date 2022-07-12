@@ -1,20 +1,22 @@
 import { AuthenticationUsecase } from '@/data/usecases';
 
 import { mockAuthenticationParams } from '@/tests/domain/mocks';
-import { LoadUserRepositorySpy, HasherComparerSpy } from '@/tests/data/mocks';
+import { LoadUserRepositorySpy, HasherComparerSpy, EncrypterSpy } from '@/tests/data/mocks';
 
 interface SutTypes {
   sut: AuthenticationUsecase;
   loadUserRepositorySpy: LoadUserRepositorySpy;
   hasherComparerSpy: HasherComparerSpy;
+  encrypterSpy: EncrypterSpy;
 }
 
 const makeSut = (): SutTypes => {
   const loadUserRepositorySpy = new LoadUserRepositorySpy();
   const hasherComparerSpy = new HasherComparerSpy();
-  const sut = new AuthenticationUsecase(loadUserRepositorySpy, hasherComparerSpy);
+  const encrypterSpy = new EncrypterSpy();
+  const sut = new AuthenticationUsecase(loadUserRepositorySpy, hasherComparerSpy, encrypterSpy);
 
-  return { sut, loadUserRepositorySpy, hasherComparerSpy };
+  return { sut, loadUserRepositorySpy, hasherComparerSpy, encrypterSpy };
 };
 
 describe('AuthenticationUsecase', () => {
@@ -77,5 +79,14 @@ describe('AuthenticationUsecase', () => {
     const authenticationResult = await sut.perform(mockAuthenticationParams());
 
     expect(authenticationResult).toBeNull();
+  });
+
+  test('Should call Encrypter with correct value', async () => {
+    const { sut, loadUserRepositorySpy, encrypterSpy } = makeSut();
+
+    await sut.perform(mockAuthenticationParams());
+
+    expect(encrypterSpy.params).toEqual({ plaintext: loadUserRepositorySpy.result?.id });
+    expect(encrypterSpy.callsCount).toBe(1);
   });
 });
