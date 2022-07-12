@@ -19,11 +19,13 @@ export class AuthenticationUsecase implements Authentication {
       });
       if (isPasswordValid) {
         const { ciphertext } = await this.encrypter.encrypt({ plaintext: userData.id });
-        const { password, ...userUpdatedData } = await this.updateUserRepository.update({
-          ...userData,
+        await this.updateUserRepository.update({ ...userData, accessToken: ciphertext });
+        return {
           accessToken: ciphertext,
-        });
-        return userUpdatedData;
+          id: userData.id,
+          name: userData.name,
+          email: userData.email,
+        };
       }
     }
     return null;
