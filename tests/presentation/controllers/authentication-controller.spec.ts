@@ -71,4 +71,19 @@ describe('AuthenticationController', () => {
     expect(authenticationUsecaseSpy.params).toEqual(request);
     expect(authenticationUsecaseSpy.callsCount).toBe(1);
   });
+
+  test('Should return 500 if AuthenticationUsecase throws', async () => {
+    const { sut, authenticationUsecaseSpy } = makeSut();
+    jest.spyOn(authenticationUsecaseSpy, 'perform').mockImplementation(() => {
+      throw new Error();
+    });
+    const request = {
+      email: 'any_email@mail.com',
+      password: 'any_password',
+    };
+
+    const httpResponse = await sut.handle(request);
+
+    expect(httpResponse).toEqual(serverError(new Error()));
+  });
 });
