@@ -31,7 +31,7 @@ export interface UpdateUserRepository {
 }
 
 export namespace UpdateUserRepository {
-  export type Params = {
+  type UserAuthenticated = {
     id: string;
     name: string;
     email: string;
@@ -39,11 +39,7 @@ export namespace UpdateUserRepository {
     accessToken: string;
   };
 
-  export type Result = {
-    id: string;
-    name: string;
-    email: string;
-    password: string;
-    accessToken: string;
-  };
+  export type Params = UserAuthenticated;
+
+  export type Result = UserAuthenticated;
 }
