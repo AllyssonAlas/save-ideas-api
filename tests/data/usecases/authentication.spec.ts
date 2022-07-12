@@ -89,4 +89,15 @@ describe('AuthenticationUsecase', () => {
     expect(encrypterSpy.params).toEqual({ plaintext: loadUserRepositorySpy.result?.id });
     expect(encrypterSpy.callsCount).toBe(1);
   });
+
+  test('Should throw if Encrypter throws', async () => {
+    const { sut, encrypterSpy } = makeSut();
+    jest.spyOn(encrypterSpy, 'encrypt').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const promise = sut.perform(mockAuthenticationParams());
+
+    await expect(promise).rejects.toThrow();
+  });
 });
