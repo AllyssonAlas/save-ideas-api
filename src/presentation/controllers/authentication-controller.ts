@@ -1,15 +1,19 @@
 import { Controller, Validation } from '@/presentation/protocols';
-import { badRequest } from '@/presentation/helpers';
+import { badRequest, serverError } from '@/presentation/helpers';
 
 export class AuthenticationController implements Controller {
   constructor(private readonly validation: Validation) {}
 
   async handle(request: AuthenticationController.Request): Promise<any> {
-    const error = this.validation.validate(request);
-    if (error) {
-      return badRequest(error);
+    try {
+      const error = this.validation.validate(request);
+      if (error) {
+        return badRequest(error);
+      }
+      return Promise.resolve();
+    } catch (error) {
+      return serverError(error);
     }
-    return Promise.resolve();
   }
 }
 
