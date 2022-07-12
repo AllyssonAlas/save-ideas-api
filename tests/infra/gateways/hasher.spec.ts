@@ -6,6 +6,10 @@ jest.mock('bcrypt', () => ({
   async hash(): Promise<string> {
     return Promise.resolve('hashed_string');
   },
+
+  async compare(): Promise<boolean> {
+    return Promise.resolve(true);
+  },
 }));
 
 interface SutTypes {
@@ -16,36 +20,48 @@ interface SutTypes {
 const makeSut = (): SutTypes => {
   const salt = 12;
   const sut = new BcryptAdapter(salt);
-
   return { sut, salt };
 };
 
 describe('Hasher', () => {
-  test('Should call hash with correct params', async () => {
-    const { sut, salt } = makeSut();
-    const hashSpy = jest.spyOn(bcrypt, 'hash');
+  describe('hash()', () => {
+    test('Should call hash with correct params', async () => {
+      const { sut, salt } = makeSut();
+      const hashSpy = jest.spyOn(bcrypt, 'hash');
 
-    await sut.hash({ plaintext: 'any_string' });
+      await sut.hash({ plaintext: 'any_string' });
 
-    expect(hashSpy).toHaveBeenCalledWith('any_string', salt);
-  });
-
-  test('Should return a result on succes', async () => {
-    const { sut } = makeSut();
-
-    const result = await sut.hash({ plaintext: 'any_string' });
-
-    expect(result).toEqual({ ciphertext: 'hashed_string' });
-  });
-
-  test('Should throw if hash throws', async () => {
-    const { sut } = makeSut();
-    jest.spyOn(bcrypt, 'hash').mockImplementationOnce(() => {
-      throw new Error();
+      expect(hashSpy).toHaveBeenCalledWith('any_string', salt);
     });
 
-    const promise = sut.hash({ plaintext: 'any_string' });
+    test('Should throw if hash throws', async () => {
+      const { sut } = makeSut();
+      jest.spyOn(bcrypt, 'hash').mockImplementationOnce(() => {
+        throw new Error();
+      });
 
-    await expect(promise).rejects.toThrow();
+      const promise = sut.hash({ plaintext: 'any_string' });
+
+      await expect(promise).rejects.toThrow();
+    });
+
+    test('Should return a hashed string on succes', async () => {
+      const { sut } = makeSut();
+
+      const result = await sut.hash({ plaintext: 'any_string' });
+
+      expect(result).toEqual({ ciphertext: 'hashed_string' });
+    });
+  });
+
+  describe('compare()', () => {
+    test('Should call compare with correct params', async () => {
+      const { sut } = makeSut();
+      const hashComparerSpy = jest.spyOn(bcrypt, 'compare');
+
+      await sut.compare({ plaintext: 'any_string', digest: 'hashed_string' });
+
+      expect(hashComparerSpy).toHaveBeenCalledWith('any_string', 'hashed_string');
+    });
   });
 });
