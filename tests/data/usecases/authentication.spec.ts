@@ -1,22 +1,34 @@
 import { AuthenticationUsecase } from '@/data/usecases';
 
 import { mockAuthenticationParams } from '@/tests/domain/mocks';
-import { LoadUserRepositorySpy, HasherComparerSpy, EncrypterSpy } from '@/tests/data/mocks';
+import {
+  LoadUserRepositorySpy,
+  HasherComparerSpy,
+  EncrypterSpy,
+  UpdateUserRepositorySpy,
+} from '@/tests/data/mocks';
 
 interface SutTypes {
   sut: AuthenticationUsecase;
   loadUserRepositorySpy: LoadUserRepositorySpy;
   hasherComparerSpy: HasherComparerSpy;
   encrypterSpy: EncrypterSpy;
+  updateUserRepositorySpy: UpdateUserRepositorySpy;
 }
 
 const makeSut = (): SutTypes => {
   const loadUserRepositorySpy = new LoadUserRepositorySpy();
   const hasherComparerSpy = new HasherComparerSpy();
   const encrypterSpy = new EncrypterSpy();
-  const sut = new AuthenticationUsecase(loadUserRepositorySpy, hasherComparerSpy, encrypterSpy);
+  const updateUserRepositorySpy = new UpdateUserRepositorySpy();
+  const sut = new AuthenticationUsecase(
+    loadUserRepositorySpy,
+    hasherComparerSpy,
+    encrypterSpy,
+    updateUserRepositorySpy,
+  );
 
-  return { sut, loadUserRepositorySpy, hasherComparerSpy, encrypterSpy };
+  return { sut, loadUserRepositorySpy, hasherComparerSpy, encrypterSpy, updateUserRepositorySpy };
 };
 
 describe('AuthenticationUsecase', () => {
@@ -99,5 +111,17 @@ describe('AuthenticationUsecase', () => {
     const promise = sut.perform(mockAuthenticationParams());
 
     await expect(promise).rejects.toThrow();
+  });
+
+  test('Should call UpdateUserRepository with correct values', async () => {
+    const { sut, updateUserRepositorySpy, loadUserRepositorySpy, encrypterSpy } = makeSut();
+
+    await sut.perform(mockAuthenticationParams());
+
+    expect(updateUserRepositorySpy.params).toEqual({
+      ...loadUserRepositorySpy.result,
+      accessToken: encrypterSpy.result.ciphertext,
+    });
+    expect(updateUserRepositorySpy.callsCount).toBe(1);
   });
 });
