@@ -83,5 +83,13 @@ describe('Hasher', () => {
 
       expect(result).toBe(false);
     });
+
+    test('Should return true on success', async () => {
+      const { sut } = makeSut();
+
+      const result = await sut.compare({ plaintext: 'any_string', digest: 'hashed_string' });
+
+      expect(result).toBe(true);
+    });
   });
 });
