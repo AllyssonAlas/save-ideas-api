@@ -64,4 +64,26 @@ describe('UsersRepository', () => {
       expect(user).toBeNull();
     });
   });
+
+  describe('update()', () => {
+    test('Should return an user update with the data received', async () => {
+      const sut = makeSut();
+      const createUserParams = mockCreateUserParams();
+      await usersCollection.add(createUserParams);
+
+      const user = await sut.load({ email: createUserParams.email });
+      await sut.update({
+        id: user?.id || 'any_id',
+        name: 'other_name',
+        email: 'other_mail@mail.com',
+        password: 'other_password',
+        accessToken: 'any_token',
+      });
+      const updatedUser = await sut.load({ email: 'other_mail@mail.com' });
+
+      expect(updatedUser?.name).toBe('other_name');
+      expect(updatedUser?.password).toBe('other_password');
+      expect(updatedUser?.accessToken).toBe('any_token');
+    });
+  });
 });

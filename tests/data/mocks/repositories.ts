@@ -38,20 +38,13 @@ export class CreateUserRepositorySpy implements CreateUserRepository {
 
 export class UpdateUserRepositorySpy implements UpdateUserRepository {
   params?: UpdateUserRepository.Params;
-  result = {
-    id: 'any_id',
-    name: 'any_name',
-    email: 'any_email@mail.com',
-    password: 'any_password',
-    accessToken: 'any_access_token',
-  };
 
   callsCount = 0;
 
   async update(params: UpdateUserRepository.Params): Promise<UpdateUserRepository.Result> {
     this.callsCount++;
     this.params = params;
-    return Promise.resolve(this.result);
+    return Promise.resolve();
   }
 }
 
