@@ -10,7 +10,7 @@ export class AuthenticationUsecase implements Authentication {
     private readonly updateUserRepository: UpdateUserRepository,
   ) {}
 
-  async perform(params: Authentication.Params): Promise<any> {
+  async perform(params: Authentication.Params): Promise<Authentication.Result> {
     const userData = await this.loadUserRepository.load({ email: params.email });
     if (userData) {
       const isPasswordValid = await this.hasherComparer.compare({
@@ -19,8 +19,10 @@ export class AuthenticationUsecase implements Authentication {
       });
       if (isPasswordValid) {
         const { ciphertext } = await this.encrypter.encrypt({ plaintext: userData.id });
-        const userUpdatedData = { ...userData, accessToken: ciphertext };
-        await this.updateUserRepository.update(userUpdatedData);
+        const { password, ...userUpdatedData } = await this.updateUserRepository.update({
+          ...userData,
+          accessToken: ciphertext,
+        });
         return userUpdatedData;
       }
     }

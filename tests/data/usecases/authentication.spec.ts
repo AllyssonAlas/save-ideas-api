@@ -138,10 +138,15 @@ describe('AuthenticationUsecase', () => {
   });
 
   test('Should return user data on success', async () => {
-    const { sut, updateUserRepositorySpy } = makeSut();
+    const { sut } = makeSut();
 
     const authenticationResult = await sut.perform(mockAuthenticationParams());
 
-    expect(authenticationResult).toEqual(updateUserRepositorySpy.result);
+    expect(authenticationResult).toEqual({
+      id: 'any_id',
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      accessToken: 'any_access_token',
+    });
   });
 });

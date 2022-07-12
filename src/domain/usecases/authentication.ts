@@ -4,7 +4,7 @@ export namespace Authentication {
     password: string;
   };
 
-  export type Result = {
+  export type Result = null | {
     id: string;
     name: string;
     email: string;
