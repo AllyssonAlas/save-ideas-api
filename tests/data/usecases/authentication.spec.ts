@@ -20,6 +20,7 @@ const makeSut = (): SutTypes => {
   const loadUserRepositorySpy = new LoadUserRepositorySpy();
   const hasherComparerSpy = new HasherComparerSpy();
   const encrypterSpy = new EncrypterSpy();
+  encrypterSpy.result = { ciphertext: 'any_access_token' };
   const updateUserRepositorySpy = new UpdateUserRepositorySpy();
   const sut = new AuthenticationUsecase(
     loadUserRepositorySpy,
@@ -134,5 +135,13 @@ describe('AuthenticationUsecase', () => {
     const promise = sut.perform(mockAuthenticationParams());
 
     await expect(promise).rejects.toThrow();
+  });
+
+  test('Should return user data on success', async () => {
+    const { sut, updateUserRepositorySpy } = makeSut();
+
+    const authenticationResult = await sut.perform(mockAuthenticationParams());
+
+    expect(authenticationResult).toEqual(updateUserRepositorySpy.result);
   });
 });
