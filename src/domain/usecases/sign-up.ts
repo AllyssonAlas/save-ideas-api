@@ -5,7 +5,9 @@ export namespace SignUp {
     password: string;
   };
 
-  export type Result = boolean;
+  export type Result = {
+    wasSigned: boolean;
+  };
 }
 
 export interface SignUp {

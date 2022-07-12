@@ -2,7 +2,7 @@ import { Authentication, SignUp } from '@/domain/usecases';
 
 export class SignUpSpy implements SignUp {
   params?: SignUp.Params;
-  result = true;
+  result = { wasSigned: true };
   callsCount = 0;
 
   async perform(params: SignUp.Params): Promise<SignUp.Result> {

@@ -14,12 +14,12 @@ export class SignUpUsecase implements SignUp {
     const { ciphertext } = await this.hasher.hash({ plaintext: password });
     const userData = await this.loadUserRepository.load({ email });
     if (!userData) {
-      const newUserData = await this.createUserRepository.create({
+      await this.createUserRepository.create({
         ...params,
         password: ciphertext,
       });
-      return newUserData;
+      return { wasSigned: true };
     }
-    return false;
+    return { wasSigned: false };
   }
 }

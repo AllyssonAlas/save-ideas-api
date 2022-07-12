@@ -59,7 +59,7 @@ describe('SignUpController', () => {
 
   test('Should return 403 if invalid is provided', async () => {
     const { sut, signUpSpy } = makeSut();
-    signUpSpy.result = false;
+    signUpSpy.result = { wasSigned: false };
 
     const httpResponse = await sut.handle(mockRequest());
 

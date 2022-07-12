@@ -82,7 +82,7 @@ describe('SignUpUsecase', () => {
 
     const signUpResult = await sut.perform(mockUserData());
 
-    expect(signUpResult).toBe(false);
+    expect(signUpResult).toEqual({ wasSigned: false });
   });
 
   test('Should call CreateUserRepository with correct values if LoadUserRepository returns null', async () => {

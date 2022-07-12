@@ -11,8 +11,8 @@ export class SignUpController implements Controller {
       const error = this.validation.validate(request);
       if (error) return badRequest(error);
       const { passwordConfirmation, ...userData } = request;
-      const isUserValid = await this.signUp.perform(userData);
-      if (!isUserValid) return forbidden(new EmailInUseError());
+      const { wasSigned } = await this.signUp.perform(userData);
+      if (!wasSigned) return forbidden(new EmailInUseError());
       return noContent();
     } catch (error) {
       return serverError(error);
