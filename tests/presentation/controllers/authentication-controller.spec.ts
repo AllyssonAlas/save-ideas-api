@@ -1,4 +1,6 @@
 import { AuthenticationController } from '@/presentation/controllers';
+import { MissingParamError } from '@/presentation/errors';
+import { badRequest } from '@/presentation/helpers';
 
 import { ValidationSpy } from '@/tests/presentation/mocks';
 
@@ -25,5 +27,18 @@ describe('AuthenticationController', () => {
 
     expect(validationSpy.input).toEqual(request);
     expect(validationSpy.callsCount).toBe(1);
+  });
+
+  test('Should call return 400 if Validation returns an error', async () => {
+    const { sut, validationSpy } = makeSut();
+    validationSpy.error = new MissingParamError('field');
+    const request = {
+      email: 'any_email@mail.com',
+      password: 'any_password',
+    };
+
+    const httpResponse = await sut.handle(request);
+
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('field')));
   });
 });
