@@ -1,6 +1,6 @@
 import { AuthenticationController } from '@/presentation/controllers';
 import { MissingParamError } from '@/presentation/errors';
-import { badRequest } from '@/presentation/helpers';
+import { badRequest, serverError } from '@/presentation/helpers';
 
 import { ValidationSpy } from '@/tests/presentation/mocks';
 
@@ -40,5 +40,20 @@ describe('AuthenticationController', () => {
     const httpResponse = await sut.handle(request);
 
     expect(httpResponse).toEqual(badRequest(new MissingParamError('field')));
+  });
+
+  test('Should return 500 if Validation throws', async () => {
+    const { sut, validationSpy } = makeSut();
+    jest.spyOn(validationSpy, 'validate').mockImplementation(() => {
+      throw new Error();
+    });
+    const request = {
+      email: 'any_email@mail.com',
+      password: 'any_password',
+    };
+
+    const httpResponse = await sut.handle(request);
+
+    expect(httpResponse).toEqual(serverError(new Error()));
   });
 });
