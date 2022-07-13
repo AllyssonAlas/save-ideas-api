@@ -5,6 +5,9 @@ export class LoadUserUsecase implements LoadUser {
   constructor(private readonly loadUserByIdRepository: LoadUserByIdRepository) {}
 
   async perform(params: LoadUser.Params): Promise<any> {
-    await this.loadUserByIdRepository.load(params);
+    const isIdValid = await this.loadUserByIdRepository.load(params);
+    if (!isIdValid) {
+      return null;
+    }
   }
 }
