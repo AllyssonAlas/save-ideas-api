@@ -1,8 +1,8 @@
 import { SignUpController } from '@/presentation/controllers';
-import { badRequest, serverError, forbidden, noContent } from '@/presentation/helpers';
+import { badRequest, serverError, forbidden } from '@/presentation/helpers';
 import { MissingParamError, EmailInUseError } from '@/presentation/errors';
 
-import { SignUpSpy, ValidationSpy } from '@/tests/presentation/mocks';
+import { SignUpSpy, ValidationSpy, AuthenticationUsecaseSpy } from '@/tests/presentation/mocks';
 
 const mockRequest = (): SignUpController.Request => ({
   name: 'any_name',
@@ -13,15 +13,17 @@ const mockRequest = (): SignUpController.Request => ({
 
 interface SutTypes {
   sut: SignUpController;
-  signUpSpy: SignUpSpy;
   validationSpy: ValidationSpy;
+  signUpSpy: SignUpSpy;
+  authenticationUsecaseSpy: AuthenticationUsecaseSpy;
 }
 
 const makeSut = (): SutTypes => {
-  const signUpSpy = new SignUpSpy();
   const validationSpy = new ValidationSpy();
-  const sut = new SignUpController(validationSpy, signUpSpy);
-  return { sut, signUpSpy, validationSpy };
+  const signUpSpy = new SignUpSpy();
+  const authenticationUsecaseSpy = new AuthenticationUsecaseSpy();
+  const sut = new SignUpController(validationSpy, signUpSpy, authenticationUsecaseSpy);
+  return { sut, validationSpy, signUpSpy, authenticationUsecaseSpy };
 };
 
 describe('SignUpController', () => {
@@ -88,11 +90,15 @@ describe('SignUpController', () => {
     expect(httpResponse).toEqual(serverError(new Error()));
   });
 
-  test('Should return 200 if valid is provided', async () => {
-    const { sut } = makeSut();
+  test('Should call Authentication with correct values', async () => {
+    const { sut, authenticationUsecaseSpy } = makeSut();
 
-    const httpResponse = await sut.handle(mockRequest());
+    await sut.handle(mockRequest());
 
-    expect(httpResponse).toEqual(noContent());
+    expect(authenticationUsecaseSpy.params).toEqual({
+      email: 'any_email@mail',
+      password: 'any_password',
+    });
+    expect(authenticationUsecaseSpy.callsCount).toBe(1);
   });
 });
