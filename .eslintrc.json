@@ -14,6 +14,7 @@
     "@typescript-eslint/promise-function-async": 2,
     "@typescript-eslint/require-await": 2,
     "@typescript-eslint/no-redeclare": ["error"],
+    "brace-style": "off",
     "camelcase": 0,
     "comma-dangle": ["error", "always-multiline"],
     "jest/no-disabled-tests": "warn",
