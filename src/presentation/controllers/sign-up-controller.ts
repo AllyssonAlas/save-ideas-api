@@ -1,7 +1,7 @@
 import { Authentication, SignUp } from '@/domain/usecases';
 import { HttpResponse, Controller, Validation } from '@/presentation/protocols';
 import { EmailInUseError } from '@/presentation/errors';
-import { badRequest, serverError, noContent, forbidden } from '@/presentation/helpers';
+import { badRequest, serverError, forbidden, ok } from '@/presentation/helpers';
 
 export class SignUpController implements Controller {
   constructor(
@@ -17,8 +17,11 @@ export class SignUpController implements Controller {
       const { passwordConfirmation, ...userData } = request;
       const { wasSigned } = await this.signUp.perform(userData);
       if (!wasSigned) return forbidden(new EmailInUseError());
-      await this.authentication.perform({ email: userData.email, password: userData.password });
-      return noContent();
+      const authenticationData = await this.authentication.perform({
+        email: userData.email,
+        password: userData.password,
+      });
+      return ok(authenticationData);
     } catch (error) {
       return serverError(error);
     }
