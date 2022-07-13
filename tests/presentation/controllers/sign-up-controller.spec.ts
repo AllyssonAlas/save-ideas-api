@@ -25,6 +25,25 @@ const makeSut = (): SutTypes => {
 };
 
 describe('SignUpController', () => {
+  test('Should call Validation with correct value', async () => {
+    const { sut, validationSpy } = makeSut();
+    const request = mockRequest();
+
+    await sut.handle(request);
+
+    expect(validationSpy.input).toEqual(request);
+    expect(validationSpy.callsCount).toBe(1);
+  });
+
+  test('Should return 400 if Validation returns an error', async () => {
+    const { sut, validationSpy } = makeSut();
+    validationSpy.error = new MissingParamError('any_field');
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('any_field')));
+  });
+
   test('Should call SignUpUsecase with correct values', async () => {
     const { sut, signUpSpy } = makeSut();
 
@@ -36,6 +55,15 @@ describe('SignUpController', () => {
       password: 'any_password',
     });
     expect(signUpSpy.callsCount).toBe(1);
+  });
+
+  test('Should return 403 if invalid email is provided', async () => {
+    const { sut, signUpSpy } = makeSut();
+    signUpSpy.result = { wasSigned: false };
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(forbidden(new EmailInUseError()));
   });
 
   test('Should return 500 if SignUpUsecase throws', async () => {
@@ -55,33 +83,5 @@ describe('SignUpController', () => {
     const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(noContent());
-  });
-
-  test('Should return 403 if invalid is provided', async () => {
-    const { sut, signUpSpy } = makeSut();
-    signUpSpy.result = { wasSigned: false };
-
-    const httpResponse = await sut.handle(mockRequest());
-
-    expect(httpResponse).toEqual(forbidden(new EmailInUseError()));
-  });
-
-  test('Should call Validation with correct value', async () => {
-    const { sut, validationSpy } = makeSut();
-    const request = mockRequest();
-
-    await sut.handle(request);
-
-    expect(validationSpy.input).toEqual(request);
-    expect(validationSpy.callsCount).toBe(1);
-  });
-
-  test('Should return 400 if Validation returns an error', async () => {
-    const { sut, validationSpy } = makeSut();
-    validationSpy.error = new MissingParamError('any_field');
-
-    const httpResponse = await sut.handle(mockRequest());
-
-    expect(httpResponse).toEqual(badRequest(new MissingParamError('any_field')));
   });
 });
