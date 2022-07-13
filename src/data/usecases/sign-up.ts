@@ -12,7 +12,7 @@ export class SignUpUsecase implements SignUp {
   async perform(params: SignUp.Params): Promise<SignUp.Result> {
     const { email, password } = params;
     const { ciphertext } = await this.hasher.hash({ plaintext: password });
-    const userData = await this.loadUserByEmailRepository.load({ email });
+    const userData = await this.loadUserByEmailRepository.loadByEmail({ email });
     if (!userData) {
       await this.createUserRepository.create({
         ...params,

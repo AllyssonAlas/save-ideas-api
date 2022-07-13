@@ -1,7 +1,9 @@
 import { User } from '@/domain/models';
 
 export interface LoadUserByEmailRepository {
-  load: (params: LoadUserByEmailRepository.Params) => Promise<LoadUserByEmailRepository.Result>;
+  loadByEmail: (
+    params: LoadUserByEmailRepository.Params,
+  ) => Promise<LoadUserByEmailRepository.Result>;
 }
 
 export namespace LoadUserByEmailRepository {
@@ -13,7 +15,7 @@ export namespace LoadUserByEmailRepository {
 }
 
 export interface LoadUserByIdRepository {
-  load: (params: LoadUserByIdRepository.Params) => Promise<LoadUserByIdRepository.Result>;
+  loadById: (params: LoadUserByIdRepository.Params) => Promise<LoadUserByIdRepository.Result>;
 }
 
 export namespace LoadUserByIdRepository {

@@ -11,7 +11,7 @@ export class AuthenticationUsecase implements Authentication {
   ) {}
 
   async perform(params: Authentication.Params): Promise<Authentication.Result> {
-    const userData = await this.loadUserByEmailRepository.load({ email: params.email });
+    const userData = await this.loadUserByEmailRepository.loadByEmail({ email: params.email });
     if (userData) {
       const { isValid } = await this.hasherComparer.compare({
         plaintext: params.password,

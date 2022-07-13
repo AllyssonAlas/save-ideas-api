@@ -25,7 +25,7 @@ describe('LoadUserUsecase', () => {
 
   test('Should throw if LoadUserByIdRepository throws', async () => {
     const { sut, loadUserByIdRepositorySpy } = makeSut();
-    jest.spyOn(loadUserByIdRepositorySpy, 'load').mockImplementationOnce(() => {
+    jest.spyOn(loadUserByIdRepositorySpy, 'loadById').mockImplementationOnce(() => {
       throw new Error();
     });
 

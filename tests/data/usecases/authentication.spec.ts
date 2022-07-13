@@ -50,7 +50,7 @@ describe('AuthenticationUsecase', () => {
 
   test('Should throw if LoadUserByEmailRepository throws', async () => {
     const { sut, loadUserByEmailRepositorySpy } = makeSut();
-    jest.spyOn(loadUserByEmailRepositorySpy, 'load').mockImplementationOnce(() => {
+    jest.spyOn(loadUserByEmailRepositorySpy, 'loadByEmail').mockImplementationOnce(() => {
       throw new Error();
     });
 

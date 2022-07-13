@@ -18,7 +18,9 @@ export class LoadUserByEmailRepositorySpy implements LoadUserByEmailRepository {
 
   callsCount = 0;
 
-  async load(params: LoadUserByEmailRepository.Params): Promise<LoadUserByEmailRepository.Result> {
+  async loadByEmail(
+    params: LoadUserByEmailRepository.Params,
+  ): Promise<LoadUserByEmailRepository.Result> {
     this.callsCount++;
     this.params = params;
     return Promise.resolve(this.result);
@@ -37,7 +39,7 @@ export class LoadUserByIdRepositorySpy implements LoadUserByIdRepository {
 
   callsCount = 0;
 
-  async load(params: LoadUserByIdRepository.Params): Promise<LoadUserByIdRepository.Result> {
+  async loadById(params: LoadUserByIdRepository.Params): Promise<LoadUserByIdRepository.Result> {
     this.callsCount++;
     this.params = params;
     return Promise.resolve(this.result);

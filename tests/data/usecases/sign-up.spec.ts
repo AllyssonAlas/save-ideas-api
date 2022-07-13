@@ -63,7 +63,7 @@ describe('SignUpUsecase', () => {
 
   test('Should throw if LoadUserByEmailRepository throws', async () => {
     const { sut, loadUserByEmailRepositorySpy } = makeSut();
-    jest.spyOn(loadUserByEmailRepositorySpy, 'load').mockImplementationOnce(() => {
+    jest.spyOn(loadUserByEmailRepositorySpy, 'loadByEmail').mockImplementationOnce(() => {
       throw new Error();
     });
 
@@ -74,7 +74,7 @@ describe('SignUpUsecase', () => {
 
   test('Should return SignUpError when LoadUserByEmailRepository returns user data', async () => {
     const { sut, loadUserByEmailRepositorySpy } = makeSut();
-    jest.spyOn(loadUserByEmailRepositorySpy, 'load').mockReturnValueOnce(
+    jest.spyOn(loadUserByEmailRepositorySpy, 'loadByEmail').mockReturnValueOnce(
       Promise.resolve({
         id: 'any_id',
         name: 'any_name',
