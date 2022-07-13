@@ -1,5 +1,5 @@
 import { Authentication } from '@/domain/usecases';
-import { Controller, Validation } from '@/presentation/protocols';
+import { Controller, HttpResponse, Validation } from '@/presentation/protocols';
 import { badRequest, ok, serverError, unauthorized } from '@/presentation/helpers';
 
 export class AuthenticationController implements Controller {
@@ -8,7 +8,7 @@ export class AuthenticationController implements Controller {
     private readonly authentication: Authentication,
   ) {}
 
-  async handle(request: AuthenticationController.Request): Promise<any> {
+  async handle(request: AuthenticationController.Request): Promise<HttpResponse> {
     try {
       const error = this.validation.validate(request);
       if (error) {
