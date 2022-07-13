@@ -1,10 +1,10 @@
 import { User } from '@/domain/models';
 
-export interface LoadUserRepository {
-  load: (params: LoadUserRepository.Params) => Promise<LoadUserRepository.Result>;
+export interface LoadUserByEmailRepository {
+  load: (params: LoadUserByEmailRepository.Params) => Promise<LoadUserByEmailRepository.Result>;
 }
 
-export namespace LoadUserRepository {
+export namespace LoadUserByEmailRepository {
   export type Params = {
     email: string;
   };

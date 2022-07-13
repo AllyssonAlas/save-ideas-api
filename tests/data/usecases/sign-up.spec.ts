@@ -1,6 +1,10 @@
 import { SignUpUsecase } from '@/data/usecases';
 
-import { HasherSpy, CreateUserRepositorySpy, LoadUserRepositorySpy } from '@/tests/data/mocks';
+import {
+  HasherSpy,
+  CreateUserRepositorySpy,
+  LoadUserByEmailRepositorySpy,
+} from '@/tests/data/mocks';
 
 const mockUserData = () => ({
   name: 'any_name',
@@ -10,19 +14,19 @@ const mockUserData = () => ({
 
 interface SutTypes {
   hasherSpy: HasherSpy;
-  loadUserRepositorySpy: LoadUserRepositorySpy;
+  loadUserByEmailRepositorySpy: LoadUserByEmailRepositorySpy;
   createUserRepositorySpy: CreateUserRepositorySpy;
   sut: SignUpUsecase;
 }
 
 const makeSut = (): SutTypes => {
   const hasherSpy = new HasherSpy();
-  const loadUserRepositorySpy = new LoadUserRepositorySpy();
-  loadUserRepositorySpy.result = null;
+  const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy();
+  loadUserByEmailRepositorySpy.result = null;
   const createUserRepositorySpy = new CreateUserRepositorySpy();
-  const sut = new SignUpUsecase(hasherSpy, loadUserRepositorySpy, createUserRepositorySpy);
+  const sut = new SignUpUsecase(hasherSpy, loadUserByEmailRepositorySpy, createUserRepositorySpy);
 
-  return { sut, hasherSpy, loadUserRepositorySpy, createUserRepositorySpy };
+  return { sut, hasherSpy, loadUserByEmailRepositorySpy, createUserRepositorySpy };
 };
 
 describe('SignUpUsecase', () => {
@@ -47,19 +51,19 @@ describe('SignUpUsecase', () => {
     await expect(promise).rejects.toThrow();
   });
 
-  test('Should call LoadUserRepository with correct value', async () => {
-    const { sut, loadUserRepositorySpy } = makeSut();
+  test('Should call LoadUserByEmailRepository with correct value', async () => {
+    const { sut, loadUserByEmailRepositorySpy } = makeSut();
     const userData = mockUserData();
 
     await sut.perform(userData);
 
-    expect(loadUserRepositorySpy.params).toEqual({ email: userData.email });
-    expect(loadUserRepositorySpy.callsCount).toBe(1);
+    expect(loadUserByEmailRepositorySpy.params).toEqual({ email: userData.email });
+    expect(loadUserByEmailRepositorySpy.callsCount).toBe(1);
   });
 
-  test('Should throw if LoadUserRepository throws', async () => {
-    const { sut, loadUserRepositorySpy } = makeSut();
-    jest.spyOn(loadUserRepositorySpy, 'load').mockImplementationOnce(() => {
+  test('Should throw if LoadUserByEmailRepository throws', async () => {
+    const { sut, loadUserByEmailRepositorySpy } = makeSut();
+    jest.spyOn(loadUserByEmailRepositorySpy, 'load').mockImplementationOnce(() => {
       throw new Error();
     });
 
@@ -68,9 +72,9 @@ describe('SignUpUsecase', () => {
     await expect(promise).rejects.toThrow();
   });
 
-  test('Should return SignUpError when LoadUserRepository returns user data', async () => {
-    const { sut, loadUserRepositorySpy } = makeSut();
-    jest.spyOn(loadUserRepositorySpy, 'load').mockReturnValueOnce(
+  test('Should return SignUpError when LoadUserByEmailRepository returns user data', async () => {
+    const { sut, loadUserByEmailRepositorySpy } = makeSut();
+    jest.spyOn(loadUserByEmailRepositorySpy, 'load').mockReturnValueOnce(
       Promise.resolve({
         id: 'any_id',
         name: 'any_name',
@@ -85,7 +89,7 @@ describe('SignUpUsecase', () => {
     expect(signUpResult).toEqual({ wasSigned: false });
   });
 
-  test('Should call CreateUserRepository with correct values if LoadUserRepository returns null', async () => {
+  test('Should call CreateUserRepository with correct values if LoadUserByEmailRepository returns null', async () => {
     const { sut, createUserRepositorySpy } = makeSut();
 
     await sut.perform(mockUserData());

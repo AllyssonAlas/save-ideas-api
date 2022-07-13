@@ -1,19 +1,19 @@
 import {
   CreateUserRepository,
-  LoadUserRepository,
+  LoadUserByEmailRepository,
   UpdateUserRepository,
 } from '@/data/protocols/repositories';
 import { FirestoreHelper } from '@/infra/db';
 
 // eslint-disable-next-line prettier/prettier
-export class UserRepository implements CreateUserRepository, LoadUserRepository, UpdateUserRepository {
+export class UserRepository implements CreateUserRepository, LoadUserByEmailRepository, UpdateUserRepository {
   async create(params: CreateUserRepository.Params): Promise<CreateUserRepository.Result> {
     const usersCollection = FirestoreHelper.getCollection('users');
     const result = await usersCollection.add(params);
     return !!result;
   }
 
-  async load(params: LoadUserRepository.Params): Promise<LoadUserRepository.Result> {
+  async load(params: LoadUserByEmailRepository.Params): Promise<LoadUserByEmailRepository.Result> {
     const usersCollection = FirestoreHelper.getCollection('users');
     const usersSnapshot = await usersCollection.where('email', '==', params.email).get();
     if (usersSnapshot.empty) return null;
