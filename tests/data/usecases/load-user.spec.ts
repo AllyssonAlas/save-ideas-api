@@ -33,4 +33,13 @@ describe('LoadUserUsecase', () => {
 
     await expect(promise).rejects.toThrow();
   });
+
+  test('Should return null if LoadUserByIdRepository returns null', async () => {
+    const { sut, loadUserByIdRepositorySpy } = makeSut();
+    loadUserByIdRepositorySpy.result = null;
+
+    const loadUserResult = await sut.perform({ id: 'any_id' });
+
+    expect(loadUserResult).toBeNull();
+  });
 });
