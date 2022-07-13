@@ -4,7 +4,6 @@
 * name: string
 * email: string
 * password: string
-* accessToken: string
 
 > ## Case of success
 1. Receive and validate the data
