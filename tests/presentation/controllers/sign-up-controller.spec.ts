@@ -44,6 +44,17 @@ describe('SignUpController', () => {
     expect(httpResponse).toEqual(badRequest(new MissingParamError('any_field')));
   });
 
+  test('Should return 500 if Validation throws', async () => {
+    const { sut, validationSpy } = makeSut();
+    jest.spyOn(validationSpy, 'validate').mockImplementation(() => {
+      throw new Error();
+    });
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(serverError(new Error()));
+  });
+
   test('Should call SignUpUsecase with correct values', async () => {
     const { sut, signUpSpy } = makeSut();
 
