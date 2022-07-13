@@ -12,6 +12,18 @@ export namespace LoadUserByEmailRepository {
   export type Result = null | User;
 }
 
+export interface LoadUserByIdRepository {
+  load: (params: LoadUserByIdRepository.Params) => Promise<LoadUserByIdRepository.Result>;
+}
+
+export namespace LoadUserByIdRepository {
+  export type Params = {
+    id: string;
+  };
+
+  export type Result = null | User;
+}
+
 export interface CreateUserRepository {
   create: (params: CreateUserRepository.Params) => Promise<CreateUserRepository.Result>;
 }
