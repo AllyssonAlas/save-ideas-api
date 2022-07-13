@@ -1,6 +1,6 @@
 import { Authentication, SignUp } from '@/domain/usecases';
 
-export class SignUpSpy implements SignUp {
+export class SignUpUsecaseSpy implements SignUp {
   params?: SignUp.Params;
   result = { wasSigned: true };
   callsCount = 0;

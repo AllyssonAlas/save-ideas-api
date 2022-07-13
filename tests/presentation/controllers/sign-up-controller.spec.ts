@@ -2,7 +2,11 @@ import { SignUpController } from '@/presentation/controllers';
 import { badRequest, serverError, forbidden, ok } from '@/presentation/helpers';
 import { MissingParamError, EmailInUseError } from '@/presentation/errors';
 
-import { SignUpSpy, ValidationSpy, AuthenticationUsecaseSpy } from '@/tests/presentation/mocks';
+import {
+  SignUpUsecaseSpy,
+  ValidationSpy,
+  AuthenticationUsecaseSpy,
+} from '@/tests/presentation/mocks';
 
 const mockRequest = (): SignUpController.Request => ({
   name: 'any_name',
@@ -14,16 +18,16 @@ const mockRequest = (): SignUpController.Request => ({
 interface SutTypes {
   sut: SignUpController;
   validationSpy: ValidationSpy;
-  signUpSpy: SignUpSpy;
+  signUpUsecaseSpy: SignUpUsecaseSpy;
   authenticationUsecaseSpy: AuthenticationUsecaseSpy;
 }
 
 const makeSut = (): SutTypes => {
   const validationSpy = new ValidationSpy();
-  const signUpSpy = new SignUpSpy();
+  const signUpUsecaseSpy = new SignUpUsecaseSpy();
   const authenticationUsecaseSpy = new AuthenticationUsecaseSpy();
-  const sut = new SignUpController(validationSpy, signUpSpy, authenticationUsecaseSpy);
-  return { sut, validationSpy, signUpSpy, authenticationUsecaseSpy };
+  const sut = new SignUpController(validationSpy, signUpUsecaseSpy, authenticationUsecaseSpy);
+  return { sut, validationSpy, signUpUsecaseSpy, authenticationUsecaseSpy };
 };
 
 describe('SignUpController', () => {
@@ -58,21 +62,21 @@ describe('SignUpController', () => {
   });
 
   test('Should call SignUpUsecase with correct values', async () => {
-    const { sut, signUpSpy } = makeSut();
+    const { sut, signUpUsecaseSpy } = makeSut();
 
     await sut.handle(mockRequest());
 
-    expect(signUpSpy.params).toEqual({
+    expect(signUpUsecaseSpy.params).toEqual({
       name: 'any_name',
       email: 'any_email@mail',
       password: 'any_password',
     });
-    expect(signUpSpy.callsCount).toBe(1);
+    expect(signUpUsecaseSpy.callsCount).toBe(1);
   });
 
   test('Should return 403 if invalid email is provided', async () => {
-    const { sut, signUpSpy } = makeSut();
-    signUpSpy.result = { wasSigned: false };
+    const { sut, signUpUsecaseSpy } = makeSut();
+    signUpUsecaseSpy.result = { wasSigned: false };
 
     const httpResponse = await sut.handle(mockRequest());
 
@@ -80,8 +84,8 @@ describe('SignUpController', () => {
   });
 
   test('Should return 500 if SignUpUsecase throws', async () => {
-    const { sut, signUpSpy } = makeSut();
-    jest.spyOn(signUpSpy, 'perform').mockImplementationOnce(() => {
+    const { sut, signUpUsecaseSpy } = makeSut();
+    jest.spyOn(signUpUsecaseSpy, 'perform').mockImplementationOnce(() => {
       throw new Error();
     });
 
