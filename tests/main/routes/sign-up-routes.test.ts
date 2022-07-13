@@ -33,7 +33,7 @@ describe('SignUp Routes', () => {
           password: 'jhon_doe@123',
           passwordConfirmation: 'jhon_doe@123',
         })
-        .expect(204);
+        .expect(200);
     });
   });
 

@@ -1,5 +1,5 @@
 import { SignUpController } from '@/presentation/controllers';
-import { badRequest, serverError, forbidden } from '@/presentation/helpers';
+import { badRequest, serverError, forbidden, ok } from '@/presentation/helpers';
 import { MissingParamError, EmailInUseError } from '@/presentation/errors';
 
 import { SignUpSpy, ValidationSpy, AuthenticationUsecaseSpy } from '@/tests/presentation/mocks';
@@ -111,5 +111,20 @@ describe('SignUpController', () => {
     const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(serverError(new Error()));
+  });
+
+  test('Should return 200 on success', async () => {
+    const { sut } = makeSut();
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(
+      ok({
+        id: 'any_id',
+        name: 'any_name',
+        email: 'any_email@mail.com',
+        accessToken: 'any_access_token',
+      }),
+    );
   });
 });
