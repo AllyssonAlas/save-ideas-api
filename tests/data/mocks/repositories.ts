@@ -1,5 +1,6 @@
 import {
   CreateUserRepository,
+  LoadUserByIdRepository,
   LoadUserByEmailRepository,
   LogErrorRepository,
   UpdateUserRepository,
@@ -18,6 +19,25 @@ export class LoadUserByEmailRepositorySpy implements LoadUserByEmailRepository {
   callsCount = 0;
 
   async load(params: LoadUserByEmailRepository.Params): Promise<LoadUserByEmailRepository.Result> {
+    this.callsCount++;
+    this.params = params;
+    return Promise.resolve(this.result);
+  }
+}
+
+export class LoadUserByIdRepositorySpy implements LoadUserByIdRepository {
+  params?: LoadUserByIdRepository.Params;
+  result: LoadUserByIdRepository.Result = {
+    id: 'any_id',
+    name: 'any_name',
+    email: 'any_email@mail.com',
+    password: 'any_password',
+    accessToken: 'any_access_token',
+  };
+
+  callsCount = 0;
+
+  async load(params: LoadUserByIdRepository.Params): Promise<LoadUserByIdRepository.Result> {
     this.callsCount++;
     this.params = params;
     return Promise.resolve(this.result);
