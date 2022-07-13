@@ -42,4 +42,18 @@ describe('LoadUserUsecase', () => {
 
     expect(loadUserResult).toBeNull();
   });
+
+  test('Should return an user on success', async () => {
+    const { sut } = makeSut();
+
+    const loadUserResult = await sut.perform({ id: 'any_id' });
+
+    expect(loadUserResult).toEqual({
+      id: 'any_id',
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      password: 'any_password',
+      accessToken: 'any_access_token',
+    });
+  });
 });
