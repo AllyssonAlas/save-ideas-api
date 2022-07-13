@@ -1,3 +1,5 @@
+import { User } from '@/domain/models';
+
 export interface LoadUserRepository {
   load: (params: LoadUserRepository.Params) => Promise<LoadUserRepository.Result>;
 }
@@ -7,12 +9,7 @@ export namespace LoadUserRepository {
     email: string;
   };
 
-  export type Result = null | {
-    id: string;
-    name: string;
-    email: string;
-    accessToken?: string;
-  };
+  export type Result = null | User;
 }
 
 export interface CreateUserRepository {
@@ -27,4 +24,20 @@ export namespace CreateUserRepository {
   };
 
   export type Result = boolean;
+}
+
+export interface UpdateUserRepository {
+  update: (params: UpdateUserRepository.Params) => Promise<UpdateUserRepository.Result>;
+}
+
+export namespace UpdateUserRepository {
+  export type Params = {
+    id: string;
+    name: string;
+    email: string;
+    password: string;
+    accessToken: string;
+  };
+
+  export type Result = void;
 }

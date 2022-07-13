@@ -2,6 +2,7 @@ import {
   CreateUserRepository,
   LoadUserRepository,
   LogErrorRepository,
+  UpdateUserRepository,
 } from '@/data/protocols/repositories';
 
 export class LoadUserRepositorySpy implements LoadUserRepository {
@@ -10,6 +11,7 @@ export class LoadUserRepositorySpy implements LoadUserRepository {
     id: 'any_id',
     name: 'any_name',
     email: 'any_email@mail.com',
+    password: 'any_password',
     accessToken: 'any_access_token',
   };
 
@@ -31,6 +33,18 @@ export class CreateUserRepositorySpy implements CreateUserRepository {
     this.callsCount++;
     this.params = params;
     return Promise.resolve(!!this.result);
+  }
+}
+
+export class UpdateUserRepositorySpy implements UpdateUserRepository {
+  params?: UpdateUserRepository.Params;
+
+  callsCount = 0;
+
+  async update(params: UpdateUserRepository.Params): Promise<UpdateUserRepository.Result> {
+    this.callsCount++;
+    this.params = params;
+    return Promise.resolve();
   }
 }
 

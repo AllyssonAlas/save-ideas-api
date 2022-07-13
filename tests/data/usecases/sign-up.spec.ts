@@ -26,7 +26,7 @@ const makeSut = (): SutTypes => {
 };
 
 describe('SignUpUsecase', () => {
-  it('Should call Hasher with correct value', async () => {
+  test('Should call Hasher with correct value', async () => {
     const { sut, hasherSpy } = makeSut();
     const userData = mockUserData();
 
@@ -36,7 +36,7 @@ describe('SignUpUsecase', () => {
     expect(hasherSpy.callsCount).toBe(1);
   });
 
-  it('Should throw if Hasher throws', async () => {
+  test('Should throw if Hasher throws', async () => {
     const { sut, hasherSpy } = makeSut();
     jest.spyOn(hasherSpy, 'hash').mockImplementationOnce(() => {
       throw new Error();
@@ -47,7 +47,7 @@ describe('SignUpUsecase', () => {
     await expect(promise).rejects.toThrow();
   });
 
-  it('Should call LoadUserRepository with correct value', async () => {
+  test('Should call LoadUserRepository with correct value', async () => {
     const { sut, loadUserRepositorySpy } = makeSut();
     const userData = mockUserData();
 
@@ -57,7 +57,7 @@ describe('SignUpUsecase', () => {
     expect(loadUserRepositorySpy.callsCount).toBe(1);
   });
 
-  it('Should throw if LoadUserRepository throws', async () => {
+  test('Should throw if LoadUserRepository throws', async () => {
     const { sut, loadUserRepositorySpy } = makeSut();
     jest.spyOn(loadUserRepositorySpy, 'load').mockImplementationOnce(() => {
       throw new Error();
@@ -68,23 +68,24 @@ describe('SignUpUsecase', () => {
     await expect(promise).rejects.toThrow();
   });
 
-  it('Should return SignUpError when LoadUserRepository returns user data', async () => {
+  test('Should return SignUpError when LoadUserRepository returns user data', async () => {
     const { sut, loadUserRepositorySpy } = makeSut();
     jest.spyOn(loadUserRepositorySpy, 'load').mockReturnValueOnce(
       Promise.resolve({
         id: 'any_id',
         name: 'any_name',
         email: 'any_email@mail.com',
+        password: 'any_password',
         accessToken: 'any_access_token',
       }),
     );
 
     const signUpResult = await sut.perform(mockUserData());
 
-    expect(signUpResult).toBe(false);
+    expect(signUpResult).toEqual({ wasSigned: false });
   });
 
-  it('Should call CreateUserRepository with correct values if LoadUserRepository returns null', async () => {
+  test('Should call CreateUserRepository with correct values if LoadUserRepository returns null', async () => {
     const { sut, createUserRepositorySpy } = makeSut();
 
     await sut.perform(mockUserData());
@@ -97,7 +98,7 @@ describe('SignUpUsecase', () => {
     expect(createUserRepositorySpy.callsCount).toBe(1);
   });
 
-  it('Should throw if CreateUserRepository throws', async () => {
+  test('Should throw if CreateUserRepository throws', async () => {
     const { sut, createUserRepositorySpy } = makeSut();
     jest.spyOn(createUserRepositorySpy, 'create').mockImplementationOnce(() => {
       throw new Error();
@@ -108,7 +109,7 @@ describe('SignUpUsecase', () => {
     await expect(promise).rejects.toThrow();
   });
 
-  it('Should return the name and email from created user', async () => {
+  test('Should return the name and email from created user', async () => {
     const { sut } = makeSut();
 
     const userData = await sut.perform(mockUserData());
