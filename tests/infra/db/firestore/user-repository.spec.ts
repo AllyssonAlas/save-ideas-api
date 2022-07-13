@@ -86,4 +86,24 @@ describe('UsersRepository', () => {
       expect(updatedUser?.accessToken).toBe('any_token');
     });
   });
+
+  describe('loadById()', () => {
+    test('Should return an user if id is valid', async () => {
+      const sut = makeSut();
+
+      await usersCollection.doc('any_id').set({
+        name: 'any_name',
+        email: 'any_email@email.com',
+        password: 'any_password',
+        accessToken: 'any_access_token',
+      });
+      const user = await sut.loadById({ id: 'any_id' });
+
+      expect(user).toBeTruthy();
+      expect(user?.name).toBe('any_name');
+      expect(user?.email).toBe('any_email@email.com');
+      expect(user?.password).toBe('any_password');
+      expect(user?.accessToken).toBe('any_access_token');
+    });
+  });
 });
