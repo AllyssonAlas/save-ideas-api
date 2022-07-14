@@ -137,4 +137,13 @@ describe('UpdateUserController', () => {
 
     expect(httpResponse).toEqual(serverError(new Error()));
   });
+
+  test('Should return 403 if UpdateUserUsecase returns wasSuccessful false', async () => {
+    const { sut, updateUserUsecaseSpy } = makeSut();
+    updateUserUsecaseSpy.result = { wasSuccessful: false };
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(forbidden(new InvalidParamError('password')));
+  });
 });
