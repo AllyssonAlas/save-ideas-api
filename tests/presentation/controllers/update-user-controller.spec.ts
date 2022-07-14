@@ -83,7 +83,7 @@ describe('UpdateUserController', () => {
     expect(httpResponse).toEqual(serverError(new Error()));
   });
 
-  test('Should return 403 if invalid email is provided', async () => {
+  test('Should return 403 if invalid id is provided', async () => {
     const { sut, loadUserUsecaseSpy } = makeSut();
     loadUserUsecaseSpy.result = null;
 
@@ -125,5 +125,16 @@ describe('UpdateUserController', () => {
       passwordHash: 'any_hashed_password',
     });
     expect(updateUserUsecaseSpy.callsCount).toBe(1);
+  });
+
+  test('Should return 500 if UpdateUserUsecase throws', async () => {
+    const { sut, updateUserUsecaseSpy } = makeSut();
+    jest.spyOn(updateUserUsecaseSpy, 'perform').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(serverError(new Error()));
   });
 });
