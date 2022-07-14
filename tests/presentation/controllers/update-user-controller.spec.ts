@@ -65,4 +65,15 @@ describe('UpdateUserController', () => {
     expect(loadUserUsecaseSpy.params).toEqual({ id: 'any_id' });
     expect(loadUserUsecaseSpy.callsCount).toBe(1);
   });
+
+  test('Should return 500 if LoadUserUsecaseSpy throws', async () => {
+    const { sut, loadUserUsecaseSpy } = makeSut();
+    jest.spyOn(loadUserUsecaseSpy, 'perform').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(serverError(new Error()));
+  });
 });
