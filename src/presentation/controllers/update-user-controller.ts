@@ -1,7 +1,7 @@
 import { LoadUser, UpdateUser } from '@/domain/usecases';
 import { Controller, Validation } from '@/presentation/protocols';
 import { InvalidParamError } from '@/presentation/errors';
-import { badRequest, forbidden, serverError } from '@/presentation/helpers';
+import { badRequest, forbidden, noContent, serverError } from '@/presentation/helpers';
 
 export class UpdateUserController implements Controller {
   constructor(
@@ -33,6 +33,7 @@ export class UpdateUserController implements Controller {
       if (!wasSuccessful) {
         return forbidden(new InvalidParamError('password'));
       }
+      return noContent();
     } catch (error) {
       return serverError(error);
     }
