@@ -22,4 +22,20 @@ describe('UpdateUserUsecase', () => {
     });
     expect(hasherComparerSpy.callsCount).toBe(1);
   });
+
+  test('Should return wasSuccessful false if HasherComparer returns false', async () => {
+    const hasherComparerSpy = new HasherComparerSpy();
+    const sut = new UpdateUserUsecase(hasherComparerSpy);
+    const mockUpdaterUserParamsWithOldPassword = {
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      password: 'other_password',
+      oldPassword: 'any_password',
+      oldPasswordHash: 'any_hashed_password',
+    };
+
+    const updateUserResult = await sut.perform(mockUpdaterUserParamsWithOldPassword);
+
+    expect(updateUserResult).toEqual({ wasSuccessful: false });
+  });
 });
