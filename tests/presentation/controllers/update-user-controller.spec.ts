@@ -2,7 +2,7 @@ import { UpdateUserController } from '@/presentation/controllers';
 import { MissingParamError } from '@/presentation/errors';
 import { badRequest, serverError } from '@/presentation/helpers';
 
-import { ValidationSpy } from '@/tests/presentation/mocks';
+import { ValidationSpy, LoadUserUsecaseSpy } from '@/tests/presentation/mocks';
 
 const mockRequest = (): UpdateUserController.Request => ({
   id: 'any_id',
@@ -12,13 +12,15 @@ const mockRequest = (): UpdateUserController.Request => ({
 
 interface SutTypes {
   sut: UpdateUserController;
+  loadUserUsecaseSpy: LoadUserUsecaseSpy;
   validationSpy: ValidationSpy;
 }
 
 const makeSut = (): SutTypes => {
   const validationSpy = new ValidationSpy();
-  const sut = new UpdateUserController(validationSpy);
-  return { sut, validationSpy };
+  const loadUserUsecaseSpy = new LoadUserUsecaseSpy();
+  const sut = new UpdateUserController(validationSpy, loadUserUsecaseSpy);
+  return { sut, validationSpy, loadUserUsecaseSpy };
 };
 
 describe('UpdateUserController', () => {
@@ -53,5 +55,14 @@ describe('UpdateUserController', () => {
     const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(serverError(new Error()));
+  });
+
+  test('Should call LoadUserUsecase with correct values', async () => {
+    const { sut, loadUserUsecaseSpy } = makeSut();
+
+    await sut.handle(mockRequest());
+
+    expect(loadUserUsecaseSpy.params).toEqual({ id: 'any_id' });
+    expect(loadUserUsecaseSpy.callsCount).toBe(1);
   });
 });
