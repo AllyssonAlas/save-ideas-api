@@ -1,10 +1,14 @@
-import { LoadUser } from '@/domain/usecases';
+import { LoadUser, UpdateUser } from '@/domain/usecases';
 import { Controller, Validation } from '@/presentation/protocols';
 import { InvalidParamError } from '@/presentation/errors';
 import { badRequest, forbidden, serverError } from '@/presentation/helpers';
 
 export class UpdateUserController implements Controller {
-  constructor(private readonly validation: Validation, private readonly loadUser: LoadUser) {}
+  constructor(
+    private readonly validation: Validation,
+    private readonly loadUser: LoadUser,
+    private readonly updateUpdate: UpdateUser,
+  ) {}
 
   async handle(request: UpdateUserController.Request): Promise<any> {
     try {
@@ -16,6 +20,16 @@ export class UpdateUserController implements Controller {
       if (!userData) {
         return forbidden(new InvalidParamError('id'));
       }
+      const userNewData = {
+        id: userData.id,
+        name: userData.name,
+        email: userData.email,
+        password: request.password,
+        passwordHash: userData.password,
+        newPassword: request.newPassword,
+      };
+
+      await this.updateUpdate.perform(userNewData);
     } catch (error) {
       return serverError(error);
     }
