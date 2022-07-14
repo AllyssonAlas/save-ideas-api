@@ -5,15 +5,16 @@ export class UpdateUserUsecase implements UpdateUser {
   constructor(private readonly hasherComparer: HasherComparer, private readonly hasher: Hasher) {}
 
   async perform(params: UpdateUser.Params): Promise<any> {
-    if (params.password) {
+    const { password, passwordHash, newPassword = '' } = params;
+    if (password) {
       const { isValid } = await this.hasherComparer.compare({
-        plaintext: params.password,
-        digest: params.passwordHash,
+        plaintext: password,
+        digest: passwordHash,
       });
       if (!isValid) {
         return { wasSuccessful: false };
       }
-      await this.hasher.hash({ plaintext: params?.newPassword ?? '' });
+      await this.hasher.hash({ plaintext: newPassword });
     }
   }
 }
