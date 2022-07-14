@@ -5,7 +5,7 @@ export namespace LoadUser {
     id: string;
   };
 
-  export type Result = User;
+  export type Result = null | User;
 }
 
 export interface LoadUser {
