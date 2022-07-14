@@ -1,16 +1,11 @@
 import { SignUpUsecase } from '@/data/usecases';
 
+import { mockCreateUserParams } from '@/tests/domain/mocks';
 import {
   HasherSpy,
   CreateUserRepositorySpy,
   LoadUserByEmailRepositorySpy,
 } from '@/tests/data/mocks';
-
-const mockUserData = () => ({
-  name: 'any_name',
-  email: 'any_email@mail.com',
-  password: 'any_password',
-});
 
 interface SutTypes {
   hasherSpy: HasherSpy;
@@ -32,7 +27,7 @@ const makeSut = (): SutTypes => {
 describe('SignUpUsecase', () => {
   test('Should call Hasher with correct value', async () => {
     const { sut, hasherSpy } = makeSut();
-    const userData = mockUserData();
+    const userData = mockCreateUserParams();
 
     await sut.perform(userData);
 
@@ -46,14 +41,14 @@ describe('SignUpUsecase', () => {
       throw new Error();
     });
 
-    const promise = sut.perform(mockUserData());
+    const promise = sut.perform(mockCreateUserParams());
 
     await expect(promise).rejects.toThrow();
   });
 
   test('Should call LoadUserByEmailRepository with correct value', async () => {
     const { sut, loadUserByEmailRepositorySpy } = makeSut();
-    const userData = mockUserData();
+    const userData = mockCreateUserParams();
 
     await sut.perform(userData);
 
@@ -67,7 +62,7 @@ describe('SignUpUsecase', () => {
       throw new Error();
     });
 
-    const promise = sut.perform(mockUserData());
+    const promise = sut.perform(mockCreateUserParams());
 
     await expect(promise).rejects.toThrow();
   });
@@ -84,7 +79,7 @@ describe('SignUpUsecase', () => {
       }),
     );
 
-    const signUpResult = await sut.perform(mockUserData());
+    const signUpResult = await sut.perform(mockCreateUserParams());
 
     expect(signUpResult).toEqual({ wasSigned: false });
   });
@@ -92,7 +87,7 @@ describe('SignUpUsecase', () => {
   test('Should call CreateUserRepository with correct values if LoadUserByEmailRepository returns null', async () => {
     const { sut, createUserRepositorySpy } = makeSut();
 
-    await sut.perform(mockUserData());
+    await sut.perform(mockCreateUserParams());
 
     expect(createUserRepositorySpy.params).toEqual({
       name: 'any_name',
@@ -108,7 +103,7 @@ describe('SignUpUsecase', () => {
       throw new Error();
     });
 
-    const promise = sut.perform(mockUserData());
+    const promise = sut.perform(mockCreateUserParams());
 
     await expect(promise).rejects.toThrow();
   });
@@ -116,7 +111,7 @@ describe('SignUpUsecase', () => {
   test('Should return the name and email from created user', async () => {
     const { sut } = makeSut();
 
-    const userData = await sut.perform(mockUserData());
+    const userData = await sut.perform(mockCreateUserParams());
 
     expect(userData).toBeTruthy();
   });
