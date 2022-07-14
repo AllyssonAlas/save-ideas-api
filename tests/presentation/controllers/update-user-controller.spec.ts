@@ -2,6 +2,12 @@ import { UpdateUserController } from '@/presentation/controllers';
 
 import { ValidationSpy } from '@/tests/presentation/mocks';
 
+const mockRequest = (): UpdateUserController.Request => ({
+  id: 'any_id',
+  name: 'any_name',
+  email: 'any_email@mail.com',
+});
+
 interface SutTypes {
   sut: UpdateUserController;
   validationSpy: ValidationSpy;
@@ -17,13 +23,7 @@ describe('UpdateUserController', () => {
   test('Should call Validation with correct values', async () => {
     const { sut, validationSpy } = makeSut();
 
-    const mockRequest = {
-      id: 'any_id',
-      name: 'any_name',
-      email: 'any_email@mail.com',
-    };
-
-    await sut.handle(mockRequest);
+    await sut.handle(mockRequest());
 
     expect(validationSpy.input).toEqual({
       id: 'any_id',
