@@ -1,18 +1,20 @@
 import { UpdateUserUsecase } from '@/data/usecases';
 
 import { mockUpdaterUserParamsWithOldPassword } from '@/tests/domain/mocks';
-import { HasherComparerSpy } from '@/tests/data/mocks';
+import { HasherComparerSpy, HasherSpy } from '@/tests/data/mocks';
 
 interface SutTypes {
   sut: UpdateUserUsecase;
   hasherComparerSpy: HasherComparerSpy;
+  hasherSpy: HasherSpy;
 }
 
 const makeSut = (): SutTypes => {
+  const hasherSpy = new HasherSpy();
   const hasherComparerSpy = new HasherComparerSpy();
-  const sut = new UpdateUserUsecase(hasherComparerSpy);
+  const sut = new UpdateUserUsecase(hasherComparerSpy, hasherSpy);
 
-  return { sut, hasherComparerSpy };
+  return { sut, hasherComparerSpy, hasherSpy };
 };
 
 describe('UpdateUserUsecase', () => {
@@ -46,5 +48,15 @@ describe('UpdateUserUsecase', () => {
     const updateUserResult = await sut.perform(mockUpdaterUserParamsWithOldPassword());
 
     expect(updateUserResult).toEqual({ wasSuccessful: false });
+  });
+
+  test('Should call Hasher with correct value if HasherComparer returns true', async () => {
+    const { sut, hasherSpy } = makeSut();
+    const userData = mockUpdaterUserParamsWithOldPassword();
+
+    await sut.perform(userData);
+
+    expect(hasherSpy.params).toEqual({ plaintext: 'other_password' });
+    expect(hasherSpy.callsCount).toBe(1);
   });
 });
