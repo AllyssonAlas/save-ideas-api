@@ -12,12 +12,14 @@ export const mockAuthenticationParams = (): Authentication.Params => ({
 });
 
 export const mockUpdaterUserParams = (): UpdateUser.Params => ({
+  id: 'any_id',
   name: 'any_name',
   email: 'any_email@mail.com',
   passwordHash: 'any_hashed_password',
 });
 
 export const mockUpdaterUserParamsWithNewPassword = (): UpdateUser.Params => ({
+  id: 'any_id',
   name: 'any_name',
   email: 'any_email@mail.com',
   newPassword: 'other_password',

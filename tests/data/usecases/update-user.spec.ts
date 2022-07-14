@@ -1,20 +1,22 @@
 import { UpdateUserUsecase } from '@/data/usecases';
 
 import { mockUpdaterUserParams, mockUpdaterUserParamsWithNewPassword } from '@/tests/domain/mocks';
-import { HasherComparerSpy, HasherSpy } from '@/tests/data/mocks';
+import { HasherComparerSpy, HasherSpy, UpdateUserRepositorySpy } from '@/tests/data/mocks';
 
 interface SutTypes {
   sut: UpdateUserUsecase;
   hasherComparerSpy: HasherComparerSpy;
   hasherSpy: HasherSpy;
+  updateUserRepositorySpy: UpdateUserRepositorySpy;
 }
 
 const makeSut = (): SutTypes => {
+  const updateUserRepositorySpy = new UpdateUserRepositorySpy();
   const hasherSpy = new HasherSpy();
   const hasherComparerSpy = new HasherComparerSpy();
-  const sut = new UpdateUserUsecase(hasherComparerSpy, hasherSpy);
+  const sut = new UpdateUserUsecase(hasherComparerSpy, hasherSpy, updateUserRepositorySpy);
 
-  return { sut, hasherComparerSpy, hasherSpy };
+  return { sut, hasherComparerSpy, hasherSpy, updateUserRepositorySpy };
 };
 
 describe('UpdateUserUsecase', () => {
@@ -58,6 +60,21 @@ describe('UpdateUserUsecase', () => {
 
     expect(hasherSpy.params).toEqual({ plaintext: 'other_password' });
     expect(hasherSpy.callsCount).toBe(1);
+  });
+
+  test('Should call UpdateUserRepository with correct values', async () => {
+    const { sut, updateUserRepositorySpy, hasherSpy } = makeSut();
+    const hashedPassword = hasherSpy.result;
+
+    await sut.perform(mockUpdaterUserParamsWithNewPassword());
+
+    expect(updateUserRepositorySpy.params).toEqual({
+      id: 'any_id',
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      password: hashedPassword.ciphertext,
+    });
+    expect(updateUserRepositorySpy.callsCount).toBe(1);
   });
 
   test('Should not call HasherComparer if newPassword is not received', async () => {
