@@ -1,7 +1,7 @@
 import { FirestoreHelper, UserRepository } from '@/infra/db';
 import { CollectionReference } from 'firebase-admin/firestore';
 
-import { mockCreateUserParams } from '@/tests/domain/mocks';
+import { mockSignUpParams } from '@/tests/domain/mocks';
 
 const makeSut = (): UserRepository => {
   return new UserRepository();
@@ -45,7 +45,7 @@ describe('UsersRepository', () => {
   describe('loadByEmail()', () => {
     test('Should return an user if email is valid', async () => {
       const sut = makeSut();
-      const createUserParams = mockCreateUserParams();
+      const createUserParams = mockSignUpParams();
 
       await usersCollection.add(createUserParams);
       const user = await sut.loadByEmail({ email: createUserParams.email });
@@ -68,7 +68,7 @@ describe('UsersRepository', () => {
   describe('update()', () => {
     test('Should return an user update with the data received', async () => {
       const sut = makeSut();
-      const createUserParams = mockCreateUserParams();
+      const createUserParams = mockSignUpParams();
       await usersCollection.add(createUserParams);
 
       const user = await sut.loadByEmail({ email: createUserParams.email });

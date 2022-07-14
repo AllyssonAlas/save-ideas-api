@@ -1,6 +1,6 @@
 import { SignUp, Authentication, UpdateUser } from '@/domain/usecases';
 
-export const mockCreateUserParams = (): SignUp.Params => ({
+export const mockSignUpParams = (): SignUp.Params => ({
   name: 'any_name',
   email: 'any_email@mail.com',
   password: 'any_password',
