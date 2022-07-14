@@ -28,6 +28,17 @@ describe('UpdateUserUsecase', () => {
     expect(hasherComparerSpy.callsCount).toBe(1);
   });
 
+  test('Should throw if HasherComparer throws', async () => {
+    const { sut, hasherComparerSpy } = makeSut();
+    jest.spyOn(hasherComparerSpy, 'compare').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const promise = sut.perform(mockUpdaterUserParamsWithOldPassword());
+
+    await expect(promise).rejects.toThrow();
+  });
+
   test('Should return wasSuccessful false if HasherComparer returns false', async () => {
     const { sut, hasherComparerSpy } = makeSut();
     hasherComparerSpy.result = { isValid: false };
