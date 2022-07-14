@@ -1,6 +1,7 @@
 import { LoadUser } from '@/domain/usecases';
 import { Controller, Validation } from '@/presentation/protocols';
-import { badRequest, serverError } from '@/presentation/helpers';
+import { InvalidParamError } from '@/presentation/errors';
+import { badRequest, forbidden, serverError } from '@/presentation/helpers';
 
 export class UpdateUserController implements Controller {
   constructor(private readonly validation: Validation, private readonly loadUser: LoadUser) {}
@@ -11,7 +12,10 @@ export class UpdateUserController implements Controller {
       if (error) {
         return badRequest(error);
       }
-      await this.loadUser.perform({ id: request.id });
+      const userData = await this.loadUser.perform({ id: request.id });
+      if (!userData) {
+        return forbidden(new InvalidParamError('id'));
+      }
     } catch (error) {
       return serverError(error);
     }
