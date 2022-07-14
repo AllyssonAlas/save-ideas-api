@@ -1,6 +1,6 @@
 import { UpdateUserUsecase } from '@/data/usecases';
 
-import { mockUpdaterUserParamsWithOldPassword } from '@/tests/domain/mocks';
+import { mockUpdaterUserParams, mockUpdaterUserParamsWithNewPassword } from '@/tests/domain/mocks';
 import { HasherComparerSpy, HasherSpy } from '@/tests/data/mocks';
 
 interface SutTypes {
@@ -18,10 +18,10 @@ const makeSut = (): SutTypes => {
 };
 
 describe('UpdateUserUsecase', () => {
-  test('Should call HasherComparer with correct value if oldPassword is received', async () => {
+  test('Should call HasherComparer with correct value if newPassword is received', async () => {
     const { sut, hasherComparerSpy } = makeSut();
 
-    await sut.perform(mockUpdaterUserParamsWithOldPassword());
+    await sut.perform(mockUpdaterUserParamsWithNewPassword());
 
     expect(hasherComparerSpy.params).toEqual({
       plaintext: 'any_password',
@@ -36,7 +36,7 @@ describe('UpdateUserUsecase', () => {
       throw new Error();
     });
 
-    const promise = sut.perform(mockUpdaterUserParamsWithOldPassword());
+    const promise = sut.perform(mockUpdaterUserParamsWithNewPassword());
 
     await expect(promise).rejects.toThrow();
   });
@@ -45,18 +45,26 @@ describe('UpdateUserUsecase', () => {
     const { sut, hasherComparerSpy } = makeSut();
     hasherComparerSpy.result = { isValid: false };
 
-    const updateUserResult = await sut.perform(mockUpdaterUserParamsWithOldPassword());
+    const updateUserResult = await sut.perform(mockUpdaterUserParamsWithNewPassword());
 
     expect(updateUserResult).toEqual({ wasSuccessful: false });
   });
 
   test('Should call Hasher with correct value if HasherComparer returns true', async () => {
     const { sut, hasherSpy } = makeSut();
-    const userData = mockUpdaterUserParamsWithOldPassword();
+    const userData = mockUpdaterUserParamsWithNewPassword();
 
     await sut.perform(userData);
 
     expect(hasherSpy.params).toEqual({ plaintext: 'other_password' });
     expect(hasherSpy.callsCount).toBe(1);
+  });
+
+  test('Should not call HasherComparer if newPassword is not received', async () => {
+    const { sut, hasherComparerSpy } = makeSut();
+
+    await sut.perform(mockUpdaterUserParams());
+
+    expect(hasherComparerSpy.callsCount).toBe(0);
   });
 });
