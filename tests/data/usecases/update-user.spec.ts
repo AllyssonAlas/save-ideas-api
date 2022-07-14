@@ -117,4 +117,12 @@ describe('UpdateUserUsecase', () => {
 
     await expect(promise).rejects.toThrow();
   });
+
+  test('Should return wasSuccessful true on success', async () => {
+    const { sut } = makeSut();
+
+    const updateUserResult = await sut.perform(mockUpdaterUserParamsWithNewPassword());
+
+    await expect(updateUserResult).toEqual({ wasSuccessful: true });
+  });
 });
