@@ -10,6 +10,8 @@ export class UpdateUserUsecase implements UpdateUser {
         plaintext: params.oldPassword,
         digest: params?.oldPasswordHash || '',
       });
+
+      return { wasSuccessful: false };
     }
   }
 }
