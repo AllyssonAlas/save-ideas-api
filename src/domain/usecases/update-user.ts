@@ -1,5 +1,6 @@
 export namespace UpdateUser {
   export type Params = {
+    id: string;
     name: string;
     email: string;
     newPassword?: string;
