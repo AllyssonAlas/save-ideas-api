@@ -29,7 +29,10 @@ export class UpdateUserController implements Controller {
         newPassword: request.newPassword,
       };
 
-      await this.updateUpdate.perform(userNewData);
+      const { wasSuccessful } = await this.updateUpdate.perform(userNewData);
+      if (!wasSuccessful) {
+        return forbidden(new InvalidParamError('password'));
+      }
     } catch (error) {
       return serverError(error);
     }
