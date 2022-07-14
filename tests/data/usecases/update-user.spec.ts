@@ -62,6 +62,22 @@ describe('UpdateUserUsecase', () => {
     expect(hasherSpy.callsCount).toBe(1);
   });
 
+  test('Should not call HasherComparer if newPassword is not received', async () => {
+    const { sut, hasherComparerSpy } = makeSut();
+
+    await sut.perform(mockUpdaterUserParams());
+
+    expect(hasherComparerSpy.callsCount).toBe(0);
+  });
+
+  test('Should not call Hasher if newPassword is not received', async () => {
+    const { sut, hasherSpy } = makeSut();
+
+    await sut.perform(mockUpdaterUserParams());
+
+    expect(hasherSpy.callsCount).toBe(0);
+  });
+
   test('Should call UpdateUserRepository with correct values', async () => {
     const { sut, updateUserRepositorySpy, hasherSpy } = makeSut();
     const hashedPassword = hasherSpy.result;
@@ -77,6 +93,20 @@ describe('UpdateUserUsecase', () => {
     expect(updateUserRepositorySpy.callsCount).toBe(1);
   });
 
+  test('Should call UpdateUserRepository with passwordHash if newPassword is not receive', async () => {
+    const { sut, updateUserRepositorySpy } = makeSut();
+
+    await sut.perform(mockUpdaterUserParams());
+
+    expect(updateUserRepositorySpy.params).toEqual({
+      id: 'any_id',
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      password: 'any_hashed_password',
+    });
+    expect(updateUserRepositorySpy.callsCount).toBe(1);
+  });
+
   test('Should throw if UpdateUserRepository throws', async () => {
     const { sut, updateUserRepositorySpy } = makeSut();
     jest.spyOn(updateUserRepositorySpy, 'update').mockImplementationOnce(() => {
@@ -86,21 +116,5 @@ describe('UpdateUserUsecase', () => {
     const promise = sut.perform(mockUpdaterUserParamsWithNewPassword());
 
     await expect(promise).rejects.toThrow();
-  });
-
-  test('Should not call HasherComparer if newPassword is not received', async () => {
-    const { sut, hasherComparerSpy } = makeSut();
-
-    await sut.perform(mockUpdaterUserParams());
-
-    expect(hasherComparerSpy.callsCount).toBe(0);
-  });
-
-  test('Should not call Hasher if newPassword is not received', async () => {
-    const { sut, hasherSpy } = makeSut();
-
-    await sut.perform(mockUpdaterUserParams());
-
-    expect(hasherSpy.callsCount).toBe(0);
   });
 });
