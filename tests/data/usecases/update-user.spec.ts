@@ -67,4 +67,12 @@ describe('UpdateUserUsecase', () => {
 
     expect(hasherComparerSpy.callsCount).toBe(0);
   });
+
+  test('Should not call Hasher if newPassword is not received', async () => {
+    const { sut, hasherSpy } = makeSut();
+
+    await sut.perform(mockUpdaterUserParams());
+
+    expect(hasherSpy.callsCount).toBe(0);
+  });
 });
