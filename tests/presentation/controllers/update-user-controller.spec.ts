@@ -2,7 +2,11 @@ import { UpdateUserController } from '@/presentation/controllers';
 import { InvalidParamError, MissingParamError } from '@/presentation/errors';
 import { badRequest, forbidden, serverError } from '@/presentation/helpers';
 
-import { ValidationSpy, LoadUserUsecaseSpy } from '@/tests/presentation/mocks';
+import {
+  ValidationSpy,
+  LoadUserUsecaseSpy,
+  UpdateUserUsecaseSpy,
+} from '@/tests/presentation/mocks';
 
 const mockRequest = (): UpdateUserController.Request => ({
   id: 'any_id',
@@ -12,15 +16,17 @@ const mockRequest = (): UpdateUserController.Request => ({
 
 interface SutTypes {
   sut: UpdateUserController;
-  loadUserUsecaseSpy: LoadUserUsecaseSpy;
   validationSpy: ValidationSpy;
+  loadUserUsecaseSpy: LoadUserUsecaseSpy;
+  updateUserUsecaseSpy: UpdateUserUsecaseSpy;
 }
 
 const makeSut = (): SutTypes => {
-  const validationSpy = new ValidationSpy();
+  const updateUserUsecaseSpy = new UpdateUserUsecaseSpy();
   const loadUserUsecaseSpy = new LoadUserUsecaseSpy();
-  const sut = new UpdateUserController(validationSpy, loadUserUsecaseSpy);
-  return { sut, validationSpy, loadUserUsecaseSpy };
+  const validationSpy = new ValidationSpy();
+  const sut = new UpdateUserController(validationSpy, loadUserUsecaseSpy, updateUserUsecaseSpy);
+  return { sut, validationSpy, loadUserUsecaseSpy, updateUserUsecaseSpy };
 };
 
 describe('UpdateUserController', () => {
@@ -84,5 +90,40 @@ describe('UpdateUserController', () => {
     const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(forbidden(new InvalidParamError('id')));
+  });
+
+  test('Should call UpdateUserUsecase with correct values', async () => {
+    const { sut, updateUserUsecaseSpy } = makeSut();
+
+    await sut.handle(mockRequest());
+
+    expect(updateUserUsecaseSpy.params).toEqual({
+      id: 'any_id',
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      passwordHash: 'any_hashed_password',
+    });
+    expect(updateUserUsecaseSpy.callsCount).toBe(1);
+  });
+
+  test('Should call UpdateUserUsecase with newPassword', async () => {
+    const { sut, updateUserUsecaseSpy } = makeSut();
+    const mockRequestWithNewPassword = {
+      ...mockRequest(),
+      newPassword: 'other_password',
+      password: 'any_password',
+    };
+
+    await sut.handle(mockRequestWithNewPassword);
+
+    expect(updateUserUsecaseSpy.params).toEqual({
+      id: 'any_id',
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      newPassword: 'other_password',
+      password: 'any_password',
+      passwordHash: 'any_hashed_password',
+    });
+    expect(updateUserUsecaseSpy.callsCount).toBe(1);
   });
 });
