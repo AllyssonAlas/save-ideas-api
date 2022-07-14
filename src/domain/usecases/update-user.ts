@@ -2,9 +2,9 @@ export namespace UpdateUser {
   export type Params = {
     name: string;
     email: string;
-    password: string;
-    oldPassword?: string;
-    oldPasswordHash?: string;
+    newPassword?: string;
+    password?: string;
+    passwordHash: string;
   };
 
   export type Result = {

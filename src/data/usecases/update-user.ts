@@ -5,12 +5,11 @@ export class UpdateUserUsecase implements UpdateUser {
   constructor(private readonly hasherComparer: HasherComparer) {}
 
   async perform(params: UpdateUser.Params): Promise<any> {
-    if (params.oldPassword) {
+    if (params.password) {
       await this.hasherComparer.compare({
-        plaintext: params.oldPassword,
-        digest: params?.oldPasswordHash || '',
+        plaintext: params.password,
+        digest: params.passwordHash,
       });
-
       return { wasSuccessful: false };
     }
   }
