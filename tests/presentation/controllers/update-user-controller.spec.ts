@@ -1,6 +1,6 @@
 import { UpdateUserController } from '@/presentation/controllers';
 import { InvalidParamError, MissingParamError } from '@/presentation/errors';
-import { badRequest, forbidden, serverError } from '@/presentation/helpers';
+import { badRequest, forbidden, noContent, serverError } from '@/presentation/helpers';
 
 import {
   ValidationSpy,
@@ -145,5 +145,13 @@ describe('UpdateUserController', () => {
     const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(forbidden(new InvalidParamError('password')));
+  });
+
+  test('Should return 204 on success', async () => {
+    const { sut } = makeSut();
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(noContent());
   });
 });
