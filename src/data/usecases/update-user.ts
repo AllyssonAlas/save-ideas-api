@@ -9,7 +9,7 @@ export class UpdateUserUsecase implements UpdateUser {
     private readonly updateUserRepository: UpdateUserRepository,
   ) {}
 
-  async perform(params: UpdateUser.Params): Promise<any> {
+  async perform(params: UpdateUser.Params): Promise<UpdateUser.Result> {
     const { id, name, email, password, passwordHash, newPassword = '' } = params;
     let newPasswordHashed;
     if (password) {
@@ -29,5 +29,7 @@ export class UpdateUserUsecase implements UpdateUser {
       email,
       password: newPasswordHashed?.ciphertext || passwordHash,
     });
+
+    return { wasSuccessful: true };
   }
 }
