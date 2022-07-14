@@ -2,10 +2,21 @@ import { UpdateUserController } from '@/presentation/controllers';
 
 import { ValidationSpy } from '@/tests/presentation/mocks';
 
+interface SutTypes {
+  sut: UpdateUserController;
+  validationSpy: ValidationSpy;
+}
+
+const makeSut = (): SutTypes => {
+  const validationSpy = new ValidationSpy();
+  const sut = new UpdateUserController(validationSpy);
+  return { sut, validationSpy };
+};
+
 describe('UpdateUserController', () => {
   test('Should call Validation with correct values', async () => {
-    const validationSpy = new ValidationSpy();
-    const sut = new UpdateUserController(validationSpy);
+    const { sut, validationSpy } = makeSut();
+
     const mockRequest = {
       id: 'any_id',
       name: 'any_name',
