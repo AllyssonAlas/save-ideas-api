@@ -87,5 +87,15 @@ describe('User Routes', () => {
         })
         .expect(204);
     });
+
+    test('Should return 403 on invalid id', async () => {
+      await request(app)
+        .put('/api/update-user/any_id')
+        .send({
+          name: 'Johnny Doe',
+          email: 'jhon_doe@mail.com',
+        })
+        .expect(403);
+    });
   });
 });
