@@ -1,6 +1,7 @@
 import { Validation } from '@/presentation/protocols';
 import { EmailValidatorAdapter } from '@/presentation/utils';
 import {
+  CompareFieldsValidation,
   EmailValidation,
   RequiredFieldValidation,
   ValidationComposite,
@@ -17,6 +18,7 @@ describe('UpdateUserValidationFactory', () => {
     for (const field of ['id', 'name', 'email']) {
       validations.push(new RequiredFieldValidation(field));
     }
+    validations.push(new CompareFieldsValidation('newPassword', 'newPasswordConfirmation'));
     validations.push(new EmailValidation('email', new EmailValidatorAdapter()));
 
     expect(ValidationComposite).toHaveBeenCalledWith(validations);
