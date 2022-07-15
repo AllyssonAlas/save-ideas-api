@@ -1,11 +1,12 @@
 import { UpdateUser } from '@/domain/usecases';
 import { HasherComparer, Hasher } from '@/data/protocols/gateways';
-import { UpdateUserRepository } from '@/data/protocols/repositories';
+import { LoadUserByEmailRepository, UpdateUserRepository } from '@/data/protocols/repositories';
 
 export class UpdateUserUsecase implements UpdateUser {
   constructor(
     private readonly hasherComparer: HasherComparer,
     private readonly hasher: Hasher,
+    private readonly loadUserByEmailRepository: LoadUserByEmailRepository,
     private readonly updateUserRepository: UpdateUserRepository,
   ) {}
 
@@ -22,6 +23,7 @@ export class UpdateUserUsecase implements UpdateUser {
       }
       newPasswordHashed = await this.hasher.hash({ plaintext: newPassword });
     }
+    await this.loadUserByEmailRepository.loadByEmail({ email });
     this.updateUserRepository.update({
       id,
       name,
