@@ -116,6 +116,21 @@ describe('UpdateUserUsecase', () => {
     await expect(promise).rejects.toThrow();
   });
 
+  test('Should return success false and email as invalid field if LoadUserByEmailRepository return an user with different id', async () => {
+    const { sut, loadUserByEmailRepositorySpy } = makeSut();
+    loadUserByEmailRepositorySpy.result = {
+      id: 'other_id',
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      password: 'any_password',
+      accessToken: 'any_access_token',
+    };
+
+    const updateUserResult = await sut.perform(mockUpdaterUserParamsWithNewPassword());
+
+    await expect(updateUserResult).toEqual({ success: false, invalidField: 'email' });
+  });
+
   test('Should call UpdateUserRepository with correct values', async () => {
     const { sut, updateUserRepositorySpy, hasherSpy } = makeSut();
     const hashedPassword = hasherSpy.result;
