@@ -16,7 +16,7 @@ export class UpdateUserController implements Controller {
       if (error) {
         return badRequest(error);
       }
-      const userData = await this.loadUser.perform({ id: request.id });
+      const userData = await this.loadUser.perform({ id: request.userId });
       if (!userData) {
         return forbidden(new InvalidParamError('id'));
       }
@@ -42,7 +42,7 @@ export class UpdateUserController implements Controller {
 
 export namespace UpdateUserController {
   export type Request = {
-    id: string;
+    userId: string;
     name: string;
     email: string;
     password?: string;

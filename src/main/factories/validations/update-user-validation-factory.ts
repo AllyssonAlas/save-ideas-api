@@ -9,7 +9,7 @@ import {
 
 export const makeUpdateUserValidation = (): Validation => {
   const validations: Validation[] = [];
-  for (const field of ['id', 'name', 'email']) {
+  for (const field of ['userId', 'name', 'email']) {
     validations.push(new RequiredFieldValidation(field));
   }
   validations.push(new CompareFieldsValidation('newPassword', 'newPasswordConfirmation'));

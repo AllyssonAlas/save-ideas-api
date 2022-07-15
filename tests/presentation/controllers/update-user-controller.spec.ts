@@ -9,7 +9,7 @@ import {
 } from '@/tests/presentation/mocks';
 
 const mockRequest = (): UpdateUserController.Request => ({
-  id: 'any_id',
+  userId: 'any_id',
   name: 'any_name',
   email: 'any_email@mail.com',
 });
@@ -36,7 +36,7 @@ describe('UpdateUserController', () => {
     await sut.handle(mockRequest());
 
     expect(validationSpy.input).toEqual({
-      id: 'any_id',
+      userId: 'any_id',
       name: 'any_name',
       email: 'any_email@mail.com',
     });
