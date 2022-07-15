@@ -105,6 +105,17 @@ describe('UpdateUserUsecase', () => {
     expect(loadUserByEmailRepositorySpy.callsCount).toBe(1);
   });
 
+  test('Should throw if LoadUserByEmailRepository throws', async () => {
+    const { sut, loadUserByEmailRepositorySpy } = makeSut();
+    jest.spyOn(loadUserByEmailRepositorySpy, 'loadByEmail').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const promise = sut.perform(mockUpdaterUserParamsWithNewPassword());
+
+    await expect(promise).rejects.toThrow();
+  });
+
   test('Should call UpdateUserRepository with correct values', async () => {
     const { sut, updateUserRepositorySpy, hasherSpy } = makeSut();
     const hashedPassword = hasherSpy.result;
