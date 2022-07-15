@@ -43,13 +43,13 @@ describe('UpdateUserUsecase', () => {
     await expect(promise).rejects.toThrow();
   });
 
-  test('Should return wasSuccessful false if HasherComparer returns false', async () => {
+  test('Should return success false if HasherComparer returns false', async () => {
     const { sut, hasherComparerSpy } = makeSut();
     hasherComparerSpy.result = { isValid: false };
 
     const updateUserResult = await sut.perform(mockUpdaterUserParamsWithNewPassword());
 
-    expect(updateUserResult).toEqual({ wasSuccessful: false });
+    expect(updateUserResult).toEqual({ success: false, invalidField: 'password' });
   });
 
   test('Should call Hasher with correct value if HasherComparer returns true', async () => {
@@ -118,11 +118,11 @@ describe('UpdateUserUsecase', () => {
     await expect(promise).rejects.toThrow();
   });
 
-  test('Should return wasSuccessful true on success', async () => {
+  test('Should return success true on success', async () => {
     const { sut } = makeSut();
 
     const updateUserResult = await sut.perform(mockUpdaterUserParamsWithNewPassword());
 
-    await expect(updateUserResult).toEqual({ wasSuccessful: true });
+    await expect(updateUserResult).toEqual({ success: true });
   });
 });

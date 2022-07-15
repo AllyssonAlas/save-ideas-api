@@ -9,7 +9,8 @@ export namespace UpdateUser {
   };
 
   export type Result = {
-    wasSuccessful: boolean;
+    success: boolean;
+    invalidField?: string;
   };
 }
 

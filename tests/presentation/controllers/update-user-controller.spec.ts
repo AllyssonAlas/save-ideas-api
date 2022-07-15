@@ -138,9 +138,9 @@ describe('UpdateUserController', () => {
     expect(httpResponse).toEqual(serverError(new Error()));
   });
 
-  test('Should return 403 if UpdateUserUsecase returns wasSuccessful false', async () => {
+  test('Should return 403 if UpdateUserUsecase returns success false', async () => {
     const { sut, updateUserUsecaseSpy } = makeSut();
-    updateUserUsecaseSpy.result = { wasSuccessful: false };
+    updateUserUsecaseSpy.result = { success: false };
 
     const httpResponse = await sut.handle(mockRequest());
 

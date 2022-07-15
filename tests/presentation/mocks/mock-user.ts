@@ -51,7 +51,7 @@ export class LoadUserUsecaseSpy implements LoadUser {
 
 export class UpdateUserUsecaseSpy implements UpdateUser {
   params?: UpdateUser.Params;
-  result = { wasSuccessful: true };
+  result = { success: true };
   callsCount = 0;
 
   async perform(params: UpdateUser.Params): Promise<UpdateUser.Result> {

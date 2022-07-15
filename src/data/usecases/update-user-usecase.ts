@@ -18,7 +18,7 @@ export class UpdateUserUsecase implements UpdateUser {
         digest: passwordHash,
       });
       if (!isValid) {
-        return { wasSuccessful: false };
+        return { success: false, invalidField: 'password' };
       }
       newPasswordHashed = await this.hasher.hash({ plaintext: newPassword });
     }
@@ -28,6 +28,6 @@ export class UpdateUserUsecase implements UpdateUser {
       email,
       password: newPasswordHashed?.ciphertext || passwordHash,
     });
-    return { wasSuccessful: true };
+    return { success: true };
   }
 }
