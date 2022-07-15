@@ -1,6 +1,7 @@
 import { Validation } from '@/presentation/protocols';
 import { EmailValidatorAdapter } from '@/presentation/utils';
 import {
+  CompareFieldsValidation,
   EmailValidation,
   RequiredFieldValidation,
   ValidationComposite,
@@ -11,6 +12,7 @@ export const makeUpdateUserValidation = (): Validation => {
   for (const field of ['id', 'name', 'email']) {
     validations.push(new RequiredFieldValidation(field));
   }
+  validations.push(new CompareFieldsValidation('newPassword', 'newPasswordConfirmation'));
   validations.push(new EmailValidation('email', new EmailValidatorAdapter()));
   return new ValidationComposite(validations);
 };
