@@ -5,7 +5,7 @@ import { FirestoreHelper } from '@/infra/db';
 
 import app from '@/main/config/app';
 
-describe('SignUp Routes', () => {
+describe('User Routes', () => {
   beforeAll(() => {
     FirestoreHelper.connect();
   });
