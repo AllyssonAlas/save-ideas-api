@@ -10,8 +10,8 @@ import {
 
 const mockRequest = (): UpdateUserController.Request => ({
   userId: 'any_id',
-  name: 'any_name',
-  email: 'any_email@mail.com',
+  name: 'other_name',
+  email: 'other_email@mail.com',
 });
 
 interface SutTypes {
@@ -37,8 +37,8 @@ describe('UpdateUserController', () => {
 
     expect(validationSpy.input).toEqual({
       userId: 'any_id',
-      name: 'any_name',
-      email: 'any_email@mail.com',
+      name: 'other_name',
+      email: 'other_email@mail.com',
     });
     expect(validationSpy.callsCount).toBe(1);
   });
@@ -99,8 +99,8 @@ describe('UpdateUserController', () => {
 
     expect(updateUserUsecaseSpy.params).toEqual({
       id: 'any_id',
-      name: 'any_name',
-      email: 'any_email@mail.com',
+      name: 'other_name',
+      email: 'other_email@mail.com',
       passwordHash: 'any_hashed_password',
     });
     expect(updateUserUsecaseSpy.callsCount).toBe(1);
@@ -118,8 +118,8 @@ describe('UpdateUserController', () => {
 
     expect(updateUserUsecaseSpy.params).toEqual({
       id: 'any_id',
-      name: 'any_name',
-      email: 'any_email@mail.com',
+      name: 'other_name',
+      email: 'other_email@mail.com',
       newPassword: 'other_password',
       password: 'any_password',
       passwordHash: 'any_hashed_password',

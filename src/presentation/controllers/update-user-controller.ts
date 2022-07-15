@@ -1,5 +1,5 @@
 import { LoadUser, UpdateUser } from '@/domain/usecases';
-import { Controller, Validation } from '@/presentation/protocols';
+import { Controller, Validation, HttpResponse } from '@/presentation/protocols';
 import { InvalidParamError } from '@/presentation/errors';
 import { badRequest, forbidden, noContent, serverError } from '@/presentation/helpers';
 
@@ -10,7 +10,7 @@ export class UpdateUserController implements Controller {
     private readonly updateUpdate: UpdateUser,
   ) {}
 
-  async handle(request: UpdateUserController.Request): Promise<any> {
+  async handle(request: UpdateUserController.Request): Promise<HttpResponse> {
     try {
       const error = this.validation.validate(request);
       if (error) {
@@ -22,13 +22,12 @@ export class UpdateUserController implements Controller {
       }
       const userNewData = {
         id: userData.id,
-        name: userData.name,
-        email: userData.email,
+        name: request.name,
+        email: request.email,
         password: request.password,
         passwordHash: userData.password,
         newPassword: request.newPassword,
       };
-
       const { wasSuccessful } = await this.updateUpdate.perform(userNewData);
       if (!wasSuccessful) {
         return forbidden(new InvalidParamError('password'));
