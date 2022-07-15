@@ -23,8 +23,11 @@ export class UpdateUserUsecase implements UpdateUser {
       }
       newPasswordHashed = await this.hasher.hash({ plaintext: newPassword });
     }
-    await this.loadUserByEmailRepository.loadByEmail({ email });
-    this.updateUserRepository.update({
+    const userData = await this.loadUserByEmailRepository.loadByEmail({ email });
+    if (userData?.id !== id) {
+      return { success: false, invalidField: 'email' };
+    }
+    await this.updateUserRepository.update({
       id,
       name,
       email,
