@@ -67,4 +67,25 @@ describe('User Routes', () => {
         .expect(401);
     });
   });
+
+  describe('/update-user/:userId', () => {
+    test('Should return 204 on success', async () => {
+      const password = await hash('jhon_doe@123', 12);
+      const usersCollection = FirestoreHelper.getCollection('users');
+
+      const user = await usersCollection.add({
+        name: 'John Doe',
+        email: 'jhon_doe@mail.com',
+        password,
+      });
+
+      await request(app)
+        .put(`/api/update-user/${user.id}`)
+        .send({
+          name: 'Johnny Doe',
+          email: 'jhon_doe@mail.com',
+        })
+        .expect(204);
+    });
+  });
 });
