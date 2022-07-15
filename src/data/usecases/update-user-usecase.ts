@@ -22,14 +22,12 @@ export class UpdateUserUsecase implements UpdateUser {
       }
       newPasswordHashed = await this.hasher.hash({ plaintext: newPassword });
     }
-
     this.updateUserRepository.update({
       id,
       name,
       email,
       password: newPasswordHashed?.ciphertext || passwordHash,
     });
-
     return { wasSuccessful: true };
   }
 }
