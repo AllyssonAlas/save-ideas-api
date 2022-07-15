@@ -28,8 +28,8 @@ export class UpdateUserController implements Controller {
         passwordHash: userData.password,
         newPassword: request.newPassword,
       };
-      const { success } = await this.updateUpdate.perform(userNewData);
-      if (!success) {
+      const { success, invalidField } = await this.updateUpdate.perform(userNewData);
+      if (!success && invalidField === 'password') {
         return forbidden(new InvalidParamError('password'));
       }
       return noContent();
