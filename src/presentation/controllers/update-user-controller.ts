@@ -1,6 +1,6 @@
 import { LoadUser, UpdateUser } from '@/domain/usecases';
 import { Controller, Validation, HttpResponse } from '@/presentation/protocols';
-import { InvalidParamError } from '@/presentation/errors';
+import { EmailInUseError, InvalidParamError } from '@/presentation/errors';
 import { badRequest, forbidden, noContent, serverError } from '@/presentation/helpers';
 
 export class UpdateUserController implements Controller {
@@ -31,6 +31,8 @@ export class UpdateUserController implements Controller {
       const { success, invalidField } = await this.updateUpdate.perform(userNewData);
       if (!success && invalidField === 'password') {
         return forbidden(new InvalidParamError('password'));
+      } else if (!success && invalidField === 'email') {
+        return forbidden(new EmailInUseError());
       }
       return noContent();
     } catch (error) {
