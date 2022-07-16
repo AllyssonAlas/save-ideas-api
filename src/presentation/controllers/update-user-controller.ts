@@ -13,9 +13,7 @@ export class UpdateUserController implements Controller {
   async handle(request: UpdateUserController.Request): Promise<HttpResponse> {
     try {
       const { name, email, password, newPassword } = request;
-
       const error = this.validation.validate(request);
-
       if (error) {
         const optionalFields = ['password', 'newPassword', 'newPasswordConfirmation'];
         const requestFields = Object.keys(request);
