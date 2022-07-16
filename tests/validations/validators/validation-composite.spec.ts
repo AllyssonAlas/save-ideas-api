@@ -1,4 +1,4 @@
-import { ValidationComposite } from '@/presentation/validators';
+import { ValidationComposite } from '@/validations/validators';
 import { MissingParamError } from '@/presentation/errors';
 
 import { ValidationSpy } from '@/tests/presentation/mocks';

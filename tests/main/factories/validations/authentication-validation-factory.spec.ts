@@ -1,8 +1,8 @@
 import { Validation } from '@/presentation/protocols';
-import { ValidationComposite, RequiredFieldValidation } from '@/presentation/validators';
+import { ValidationComposite, RequiredFieldValidation } from '@/validations/validators';
 import { makeAuthenticationValidation } from '@/main/factories/validations';
 
-jest.mock('@/presentation/validators/validation-composite');
+jest.mock('@/validations/validators/validation-composite');
 
 describe('AuthenticationValidationFactory', () => {
   test('Should call ValidationComposite with all validations', () => {

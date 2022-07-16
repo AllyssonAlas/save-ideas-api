@@ -1,4 +1,4 @@
-import { EmailValidation } from '@/presentation/validators';
+import { EmailValidation } from '@/validations/validators';
 import { InvalidParamError } from '@/presentation/errors';
 
 import { EmailValidatorSpy } from '@/tests/presentation/mocks';
