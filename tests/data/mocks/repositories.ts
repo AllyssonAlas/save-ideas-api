@@ -1,13 +1,14 @@
 import {
   CreateUserRepository,
-  LoadUserRepository,
+  LoadUserByIdRepository,
+  LoadUserByEmailRepository,
   LogErrorRepository,
   UpdateUserRepository,
 } from '@/data/protocols/repositories';
 
-export class LoadUserRepositorySpy implements LoadUserRepository {
-  params?: LoadUserRepository.Params;
-  result: LoadUserRepository.Result = {
+export class LoadUserByEmailRepositorySpy implements LoadUserByEmailRepository {
+  params?: LoadUserByEmailRepository.Params;
+  result: LoadUserByEmailRepository.Result = {
     id: 'any_id',
     name: 'any_name',
     email: 'any_email@mail.com',
@@ -17,7 +18,28 @@ export class LoadUserRepositorySpy implements LoadUserRepository {
 
   callsCount = 0;
 
-  async load(params: LoadUserRepository.Params): Promise<LoadUserRepository.Result> {
+  async loadByEmail(
+    params: LoadUserByEmailRepository.Params,
+  ): Promise<LoadUserByEmailRepository.Result> {
+    this.callsCount++;
+    this.params = params;
+    return Promise.resolve(this.result);
+  }
+}
+
+export class LoadUserByIdRepositorySpy implements LoadUserByIdRepository {
+  params?: LoadUserByIdRepository.Params;
+  result: LoadUserByIdRepository.Result = {
+    id: 'any_id',
+    name: 'any_name',
+    email: 'any_email@mail.com',
+    password: 'any_password',
+    accessToken: 'any_access_token',
+  };
+
+  callsCount = 0;
+
+  async loadById(params: LoadUserByIdRepository.Params): Promise<LoadUserByIdRepository.Result> {
     this.callsCount++;
     this.params = params;
     return Promise.resolve(this.result);

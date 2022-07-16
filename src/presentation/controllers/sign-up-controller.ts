@@ -13,10 +13,14 @@ export class SignUpController implements Controller {
   async handle(request: SignUpController.Request): Promise<HttpResponse> {
     try {
       const error = this.validation.validate(request);
-      if (error) return badRequest(error);
+      if (error) {
+        return badRequest(error);
+      }
       const { passwordConfirmation, ...userData } = request;
       const { wasSigned } = await this.signUp.perform(userData);
-      if (!wasSigned) return forbidden(new EmailInUseError());
+      if (!wasSigned) {
+        return forbidden(new EmailInUseError());
+      }
       const authenticationData = await this.authentication.perform({
         email: userData.email,
         password: userData.password,

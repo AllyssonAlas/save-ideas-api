@@ -1,7 +1,7 @@
 import { FirestoreHelper, UserRepository } from '@/infra/db';
 import { CollectionReference } from 'firebase-admin/firestore';
 
-import { mockCreateUserParams } from '@/tests/domain/mocks';
+import { mockSignUpParams } from '@/tests/domain/mocks';
 
 const makeSut = (): UserRepository => {
   return new UserRepository();
@@ -42,13 +42,13 @@ describe('UsersRepository', () => {
     });
   });
 
-  describe('load()', () => {
+  describe('loadByEmail()', () => {
     test('Should return an user if email is valid', async () => {
       const sut = makeSut();
-      const createUserParams = mockCreateUserParams();
+      const createUserParams = mockSignUpParams();
 
       await usersCollection.add(createUserParams);
-      const user = await sut.load({ email: createUserParams.email });
+      const user = await sut.loadByEmail({ email: createUserParams.email });
 
       expect(user).toBeTruthy();
       expect(user?.id).toBeTruthy();
@@ -59,7 +59,7 @@ describe('UsersRepository', () => {
     test('Should return null if email is invalid', async () => {
       const sut = makeSut();
 
-      const user = await sut.load({ email: 'invalid_email@mail.com' });
+      const user = await sut.loadByEmail({ email: 'invalid_email@mail.com' });
 
       expect(user).toBeNull();
     });
@@ -68,10 +68,10 @@ describe('UsersRepository', () => {
   describe('update()', () => {
     test('Should return an user update with the data received', async () => {
       const sut = makeSut();
-      const createUserParams = mockCreateUserParams();
+      const createUserParams = mockSignUpParams();
       await usersCollection.add(createUserParams);
 
-      const user = await sut.load({ email: createUserParams.email });
+      const user = await sut.loadByEmail({ email: createUserParams.email });
       await sut.update({
         id: user?.id || 'any_id',
         name: 'other_name',
@@ -79,11 +79,39 @@ describe('UsersRepository', () => {
         password: 'other_password',
         accessToken: 'any_token',
       });
-      const updatedUser = await sut.load({ email: 'other_mail@mail.com' });
+      const updatedUser = await sut.loadByEmail({ email: 'other_mail@mail.com' });
 
       expect(updatedUser?.name).toBe('other_name');
       expect(updatedUser?.password).toBe('other_password');
       expect(updatedUser?.accessToken).toBe('any_token');
+    });
+  });
+
+  describe('loadById()', () => {
+    test('Should return an user if id is valid', async () => {
+      const sut = makeSut();
+
+      await usersCollection.doc('any_id').set({
+        name: 'any_name',
+        email: 'any_email@email.com',
+        password: 'any_password',
+        accessToken: 'any_access_token',
+      });
+      const user = await sut.loadById({ id: 'any_id' });
+
+      expect(user).toBeTruthy();
+      expect(user?.name).toBe('any_name');
+      expect(user?.email).toBe('any_email@email.com');
+      expect(user?.password).toBe('any_password');
+      expect(user?.accessToken).toBe('any_access_token');
+    });
+
+    test('Should return null if id is invalid', async () => {
+      const sut = makeSut();
+
+      const user = await sut.loadById({ id: 'any_id' });
+
+      expect(user).toBeNull();
     });
   });
 });

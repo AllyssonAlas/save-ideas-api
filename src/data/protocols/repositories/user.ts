@@ -1,12 +1,26 @@
 import { User } from '@/domain/models';
 
-export interface LoadUserRepository {
-  load: (params: LoadUserRepository.Params) => Promise<LoadUserRepository.Result>;
+export interface LoadUserByEmailRepository {
+  loadByEmail: (
+    params: LoadUserByEmailRepository.Params,
+  ) => Promise<LoadUserByEmailRepository.Result>;
 }
 
-export namespace LoadUserRepository {
+export namespace LoadUserByEmailRepository {
   export type Params = {
     email: string;
+  };
+
+  export type Result = null | User;
+}
+
+export interface LoadUserByIdRepository {
+  loadById: (params: LoadUserByIdRepository.Params) => Promise<LoadUserByIdRepository.Result>;
+}
+
+export namespace LoadUserByIdRepository {
+  export type Params = {
+    id: string;
   };
 
   export type Result = null | User;
@@ -31,13 +45,7 @@ export interface UpdateUserRepository {
 }
 
 export namespace UpdateUserRepository {
-  export type Params = {
-    id: string;
-    name: string;
-    email: string;
-    password: string;
-    accessToken: string;
-  };
+  export type Params = User;
 
   export type Result = void;
 }
