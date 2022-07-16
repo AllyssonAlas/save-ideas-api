@@ -1,14 +1,14 @@
 import { Validation } from '@/presentation/protocols';
-import { EmailValidatorAdapter } from '@/presentation/utils';
 import {
   CompareFieldsValidation,
   EmailValidation,
   RequiredFieldValidation,
   ValidationComposite,
-} from '@/presentation/validators';
+} from '@/validations/validators';
+import { EmailValidatorAdapter } from '@/infra/gateways';
 import { makeUpdateUserValidation } from '@/main/factories/validations';
 
-jest.mock('@/presentation/validators/validation-composite');
+jest.mock('@/validations/validators/validation-composite');
 
 describe('UpdateUserValidationFactory', () => {
   test('Should call ValidationComposite with all validations', () => {

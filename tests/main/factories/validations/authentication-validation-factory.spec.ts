@@ -1,8 +1,13 @@
 import { Validation } from '@/presentation/protocols';
-import { ValidationComposite, RequiredFieldValidation } from '@/presentation/validators';
+import {
+  ValidationComposite,
+  RequiredFieldValidation,
+  EmailValidation,
+} from '@/validations/validators';
+import { EmailValidatorAdapter } from '@/infra/gateways';
 import { makeAuthenticationValidation } from '@/main/factories/validations';
 
-jest.mock('@/presentation/validators/validation-composite');
+jest.mock('@/validations/validators/validation-composite');
 
 describe('AuthenticationValidationFactory', () => {
   test('Should call ValidationComposite with all validations', () => {
@@ -12,6 +17,7 @@ describe('AuthenticationValidationFactory', () => {
     for (const field of ['email', 'password']) {
       validations.push(new RequiredFieldValidation(field));
     }
+    validations.push(new EmailValidation('email', new EmailValidatorAdapter()));
 
     expect(ValidationComposite).toHaveBeenCalledWith(validations);
   });
