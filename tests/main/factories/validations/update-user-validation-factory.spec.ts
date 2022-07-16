@@ -15,7 +15,14 @@ describe('UpdateUserValidationFactory', () => {
     makeUpdateUserValidation();
     const validations: Validation[] = [];
 
-    for (const field of ['userId', 'name', 'email']) {
+    for (const field of [
+      'userId',
+      'name',
+      'email',
+      'password',
+      'newPassword',
+      'newPasswordConfirmation',
+    ]) {
       validations.push(new RequiredFieldValidation(field));
     }
     validations.push(new CompareFieldsValidation('newPassword', 'newPasswordConfirmation'));

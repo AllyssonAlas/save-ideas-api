@@ -43,13 +43,28 @@ describe('UpdateUserController', () => {
     expect(validationSpy.callsCount).toBe(1);
   });
 
-  test('Should call return 400 if Validation returns an error', async () => {
+  test('Should return 400 if Validation returns an error', async () => {
     const { sut, validationSpy } = makeSut();
     validationSpy.error = new MissingParamError('field');
 
     const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(badRequest(new MissingParamError('field')));
+  });
+
+  test('Should return 400 if Validation returns optional field missing', async () => {
+    const { sut, validationSpy } = makeSut();
+    validationSpy.error = new MissingParamError('newPassword');
+    const request = {
+      userId: 'any_id',
+      name: 'other_name',
+      email: 'other_email@mail.com',
+      password: '123456',
+    };
+
+    const httpResponse = await sut.handle(request);
+
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('newPassword')));
   });
 
   test('Should return 500 if Validation throws', async () => {

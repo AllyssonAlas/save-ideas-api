@@ -12,9 +12,21 @@ export class UpdateUserController implements Controller {
 
   async handle(request: UpdateUserController.Request): Promise<HttpResponse> {
     try {
+      const { name, email, password, newPassword } = request;
+
       const error = this.validation.validate(request);
+
       if (error) {
-        return badRequest(error);
+        const optionalFields = ['password', 'newPassword', 'newPasswordConfirmation'];
+        const requestFields = Object.keys(request);
+        const hasOptionalFields = requestFields.some((field) => optionalFields.includes(field));
+        const hasOptionalFieldError = optionalFields.some((field) => error.message.includes(field));
+        if (
+          (hasOptionalFields && hasOptionalFieldError) ||
+          (!hasOptionalFields && !hasOptionalFieldError)
+        ) {
+          return badRequest(error);
+        }
       }
       const userData = await this.loadUser.perform({ id: request.userId });
       if (!userData) {
@@ -22,11 +34,11 @@ export class UpdateUserController implements Controller {
       }
       const userNewData = {
         id: userData.id,
-        name: request.name,
-        email: request.email,
-        password: request.password,
+        name,
+        email,
+        password,
         passwordHash: userData.password,
-        newPassword: request.newPassword,
+        newPassword,
       };
       const { success, invalidField } = await this.updateUpdate.perform(userNewData);
       if (!success && invalidField === 'password') {
