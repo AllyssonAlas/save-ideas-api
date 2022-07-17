@@ -96,7 +96,7 @@ describe('UpdateUserUsecase', () => {
     expect(hasherSpy.callsCount).toBe(0);
   });
 
-  test('Should call LoadUserByEmailRepository with correct values', async () => {
+  test('Should call LoadUserByFieldRepository with correct values', async () => {
     const { sut, loadUserByEmailRepositorySpy } = makeSut();
 
     await sut.perform(mockUpdaterUserParamsWithNewPassword());
@@ -105,9 +105,9 @@ describe('UpdateUserUsecase', () => {
     expect(loadUserByEmailRepositorySpy.callsCount).toBe(1);
   });
 
-  test('Should throw if LoadUserByEmailRepository throws', async () => {
+  test('Should throw if LoadUserByFieldRepository throws', async () => {
     const { sut, loadUserByEmailRepositorySpy } = makeSut();
-    jest.spyOn(loadUserByEmailRepositorySpy, 'loadByEmail').mockImplementationOnce(() => {
+    jest.spyOn(loadUserByEmailRepositorySpy, 'loadByField').mockImplementationOnce(() => {
       throw new Error();
     });
 
@@ -116,7 +116,7 @@ describe('UpdateUserUsecase', () => {
     await expect(promise).rejects.toThrow();
   });
 
-  test('Should return success false and email as invalid field if LoadUserByEmailRepository return an user with different id', async () => {
+  test('Should return success false and email as invalid field if LoadUserByFieldRepository return an user with different id', async () => {
     const { sut, loadUserByEmailRepositorySpy } = makeSut();
     loadUserByEmailRepositorySpy.result = {
       id: 'other_id',

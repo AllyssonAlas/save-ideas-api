@@ -46,7 +46,7 @@ describe('SignUpUsecase', () => {
     await expect(promise).rejects.toThrow();
   });
 
-  test('Should call LoadUserByEmailRepository with correct value', async () => {
+  test('Should call LoadUserByFieldRepository with correct value', async () => {
     const { sut, loadUserByEmailRepositorySpy } = makeSut();
     const userData = mockSignUpParams();
 
@@ -56,9 +56,9 @@ describe('SignUpUsecase', () => {
     expect(loadUserByEmailRepositorySpy.callsCount).toBe(1);
   });
 
-  test('Should throw if LoadUserByEmailRepository throws', async () => {
+  test('Should throw if LoadUserByFieldRepository throws', async () => {
     const { sut, loadUserByEmailRepositorySpy } = makeSut();
-    jest.spyOn(loadUserByEmailRepositorySpy, 'loadByEmail').mockImplementationOnce(() => {
+    jest.spyOn(loadUserByEmailRepositorySpy, 'loadByField').mockImplementationOnce(() => {
       throw new Error();
     });
 
@@ -67,9 +67,9 @@ describe('SignUpUsecase', () => {
     await expect(promise).rejects.toThrow();
   });
 
-  test('Should return SignUpError when LoadUserByEmailRepository returns user data', async () => {
+  test('Should return SignUpError when LoadUserByFieldRepository returns user data', async () => {
     const { sut, loadUserByEmailRepositorySpy } = makeSut();
-    jest.spyOn(loadUserByEmailRepositorySpy, 'loadByEmail').mockReturnValueOnce(
+    jest.spyOn(loadUserByEmailRepositorySpy, 'loadByField').mockReturnValueOnce(
       Promise.resolve({
         id: 'any_id',
         name: 'any_name',
@@ -84,7 +84,7 @@ describe('SignUpUsecase', () => {
     expect(signUpResult).toEqual({ wasSigned: false });
   });
 
-  test('Should call CreateUserRepository with correct values if LoadUserByEmailRepository returns null', async () => {
+  test('Should call CreateUserRepository with correct values if LoadUserByFieldRepository returns null', async () => {
     const { sut, createUserRepositorySpy } = makeSut();
 
     await sut.perform(mockSignUpParams());

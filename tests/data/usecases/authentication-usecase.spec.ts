@@ -39,7 +39,7 @@ const makeSut = (): SutTypes => {
 };
 
 describe('AuthenticationUsecase', () => {
-  test('Should call LoadUserByEmailRepository with correct value', async () => {
+  test('Should call LoadUserByFieldRepository with correct value', async () => {
     const { sut, loadUserByEmailRepositorySpy } = makeSut();
 
     await sut.perform(mockAuthenticationParams());
@@ -48,9 +48,9 @@ describe('AuthenticationUsecase', () => {
     expect(loadUserByEmailRepositorySpy.callsCount).toBe(1);
   });
 
-  test('Should throw if LoadUserByEmailRepository throws', async () => {
+  test('Should throw if LoadUserByFieldRepository throws', async () => {
     const { sut, loadUserByEmailRepositorySpy } = makeSut();
-    jest.spyOn(loadUserByEmailRepositorySpy, 'loadByEmail').mockImplementationOnce(() => {
+    jest.spyOn(loadUserByEmailRepositorySpy, 'loadByField').mockImplementationOnce(() => {
       throw new Error();
     });
 
@@ -59,7 +59,7 @@ describe('AuthenticationUsecase', () => {
     await expect(promise).rejects.toThrow();
   });
 
-  test('Should return null if LoadUserByEmailRepository returns null', async () => {
+  test('Should return null if LoadUserByFieldRepository returns null', async () => {
     const { sut, loadUserByEmailRepositorySpy } = makeSut();
     loadUserByEmailRepositorySpy.result = null;
 

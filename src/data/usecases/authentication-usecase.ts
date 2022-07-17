@@ -1,17 +1,17 @@
 import { Authentication } from '@/domain/usecases';
-import { LoadUserByEmailRepository, UpdateUserRepository } from '@/data/protocols/repositories';
+import { LoadUserByFieldRepository, UpdateUserRepository } from '@/data/protocols/repositories';
 import { Encrypter, HasherComparer } from '@/data/protocols/gateways';
 
 export class AuthenticationUsecase implements Authentication {
   constructor(
-    private readonly loadUserByEmailRepository: LoadUserByEmailRepository,
+    private readonly loadUserByFieldRepository: LoadUserByFieldRepository,
     private readonly hasherComparer: HasherComparer,
     private readonly encrypter: Encrypter,
     private readonly updateUserRepository: UpdateUserRepository,
   ) {}
 
   async perform(params: Authentication.Params): Promise<Authentication.Result> {
-    const userData = await this.loadUserByEmailRepository.loadByEmail({ email: params.email });
+    const userData = await this.loadUserByFieldRepository.loadByField({ email: params.email });
     if (userData) {
       const { isValid } = await this.hasherComparer.compare({
         plaintext: params.password,

@@ -1,6 +1,6 @@
 import {
   CreateUserRepository,
-  LoadUserByEmailRepository,
+  LoadUserByFieldRepository,
   UpdateUserRepository,
   LoadUserByIdRepository,
 } from '@/data/protocols/repositories';
@@ -9,7 +9,7 @@ import { FirestoreHelper } from '@/infra/db';
 // eslint-disable-next-line prettier/prettier
 export class UserRepository implements
     CreateUserRepository,
-    LoadUserByEmailRepository,
+    LoadUserByFieldRepository,
     UpdateUserRepository,
     LoadUserByIdRepository
 {
@@ -19,11 +19,13 @@ export class UserRepository implements
     return !!result;
   }
 
-  async loadByEmail(
-    params: LoadUserByEmailRepository.Params,
-  ): Promise<LoadUserByEmailRepository.Result> {
+  async loadByField(
+    params: LoadUserByFieldRepository.Params,
+  ): Promise<LoadUserByFieldRepository.Result> {
+    const [field] = Object.keys(params);
+    const [fieldValue] = Object.values(params);
     const usersCollection = FirestoreHelper.getCollection('users');
-    const usersSnapshot = await usersCollection.where('email', '==', params.email).get();
+    const usersSnapshot = await usersCollection.where(field, '==', fieldValue).get();
     if (usersSnapshot.empty) return null;
     const users = FirestoreHelper.collectionMapper(usersSnapshot);
     return users[0];
