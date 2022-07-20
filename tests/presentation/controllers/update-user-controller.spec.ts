@@ -4,7 +4,7 @@ import { badRequest, forbidden, noContent, serverError } from '@/presentation/he
 
 import {
   ValidationSpy,
-  LoadUserUsecaseSpy,
+  LoadUserByIdUsecaseSpy,
   UpdateUserUsecaseSpy,
 } from '@/tests/presentation/mocks';
 
@@ -17,16 +17,16 @@ const mockRequest = (): UpdateUserController.Request => ({
 interface SutTypes {
   sut: UpdateUserController;
   validationSpy: ValidationSpy;
-  loadUserUsecaseSpy: LoadUserUsecaseSpy;
+  loadUserByIdUsecaseSpy: LoadUserByIdUsecaseSpy;
   updateUserUsecaseSpy: UpdateUserUsecaseSpy;
 }
 
 const makeSut = (): SutTypes => {
   const updateUserUsecaseSpy = new UpdateUserUsecaseSpy();
-  const loadUserUsecaseSpy = new LoadUserUsecaseSpy();
+  const loadUserByIdUsecaseSpy = new LoadUserByIdUsecaseSpy();
   const validationSpy = new ValidationSpy();
-  const sut = new UpdateUserController(validationSpy, loadUserUsecaseSpy, updateUserUsecaseSpy);
-  return { sut, validationSpy, loadUserUsecaseSpy, updateUserUsecaseSpy };
+  const sut = new UpdateUserController(validationSpy, loadUserByIdUsecaseSpy, updateUserUsecaseSpy);
+  return { sut, validationSpy, loadUserByIdUsecaseSpy, updateUserUsecaseSpy };
 };
 
 describe('UpdateUserController', () => {
@@ -79,17 +79,17 @@ describe('UpdateUserController', () => {
   });
 
   test('Should call LoadUserUsecase with correct values', async () => {
-    const { sut, loadUserUsecaseSpy } = makeSut();
+    const { sut, loadUserByIdUsecaseSpy } = makeSut();
 
     await sut.handle(mockRequest());
 
-    expect(loadUserUsecaseSpy.params).toEqual({ id: 'any_id' });
-    expect(loadUserUsecaseSpy.callsCount).toBe(1);
+    expect(loadUserByIdUsecaseSpy.params).toEqual({ id: 'any_id' });
+    expect(loadUserByIdUsecaseSpy.callsCount).toBe(1);
   });
 
-  test('Should return 500 if LoadUserUsecaseSpy throws', async () => {
-    const { sut, loadUserUsecaseSpy } = makeSut();
-    jest.spyOn(loadUserUsecaseSpy, 'perform').mockImplementationOnce(() => {
+  test('Should return 500 if LoadUserByIdUsecaseSpy throws', async () => {
+    const { sut, loadUserByIdUsecaseSpy } = makeSut();
+    jest.spyOn(loadUserByIdUsecaseSpy, 'perform').mockImplementationOnce(() => {
       throw new Error();
     });
 
@@ -99,8 +99,8 @@ describe('UpdateUserController', () => {
   });
 
   test('Should return 403 if invalid id is provided', async () => {
-    const { sut, loadUserUsecaseSpy } = makeSut();
-    loadUserUsecaseSpy.result = null;
+    const { sut, loadUserByIdUsecaseSpy } = makeSut();
+    loadUserByIdUsecaseSpy.result = null;
 
     const httpResponse = await sut.handle(mockRequest());
 

@@ -1,4 +1,4 @@
-import { Authentication, SignUp, LoadUser, UpdateUser } from '@/domain/usecases';
+import { Authentication, SignUp, LoadUserById, UpdateUser } from '@/domain/usecases';
 
 export class SignUpUsecaseSpy implements SignUp {
   params?: SignUp.Params;
@@ -30,9 +30,9 @@ export class AuthenticationUsecaseSpy implements Authentication {
   }
 }
 
-export class LoadUserUsecaseSpy implements LoadUser {
-  params?: LoadUser.Params;
-  result: LoadUser.Result = {
+export class LoadUserByIdUsecaseSpy implements LoadUserById {
+  params?: LoadUserById.Params;
+  result: LoadUserById.Result = {
     id: 'any_id',
     name: 'any_name',
     email: 'any_email@mail.com',
@@ -42,7 +42,7 @@ export class LoadUserUsecaseSpy implements LoadUser {
 
   callsCount = 0;
 
-  async perform(params: LoadUser.Params): Promise<LoadUser.Result> {
+  async perform(params: LoadUserById.Params): Promise<LoadUserById.Result> {
     this.params = params;
     this.callsCount++;
     return Promise.resolve(this.result);
