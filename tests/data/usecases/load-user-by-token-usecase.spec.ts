@@ -33,4 +33,12 @@ describe('LoadUserByTokenUsecase', () => {
 
     await expect(promise).rejects.toThrow();
   });
+
+  test('Should return null if Decryter returns false', async () => {
+    const { sut } = makeSut();
+
+    const loadUserResult = await sut.perform({ accessToken: 'any_token' });
+
+    expect(loadUserResult).toBeNull();
+  });
 });
