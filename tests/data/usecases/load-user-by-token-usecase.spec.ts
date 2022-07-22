@@ -62,4 +62,12 @@ describe('LoadUserByTokenUsecase', () => {
 
     await expect(promise).rejects.toThrow();
   });
+
+  test('Should return null if LoadUserByFieldRepository returns false', async () => {
+    const { sut } = makeSut();
+
+    const loadUserResult = await sut.perform({ accessToken: 'any_token' });
+
+    expect(loadUserResult).toBeNull();
+  });
 });
