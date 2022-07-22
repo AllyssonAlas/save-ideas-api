@@ -51,4 +51,15 @@ describe('LoadUserByTokenUsecase', () => {
     expect(loadUserByEmailRepositorySpy.params).toEqual({ accessToken: 'any_token' });
     expect(loadUserByEmailRepositorySpy.callsCount).toBe(1);
   });
+
+  test('Should throw if LoadUserByFieldRepository throws', async () => {
+    const { sut, loadUserByEmailRepositorySpy } = makeSut();
+    jest.spyOn(loadUserByEmailRepositorySpy, 'loadByField').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const promise = sut.perform({ accessToken: 'any_token' });
+
+    await expect(promise).rejects.toThrow();
+  });
 });
