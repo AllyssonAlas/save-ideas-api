@@ -11,8 +11,13 @@ export class LoadUserByTokenUsecase implements LoadUserByToken {
   async perform(params: LoadUserByToken.Params): Promise<LoadUserByToken.Result> {
     const { isTokenValid } = await this.decrypter.decrypt({ ciphertext: params.accessToken });
     if (isTokenValid) {
-      await this.loadUserByFieldRepository.loadByField({ accessToken: params.accessToken });
+      const userData = await this.loadUserByFieldRepository.loadByField({
+        accessToken: params.accessToken,
+      });
+      if (userData) {
+        return { id: userData.id };
+      }
     }
-    return Promise.resolve(null);
+    return null;
   }
 }
