@@ -22,4 +22,15 @@ describe('LoadUserByTokenUsecase', () => {
     expect(decrypterSpy.params).toEqual({ ciphertext: 'any_token' });
     expect(decrypterSpy.callsCount).toBe(1);
   });
+
+  test('Should throw if Decryter throws', async () => {
+    const { sut, decrypterSpy } = makeSut();
+    jest.spyOn(decrypterSpy, 'decrypt').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const promise = sut.perform({ accessToken: 'any_token' });
+
+    await expect(promise).rejects.toThrow();
+  });
 });
