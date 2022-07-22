@@ -36,7 +36,8 @@ describe('LoadUserByTokenUsecase', () => {
   });
 
   test('Should return null if Decryter returns false', async () => {
-    const { sut } = makeSut();
+    const { sut, decrypterSpy } = makeSut();
+    decrypterSpy.result = { isTokenValid: false };
 
     const loadUserResult = await sut.perform({ accessToken: 'any_token' });
 
@@ -63,11 +64,20 @@ describe('LoadUserByTokenUsecase', () => {
     await expect(promise).rejects.toThrow();
   });
 
-  test('Should return null if LoadUserByFieldRepository returns false', async () => {
-    const { sut } = makeSut();
+  test('Should return null if LoadUserByFieldRepository returns null', async () => {
+    const { sut, loadUserByEmailRepositorySpy } = makeSut();
+    loadUserByEmailRepositorySpy.result = null;
 
     const loadUserResult = await sut.perform({ accessToken: 'any_token' });
 
     expect(loadUserResult).toBeNull();
+  });
+
+  test('Should return an user on success', async () => {
+    const { sut } = makeSut();
+
+    const loadUserResult = await sut.perform({ accessToken: 'any_token' });
+
+    expect(loadUserResult).toEqual({ id: 'any_id' });
   });
 });
