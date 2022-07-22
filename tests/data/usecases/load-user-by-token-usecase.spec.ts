@@ -1,16 +1,17 @@
 import { LoadUserByTokenUsecase } from '@/data/usecases';
 
-import { DecrypterSpy } from '@/tests/data/mocks';
-
+import { DecrypterSpy, LoadUserByEmailRepositorySpy } from '@/tests/data/mocks';
 interface SutTypes {
   sut: LoadUserByTokenUsecase;
   decrypterSpy: DecrypterSpy;
+  loadUserByEmailRepositorySpy: LoadUserByEmailRepositorySpy;
 }
 
 const makeSut = (): SutTypes => {
+  const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy();
   const decrypterSpy = new DecrypterSpy();
-  const sut = new LoadUserByTokenUsecase(decrypterSpy);
-  return { sut, decrypterSpy };
+  const sut = new LoadUserByTokenUsecase(decrypterSpy, loadUserByEmailRepositorySpy);
+  return { sut, decrypterSpy, loadUserByEmailRepositorySpy };
 };
 
 describe('LoadUserByTokenUsecase', () => {
@@ -40,5 +41,14 @@ describe('LoadUserByTokenUsecase', () => {
     const loadUserResult = await sut.perform({ accessToken: 'any_token' });
 
     expect(loadUserResult).toBeNull();
+  });
+
+  test('Should call LoadUserByFieldRepository with correct value', async () => {
+    const { sut, loadUserByEmailRepositorySpy } = makeSut();
+
+    await sut.perform({ accessToken: 'any_token' });
+
+    expect(loadUserByEmailRepositorySpy.params).toEqual({ accessToken: 'any_token' });
+    expect(loadUserByEmailRepositorySpy.callsCount).toBe(1);
   });
 });
