@@ -1,6 +1,6 @@
 import { AuthMiddleware } from '@/presentation/middlewares';
 import { AccessDeniedError } from '@/presentation/errors';
-import { forbidden, ok } from '@/presentation/helpers';
+import { forbidden, ok, serverError } from '@/presentation/helpers';
 
 import { LoadUserByTokenUsecaseSpy } from '@/tests/presentation/mocks';
 
@@ -30,6 +30,17 @@ describe('AuthMiddleware', () => {
     await sut.handle({ accessToken: 'any_token' });
 
     expect(loadUserByTokenUsecaseSpy.params).toEqual({ accessToken: 'any_token' });
+  });
+
+  test('Should return 500 if loadUserByTokenUsecaseSpy throws', async () => {
+    const { sut, loadUserByTokenUsecaseSpy } = makeSut();
+    jest.spyOn(loadUserByTokenUsecaseSpy, 'perform').mockImplementation(() => {
+      throw new Error();
+    });
+
+    const httpResponse = await sut.handle({ accessToken: 'any_token' });
+
+    expect(httpResponse).toEqual(serverError(new Error()));
   });
 
   test('Should return 403 if LoadUserByToken returns null', async () => {
