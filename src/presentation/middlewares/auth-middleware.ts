@@ -6,7 +6,7 @@ import { AccessDeniedError } from '@/presentation/errors';
 export class AuthMiddleware implements Middleware {
   constructor(private readonly loadUserByToken: LoadUserByToken) {}
 
-  async handle(request: any): Promise<HttpResponse> {
+  async handle(request: AuthMiddleware.Request): Promise<HttpResponse> {
     try {
       if (request.accessToken) {
         const user = await this.loadUserByToken.perform({ accessToken: request.accessToken });
@@ -19,4 +19,10 @@ export class AuthMiddleware implements Middleware {
       return serverError(error);
     }
   }
+}
+
+export namespace AuthMiddleware {
+  export type Request = {
+    accessToken?: string;
+  };
 }
