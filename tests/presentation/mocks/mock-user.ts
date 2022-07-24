@@ -1,4 +1,10 @@
-import { Authentication, SignUp, LoadUserById, UpdateUser } from '@/domain/usecases';
+import {
+  Authentication,
+  SignUp,
+  LoadUserById,
+  LoadUserByToken,
+  UpdateUser,
+} from '@/domain/usecases';
 
 export class SignUpUsecaseSpy implements SignUp {
   params?: SignUp.Params;
@@ -43,6 +49,21 @@ export class LoadUserByIdUsecaseSpy implements LoadUserById {
   callsCount = 0;
 
   async perform(params: LoadUserById.Params): Promise<LoadUserById.Result> {
+    this.params = params;
+    this.callsCount++;
+    return Promise.resolve(this.result);
+  }
+}
+
+export class LoadUserByTokenUsecaseSpy implements LoadUserByToken {
+  params?: LoadUserByToken.Params;
+  result: LoadUserByToken.Result = {
+    id: 'any_id',
+  };
+
+  callsCount = 0;
+
+  async perform(params: LoadUserByToken.Params): Promise<LoadUserByToken.Result> {
     this.params = params;
     this.callsCount++;
     return Promise.resolve(this.result);
