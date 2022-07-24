@@ -91,5 +91,13 @@ describe('JwtAdapter', () => {
 
       expect(result).toEqual({ isTokenValid: false });
     });
+
+    test('Should return true on success', async () => {
+      const { sut } = makeSut();
+
+      const result = await sut.decrypt({ ciphertext: 'any_token' });
+
+      expect(result).toEqual({ isTokenValid: true });
+    });
   });
 });
