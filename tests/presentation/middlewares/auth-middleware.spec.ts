@@ -4,10 +4,20 @@ import { forbidden } from '@/presentation/helpers';
 
 import { LoadUserByTokenUsecaseSpy } from '@/tests/presentation/mocks';
 
+interface SutTypes {
+  sut: AuthMiddleware;
+  loadUserByTokenUsecaseSpy: LoadUserByTokenUsecaseSpy;
+}
+
+const makeSut = (): SutTypes => {
+  const loadUserByTokenUsecaseSpy = new LoadUserByTokenUsecaseSpy();
+  const sut = new AuthMiddleware(loadUserByTokenUsecaseSpy);
+  return { sut, loadUserByTokenUsecaseSpy };
+};
+
 describe('AuthMiddleware', () => {
   test('Should return 403 if no x-access-token exists in headers', async () => {
-    const loadUserByTokenUsecaseSpy = new LoadUserByTokenUsecaseSpy();
-    const sut = new AuthMiddleware(loadUserByTokenUsecaseSpy);
+    const { sut } = makeSut();
 
     const httpResponse = await sut.handle({});
 
@@ -15,8 +25,7 @@ describe('AuthMiddleware', () => {
   });
 
   test('Should call LoadUserByToken with correct accessToken', async () => {
-    const loadUserByTokenUsecaseSpy = new LoadUserByTokenUsecaseSpy();
-    const sut = new AuthMiddleware(loadUserByTokenUsecaseSpy);
+    const { sut, loadUserByTokenUsecaseSpy } = makeSut();
 
     await sut.handle({ accessToken: 'any_token' });
 
