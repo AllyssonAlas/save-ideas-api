@@ -31,4 +31,13 @@ describe('AuthMiddleware', () => {
 
     expect(loadUserByTokenUsecaseSpy.params).toEqual({ accessToken: 'any_token' });
   });
+
+  test('Should return 403 if LoadUserByToken returns null', async () => {
+    const { sut, loadUserByTokenUsecaseSpy } = makeSut();
+    loadUserByTokenUsecaseSpy.result = null;
+
+    const httpResponse = await sut.handle({});
+
+    expect(httpResponse).toEqual(forbidden(new AccessDeniedError()));
+  });
 });
