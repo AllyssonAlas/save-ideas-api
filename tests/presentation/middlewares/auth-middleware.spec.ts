@@ -1,6 +1,6 @@
 import { AuthMiddleware } from '@/presentation/middlewares';
 import { AccessDeniedError } from '@/presentation/errors';
-import { forbidden } from '@/presentation/helpers';
+import { forbidden, ok } from '@/presentation/helpers';
 
 import { LoadUserByTokenUsecaseSpy } from '@/tests/presentation/mocks';
 
@@ -39,5 +39,13 @@ describe('AuthMiddleware', () => {
     const httpResponse = await sut.handle({});
 
     expect(httpResponse).toEqual(forbidden(new AccessDeniedError()));
+  });
+
+  test('Should return 200 if LoadUserByToken returns an valid id', async () => {
+    const { sut, loadUserByTokenUsecaseSpy } = makeSut();
+
+    const httpResponse = await sut.handle({ accessToken: 'any_token' });
+
+    expect(httpResponse).toEqual(ok({ userId: loadUserByTokenUsecaseSpy.result?.id }));
   });
 });
