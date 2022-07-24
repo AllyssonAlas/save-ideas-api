@@ -4,6 +4,8 @@ import { forbidden, ok, serverError } from '@/presentation/helpers';
 
 import { LoadUserByTokenUsecaseSpy } from '@/tests/presentation/mocks';
 
+const mockRequest = (): AuthMiddleware.Request => ({ accessToken: 'any_token' });
+
 interface SutTypes {
   sut: AuthMiddleware;
   loadUserByTokenUsecaseSpy: LoadUserByTokenUsecaseSpy;
@@ -27,7 +29,7 @@ describe('AuthMiddleware', () => {
   test('Should call LoadUserByToken with correct accessToken', async () => {
     const { sut, loadUserByTokenUsecaseSpy } = makeSut();
 
-    await sut.handle({ accessToken: 'any_token' });
+    await sut.handle(mockRequest());
 
     expect(loadUserByTokenUsecaseSpy.params).toEqual({ accessToken: 'any_token' });
   });
@@ -38,7 +40,7 @@ describe('AuthMiddleware', () => {
       throw new Error();
     });
 
-    const httpResponse = await sut.handle({ accessToken: 'any_token' });
+    const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(serverError(new Error()));
   });
@@ -55,7 +57,7 @@ describe('AuthMiddleware', () => {
   test('Should return 200 if LoadUserByToken returns an valid id', async () => {
     const { sut, loadUserByTokenUsecaseSpy } = makeSut();
 
-    const httpResponse = await sut.handle({ accessToken: 'any_token' });
+    const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(ok({ userId: loadUserByTokenUsecaseSpy.result?.id }));
   });
