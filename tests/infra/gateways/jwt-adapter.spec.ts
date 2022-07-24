@@ -12,6 +12,12 @@ jest.mock('jsonwebtoken', () => ({
   },
 }));
 
+const mockJwtError = (): Error => {
+  const jwtError = new Error();
+  jwtError.name = 'TokenExpiredError';
+  return jwtError;
+};
+
 interface SutTypes {
   sut: JwtAdapter;
   secret: string;
@@ -73,6 +79,17 @@ describe('JwtAdapter', () => {
       const promise = sut.decrypt({ ciphertext: 'any_token' });
 
       await expect(promise).rejects.toThrow();
+    });
+
+    test('Should return false on failure', async () => {
+      const { sut } = makeSut();
+      jest.spyOn(jwt, 'verify').mockImplementationOnce(() => {
+        throw mockJwtError();
+      });
+
+      const result = await sut.decrypt({ ciphertext: 'any_token' });
+
+      expect(result).toEqual({ isTokenValid: false });
     });
   });
 });
