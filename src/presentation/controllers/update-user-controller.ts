@@ -1,4 +1,4 @@
-import { LoadUser, UpdateUser } from '@/domain/usecases';
+import { LoadUserById, UpdateUser } from '@/domain/usecases';
 import { Controller, Validation, HttpResponse } from '@/presentation/protocols';
 import { EmailInUseError, InvalidParamError } from '@/presentation/errors';
 import { badRequest, forbidden, noContent, serverError } from '@/presentation/helpers';
@@ -6,7 +6,7 @@ import { badRequest, forbidden, noContent, serverError } from '@/presentation/he
 export class UpdateUserController implements Controller {
   constructor(
     private readonly validation: Validation,
-    private readonly loadUser: LoadUser,
+    private readonly loadUserById: LoadUserById,
     private readonly updateUpdate: UpdateUser,
   ) {}
 
@@ -26,7 +26,7 @@ export class UpdateUserController implements Controller {
           return badRequest(error);
         }
       }
-      const userData = await this.loadUser.perform({ id: request.userId });
+      const userData = await this.loadUserById.perform({ id: request.userId });
       if (!userData) {
         return forbidden(new InvalidParamError('id'));
       }

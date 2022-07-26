@@ -42,13 +42,13 @@ describe('UsersRepository', () => {
     });
   });
 
-  describe('loadByEmail()', () => {
+  describe('loadByField()', () => {
     test('Should return an user if email is valid', async () => {
       const sut = makeSut();
       const createUserParams = mockSignUpParams();
 
       await usersCollection.add(createUserParams);
-      const user = await sut.loadByEmail({ email: createUserParams.email });
+      const user = await sut.loadByField({ email: createUserParams.email });
 
       expect(user).toBeTruthy();
       expect(user?.id).toBeTruthy();
@@ -59,7 +59,7 @@ describe('UsersRepository', () => {
     test('Should return null if email is invalid', async () => {
       const sut = makeSut();
 
-      const user = await sut.loadByEmail({ email: 'invalid_email@mail.com' });
+      const user = await sut.loadByField({ email: 'invalid_email@mail.com' });
 
       expect(user).toBeNull();
     });
@@ -71,7 +71,7 @@ describe('UsersRepository', () => {
       const createUserParams = mockSignUpParams();
       await usersCollection.add(createUserParams);
 
-      const user = await sut.loadByEmail({ email: createUserParams.email });
+      const user = await sut.loadByField({ email: createUserParams.email });
       await sut.update({
         id: user?.id || 'any_id',
         name: 'other_name',
@@ -79,7 +79,7 @@ describe('UsersRepository', () => {
         password: 'other_password',
         accessToken: 'any_token',
       });
-      const updatedUser = await sut.loadByEmail({ email: 'other_mail@mail.com' });
+      const updatedUser = await sut.loadByField({ email: 'other_mail@mail.com' });
 
       expect(updatedUser?.name).toBe('other_name');
       expect(updatedUser?.password).toBe('other_password');

@@ -1,19 +1,19 @@
-import { LoadUserUsecase } from '@/data/usecases';
+import { LoadUserByIdUsecase } from '@/data/usecases';
 
 import { LoadUserByIdRepositorySpy } from '@/tests/data/mocks';
 
 interface SutTypes {
-  sut: LoadUserUsecase;
+  sut: LoadUserByIdUsecase;
   loadUserByIdRepositorySpy: LoadUserByIdRepositorySpy;
 }
 
 const makeSut = (): SutTypes => {
   const loadUserByIdRepositorySpy = new LoadUserByIdRepositorySpy();
-  const sut = new LoadUserUsecase(loadUserByIdRepositorySpy);
+  const sut = new LoadUserByIdUsecase(loadUserByIdRepositorySpy);
   return { sut, loadUserByIdRepositorySpy };
 };
 
-describe('LoadUserUsecase', () => {
+describe('LoadUserByIdUsecase', () => {
   test('Should call LoadUserByIdRepository with correct value', async () => {
     const { sut, loadUserByIdRepositorySpy } = makeSut();
 
