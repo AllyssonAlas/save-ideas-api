@@ -1,9 +1,27 @@
 import { hash } from 'bcrypt';
+import { sign } from 'jsonwebtoken';
 import request from 'supertest';
 
 import { FirestoreHelper } from '@/infra/db';
 
 import app from '@/main/config/app';
+
+const mockAcessToken = async () => {
+  const password = await hash('jhon_doe@123', 12);
+  const usersCollection = FirestoreHelper.getCollection('users');
+
+  const user = await usersCollection.add({
+    name: 'John Doe',
+    email: 'jhon_doe@mail.com',
+    password,
+  });
+
+  const accessToken = sign(user.id, 'secret');
+
+  user.update({ accessToken });
+
+  return { id: user.id, accessToken };
+};
 
 describe('User Routes', () => {
   beforeAll(() => {
@@ -39,14 +57,7 @@ describe('User Routes', () => {
 
   describe('/login', () => {
     test('Should return 200 on success', async () => {
-      const password = await hash('jhon_doe@123', 12);
-      const usersCollection = FirestoreHelper.getCollection('users');
-
-      usersCollection.add({
-        name: 'John Doe',
-        email: 'jhon_doe@mail.com',
-        password,
-      });
+      await mockAcessToken();
 
       await request(app)
         .post('/api/login')
@@ -70,17 +81,11 @@ describe('User Routes', () => {
 
   describe('/update-user/:userId', () => {
     test('Should return 204 on success', async () => {
-      const password = await hash('jhon_doe@123', 12);
-      const usersCollection = FirestoreHelper.getCollection('users');
-
-      const user = await usersCollection.add({
-        name: 'John Doe',
-        email: 'jhon_doe@mail.com',
-        password,
-      });
+      const { id, accessToken } = await mockAcessToken();
 
       await request(app)
-        .put(`/api/update-user/${user.id}`)
+        .put(`/api/update-user/${id}`)
+        .set('x-access-token', accessToken)
         .send({
           name: 'Johnny Doe',
           email: 'jhon_doe@mail.com',
