@@ -5,6 +5,7 @@ import request from 'supertest';
 import { FirestoreHelper } from '@/infra/db';
 
 import app from '@/main/config/app';
+import env from '@/main/config/env';
 
 const mockAcessToken = async () => {
   const password = await hash('jhon_doe@123', 12);
@@ -16,7 +17,7 @@ const mockAcessToken = async () => {
     password,
   });
 
-  const accessToken = sign(user.id, 'secret');
+  const accessToken = sign(user.id, env.jwtSecret);
 
   user.update({ accessToken });
 

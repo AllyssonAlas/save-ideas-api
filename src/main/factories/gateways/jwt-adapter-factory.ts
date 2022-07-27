@@ -1,6 +1,6 @@
 import { JwtAdapter } from '@/infra/gateways';
+import env from '@/main/config/env';
 
 export const makeJwtAdapter = (): JwtAdapter => {
-  const secret = 'secret';
-  return new JwtAdapter(secret);
+  return new JwtAdapter(env.jwtSecret);
 };
