@@ -2,10 +2,21 @@ import { CreateIdeiaUsecase } from '@/data/usecases';
 
 import { CreateIdeiaRepositorySpy } from '@/tests/data/mocks/repositories';
 
+interface SutTypes {
+  sut: CreateIdeiaUsecase;
+  createIdeiaRepositorySpy: CreateIdeiaRepositorySpy;
+}
+
+const makeSut = (): SutTypes => {
+  const createIdeiaRepositorySpy = new CreateIdeiaRepositorySpy();
+  const sut = new CreateIdeiaUsecase(createIdeiaRepositorySpy);
+
+  return { sut, createIdeiaRepositorySpy };
+};
+
 describe('CreateIdeiaUsecase', () => {
   test('Should call CreateIdeiaRepository with correct value', async () => {
-    const createIdeiaRepositorySpy = new CreateIdeiaRepositorySpy();
-    const sut = new CreateIdeiaUsecase(createIdeiaRepositorySpy);
+    const { sut, createIdeiaRepositorySpy } = makeSut();
 
     await sut.perform({
       title: 'any_title_ideia',
