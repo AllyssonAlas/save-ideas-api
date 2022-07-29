@@ -1,6 +1,6 @@
 import { CreateIdeiaUsecase } from '@/data/usecases';
 
-import { CreateIdeiaRepositorySpy } from '@/tests/data/mocks';
+import { CreateIdeiaRepositorySpy } from '@/tests/data/mocks/repositories';
 
 describe('CreateIdeiaUsecase', () => {
   test('Should call CreateIdeiaRepository with correct value', async () => {
