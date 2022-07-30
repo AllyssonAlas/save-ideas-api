@@ -119,4 +119,15 @@ describe('CreateIdeiaController', () => {
     });
     expect(createIdeiaUsecaseSpy.callsCount).toBe(1);
   });
+
+  test('Should return 500 if CreateIdeiaUsecase throws', async () => {
+    const { sut, createIdeiaUsecaseSpy } = makeSut();
+    jest.spyOn(createIdeiaUsecaseSpy, 'perform').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(serverError(new Error()));
+  });
 });
