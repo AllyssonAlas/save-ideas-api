@@ -1,6 +1,7 @@
 import { CreateIdeia, LoadUserById } from '@/domain/usecases';
 import { Controller, Validation } from '@/presentation/protocols';
-import { badRequest, serverError } from '@/presentation/helpers';
+import { badRequest, forbidden, serverError } from '@/presentation/helpers';
+import { InvalidParamError } from '@/presentation/errors';
 
 export class CreateIdeiaController implements Controller {
   constructor(
@@ -14,7 +15,10 @@ export class CreateIdeiaController implements Controller {
       if (error) {
         return badRequest(error);
       }
-      await this.loadUserById.perform({ id: request.userId });
+      const userData = await this.loadUserById.perform({ id: request.userId });
+      if (!userData) {
+        return forbidden(new InvalidParamError('id'));
+      }
       return Promise.resolve(null);
     } catch (error) {
       return serverError(error);
