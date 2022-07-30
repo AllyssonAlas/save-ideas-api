@@ -69,4 +69,15 @@ describe('CreateIdeiaController', () => {
     expect(loadUserByIdUsecaseSpy.params).toEqual({ id: 'any_id' });
     expect(loadUserByIdUsecaseSpy.callsCount).toBe(1);
   });
+
+  test('Should return 500 if LoadUserByIdUsecaseSpy throws', async () => {
+    const { sut, loadUserByIdUsecaseSpy } = makeSut();
+    jest.spyOn(loadUserByIdUsecaseSpy, 'perform').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(serverError(new Error()));
+  });
 });
