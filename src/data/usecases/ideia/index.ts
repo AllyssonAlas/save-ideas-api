@@ -1,1 +1,1 @@
-export * from './create-ideia';
+export * from './create-ideia-usecase';
