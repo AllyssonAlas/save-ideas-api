@@ -22,6 +22,7 @@ describe('CreateIdeiaUsecase', () => {
     await sut.perform(mockCreateIdeiaParams());
 
     expect(createIdeiaRepositorySpy.params).toEqual({
+      ownerId: 'any_user_id',
       title: 'any_title_ideia',
       description: 'any_description_ideia',
       features: [
@@ -49,10 +50,11 @@ describe('CreateIdeiaUsecase', () => {
   test('Should return an ideia on success', async () => {
     const { sut } = makeSut();
 
-    const loadCreateIdeiaResult = await sut.perform(mockCreateIdeiaParams());
+    const createIdeiaResult = await sut.perform(mockCreateIdeiaParams());
 
-    expect(loadCreateIdeiaResult).toEqual({
+    expect(createIdeiaResult).toEqual({
       id: 'any_id',
+      ownerId: 'any_user_id',
       title: 'any_title_ideia',
       description: 'any_description_ideia',
       features: [

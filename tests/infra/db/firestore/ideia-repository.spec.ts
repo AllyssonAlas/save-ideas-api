@@ -30,6 +30,7 @@ describe('IdeiaRepository', () => {
       const sut = makeSut();
 
       const ideia = await sut.create({
+        ownerId: 'any_user_id',
         title: 'any_title_ideia',
         description: 'any_description_ideia',
         features: [
@@ -42,6 +43,7 @@ describe('IdeiaRepository', () => {
       });
 
       expect(ideia.id).toBeTruthy();
+      expect(ideia.ownerId).toBe('any_user_id');
       expect(ideia.title).toBe('any_title_ideia');
       expect(ideia.description).toBe('any_description_ideia');
       expect(ideia.features).toHaveLength(1);

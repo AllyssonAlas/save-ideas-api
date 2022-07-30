@@ -5,6 +5,7 @@ export class CreateIdeiaUsecase implements CreateIdeia {
   constructor(private readonly createIdeiaRepository: CreateIdeiaRepository) {}
 
   async perform(params: CreateIdeia.Params): Promise<CreateIdeia.Result> {
-    return this.createIdeiaRepository.create(params);
+    const { userId, ...ideiaData } = params;
+    return this.createIdeiaRepository.create({ ...ideiaData, ownerId: userId });
   }
 }

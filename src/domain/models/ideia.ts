@@ -6,6 +6,7 @@ type IdeiaFeatures = {
 
 export type Ideia = {
   id: string;
+  ownerId: string;
   title: string;
   description: string;
   features?: IdeiaFeatures[];

@@ -1,7 +1,7 @@
 import { Ideia } from '@/domain/models';
 
 export namespace CreateIdeia {
-  export type Params = Omit<Ideia, 'id'>;
+  export type Params = Omit<Ideia & { userId: string }, 'id' | 'ownerId'>;
 
   export type Result = Ideia;
 }

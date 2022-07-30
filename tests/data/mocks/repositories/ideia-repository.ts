@@ -4,6 +4,7 @@ export class CreateIdeiaRepositorySpy implements CreateIdeiaRepository {
   params?: CreateIdeiaRepository.Params;
   result = {
     id: 'any_id',
+    ownerId: 'any_user_id',
     title: 'any_title_ideia',
     description: 'any_description_ideia',
     features: [
