@@ -2,7 +2,11 @@ import { CreateIdeiaController } from '@/presentation/controllers';
 import { InvalidParamError, MissingParamError } from '@/presentation/errors';
 import { badRequest, forbidden, serverError } from '@/presentation/helpers';
 
-import { ValidationSpy, LoadUserByIdUsecaseSpy } from '@/tests/presentation/mocks';
+import {
+  ValidationSpy,
+  LoadUserByIdUsecaseSpy,
+  CreateIdeiaUsecaseSpy,
+} from '@/tests/presentation/mocks';
 
 const mockRequest = (): CreateIdeiaController.Request => ({
   userId: 'any_id',
@@ -21,13 +25,19 @@ interface SutTypes {
   sut: CreateIdeiaController;
   validationSpy: ValidationSpy;
   loadUserByIdUsecaseSpy: LoadUserByIdUsecaseSpy;
+  createIdeiaUsecaseSpy: CreateIdeiaUsecaseSpy;
 }
 
 const makeSut = (): SutTypes => {
+  const createIdeiaUsecaseSpy = new CreateIdeiaUsecaseSpy();
   const loadUserByIdUsecaseSpy = new LoadUserByIdUsecaseSpy();
   const validationSpy = new ValidationSpy();
-  const sut = new CreateIdeiaController(validationSpy, loadUserByIdUsecaseSpy);
-  return { sut, validationSpy, loadUserByIdUsecaseSpy };
+  const sut = new CreateIdeiaController(
+    validationSpy,
+    loadUserByIdUsecaseSpy,
+    createIdeiaUsecaseSpy,
+  );
+  return { sut, validationSpy, loadUserByIdUsecaseSpy, createIdeiaUsecaseSpy };
 };
 
 describe('CreateIdeiaController', () => {
@@ -88,5 +98,25 @@ describe('CreateIdeiaController', () => {
     const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(forbidden(new InvalidParamError('id')));
+  });
+
+  test('Should call CreateIdeiaUsecase with correct values', async () => {
+    const { sut, createIdeiaUsecaseSpy } = makeSut();
+
+    await sut.handle(mockRequest());
+
+    expect(createIdeiaUsecaseSpy.params).toEqual({
+      userId: 'any_id',
+      title: 'any_title',
+      description: 'any_description',
+      features: [
+        {
+          name: 'any_feature_name',
+          description: 'any_feature_description',
+          finished: false,
+        },
+      ],
+    });
+    expect(createIdeiaUsecaseSpy.callsCount).toBe(1);
   });
 });
