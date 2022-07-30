@@ -1,3 +1,4 @@
 export * from './firestore-helper';
-export * from './user-repository';
+export * from './ideia-repository';
 export * from './log-repository';
+export * from './user-repository';
