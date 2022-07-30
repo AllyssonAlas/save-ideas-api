@@ -1,10 +1,10 @@
 import { CreateIdeia } from '@/domain/usecases';
 import { CreateIdeiaRepository } from '@/data/protocols/repositories';
 
-export class CreateIdeiaUsecase {
+export class CreateIdeiaUsecase implements CreateIdeia {
   constructor(private readonly createIdeiaRepository: CreateIdeiaRepository) {}
 
-  async perform(params: CreateIdeia.Params): Promise<any> {
-    await this.createIdeiaRepository.create(params);
+  async perform(params: CreateIdeia.Params): Promise<CreateIdeia.Result> {
+    return this.createIdeiaRepository.create(params);
   }
 }
