@@ -45,4 +45,23 @@ describe('CreateIdeiaUsecase', () => {
 
     await expect(promise).rejects.toThrow();
   });
+
+  test('Should return an ideia on success', async () => {
+    const { sut } = makeSut();
+
+    const loadCreateIdeiaResult = await sut.perform(mockCreateIdeiaParams());
+
+    expect(loadCreateIdeiaResult).toEqual({
+      id: 'any_id',
+      title: 'any_title_ideia',
+      description: 'any_description_ideia',
+      features: [
+        {
+          name: 'any_feature_name',
+          description: 'any_feature_description',
+          finished: false,
+        },
+      ],
+    });
+  });
 });
