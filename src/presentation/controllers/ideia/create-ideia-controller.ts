@@ -1,4 +1,4 @@
-import { CreateIdeia, LoadUserById } from '@/domain/usecases';
+import { LoadUserById, CreateIdeia } from '@/domain/usecases';
 import { Controller, Validation } from '@/presentation/protocols';
 import { badRequest, forbidden, serverError } from '@/presentation/helpers';
 import { InvalidParamError } from '@/presentation/errors';
@@ -7,6 +7,7 @@ export class CreateIdeiaController implements Controller {
   constructor(
     private readonly validation: Validation,
     private readonly loadUserById: LoadUserById,
+    private readonly createIdeia: CreateIdeia,
   ) {}
 
   async handle(request: CreateIdeiaController.Request): Promise<any> {
@@ -19,6 +20,7 @@ export class CreateIdeiaController implements Controller {
       if (!userData) {
         return forbidden(new InvalidParamError('id'));
       }
+      await this.createIdeia.perform(request);
       return Promise.resolve(null);
     } catch (error) {
       return serverError(error);
