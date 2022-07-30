@@ -2,7 +2,7 @@ import { CreateIdeiaController } from '@/presentation/controllers';
 import { MissingParamError } from '@/presentation/errors';
 import { badRequest, serverError } from '@/presentation/helpers';
 
-import { ValidationSpy } from '@/tests/presentation/mocks';
+import { ValidationSpy, LoadUserByIdUsecaseSpy } from '@/tests/presentation/mocks';
 
 const mockRequest = (): CreateIdeiaController.Request => ({
   userId: 'any_id',
@@ -20,12 +20,14 @@ const mockRequest = (): CreateIdeiaController.Request => ({
 interface SutTypes {
   sut: CreateIdeiaController;
   validationSpy: ValidationSpy;
+  loadUserByIdUsecaseSpy: LoadUserByIdUsecaseSpy;
 }
 
 const makeSut = (): SutTypes => {
+  const loadUserByIdUsecaseSpy = new LoadUserByIdUsecaseSpy();
   const validationSpy = new ValidationSpy();
-  const sut = new CreateIdeiaController(validationSpy);
-  return { sut, validationSpy };
+  const sut = new CreateIdeiaController(validationSpy, loadUserByIdUsecaseSpy);
+  return { sut, validationSpy, loadUserByIdUsecaseSpy };
 };
 
 describe('CreateIdeiaController', () => {
@@ -57,5 +59,14 @@ describe('CreateIdeiaController', () => {
     const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(badRequest(new MissingParamError('field')));
+  });
+
+  test('Should call LoadUserByIdUsecase with correct values', async () => {
+    const { sut, loadUserByIdUsecaseSpy } = makeSut();
+
+    await sut.handle(mockRequest());
+
+    expect(loadUserByIdUsecaseSpy.params).toEqual({ id: 'any_id' });
+    expect(loadUserByIdUsecaseSpy.callsCount).toBe(1);
   });
 });
