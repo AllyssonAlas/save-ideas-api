@@ -1,6 +1,6 @@
 import { CreateIdeiaController } from '@/presentation/controllers';
 import { MissingParamError } from '@/presentation/errors';
-import { badRequest } from '@/presentation/helpers';
+import { badRequest, serverError } from '@/presentation/helpers';
 
 import { ValidationSpy } from '@/tests/presentation/mocks';
 
@@ -37,6 +37,17 @@ describe('CreateIdeiaController', () => {
 
     expect(validationSpy.input).toEqual(request);
     expect(validationSpy.callsCount).toBe(1);
+  });
+
+  test('Should return 500 if Validation throws', async () => {
+    const { sut, validationSpy } = makeSut();
+    jest.spyOn(validationSpy, 'validate').mockImplementation(() => {
+      throw new Error();
+    });
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(serverError(new Error()));
   });
 
   test('Should call return 400 if Validation returns an error', async () => {
