@@ -32,5 +32,17 @@ describe('CreateIdeiaUsecase', () => {
         },
       ],
     });
+    expect(createIdeiaRepositorySpy.callsCount).toBe(1);
+  });
+
+  test('Should throw if CreateIdeiaRepository throws', async () => {
+    const { sut, createIdeiaRepositorySpy } = makeSut();
+    jest.spyOn(createIdeiaRepositorySpy, 'create').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const promise = sut.perform(mockCreateIdeiaParams());
+
+    await expect(promise).rejects.toThrow();
   });
 });
