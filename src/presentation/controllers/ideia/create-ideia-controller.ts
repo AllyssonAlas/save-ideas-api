@@ -1,6 +1,6 @@
 import { LoadUserById, CreateIdeia } from '@/domain/usecases';
-import { Controller, Validation } from '@/presentation/protocols';
-import { badRequest, forbidden, serverError } from '@/presentation/helpers';
+import { Controller, Validation, HttpResponse } from '@/presentation/protocols';
+import { badRequest, forbidden, ok, serverError } from '@/presentation/helpers';
 import { InvalidParamError } from '@/presentation/errors';
 
 export class CreateIdeiaController implements Controller {
@@ -10,7 +10,7 @@ export class CreateIdeiaController implements Controller {
     private readonly createIdeia: CreateIdeia,
   ) {}
 
-  async handle(request: CreateIdeiaController.Request): Promise<any> {
+  async handle(request: CreateIdeiaController.Request): Promise<HttpResponse> {
     try {
       const error = this.validation.validate(request);
       if (error) {
@@ -20,8 +20,8 @@ export class CreateIdeiaController implements Controller {
       if (!userData) {
         return forbidden(new InvalidParamError('id'));
       }
-      await this.createIdeia.perform(request);
-      return Promise.resolve(null);
+      const ideiaData = await this.createIdeia.perform(request);
+      return ok(ideiaData);
     } catch (error) {
       return serverError(error);
     }
