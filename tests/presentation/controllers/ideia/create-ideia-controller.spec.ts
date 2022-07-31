@@ -1,6 +1,6 @@
 import { CreateIdeiaController } from '@/presentation/controllers';
 import { InvalidParamError, MissingParamError } from '@/presentation/errors';
-import { badRequest, forbidden, serverError } from '@/presentation/helpers';
+import { badRequest, forbidden, ok, serverError } from '@/presentation/helpers';
 
 import {
   ValidationSpy,
@@ -129,5 +129,27 @@ describe('CreateIdeiaController', () => {
     const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(serverError(new Error()));
+  });
+
+  test('Should return 200 on success', async () => {
+    const { sut } = makeSut();
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(
+      ok({
+        id: 'any_id',
+        ownerId: 'any_user_id',
+        title: 'any_title_ideia',
+        description: 'any_description_ideia',
+        features: [
+          {
+            name: 'any_feature_name',
+            description: 'any_feature_description',
+            finished: false,
+          },
+        ],
+      }),
+    );
   });
 });
