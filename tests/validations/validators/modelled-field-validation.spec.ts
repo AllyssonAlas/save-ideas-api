@@ -24,4 +24,15 @@ describe('CompareFieldsValidation', () => {
 
     expect(error).toEqual(new InvalidParamError('field'));
   });
+
+  test('Should not return an error if validation succeeds', () => {
+    const sut = makeSut();
+
+    const error = sut.validate({
+      field: [{ subfieldOne: 'any_value' }],
+      subfields: ['subfieldOne'],
+    });
+
+    expect(error).toBeFalsy();
+  });
 });
