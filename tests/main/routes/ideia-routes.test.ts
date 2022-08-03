@@ -51,7 +51,7 @@ describe('User Routes', () => {
     await FirestoreHelper.disconnect();
   });
 
-  describe('/:userId/ideia', () => {
+  describe('/ideia', () => {
     test('Should return 200 on success', async () => {
       const accessToken = await mockAcessToken();
 
