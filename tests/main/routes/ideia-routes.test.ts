@@ -7,7 +7,7 @@ import { FirestoreHelper } from '@/infra/db';
 import app from '@/main/config/app';
 import env from '@/main/config/env';
 
-const mockAcessToken = async () => {
+const mockAcessToken = async (): Promise<string> => {
   const password = await hash('jhon_doe@123', 12);
   const usersCollection = FirestoreHelper.getCollection('users');
 
@@ -21,7 +21,7 @@ const mockAcessToken = async () => {
 
   user.update({ accessToken });
 
-  return { id: user.id, accessToken };
+  return accessToken;
 };
 
 describe('User Routes', () => {
@@ -53,10 +53,10 @@ describe('User Routes', () => {
 
   describe('/:userId/ideia', () => {
     test('Should return 200 on success', async () => {
-      const { id, accessToken } = await mockAcessToken();
+      const accessToken = await mockAcessToken();
 
       await request(app)
-        .put(`/api/${id}/ideia`)
+        .post('/api/ideia')
         .set('x-access-token', accessToken)
         .send({
           title: 'Great ideia',
@@ -66,10 +66,10 @@ describe('User Routes', () => {
     });
 
     test('Should return 400 on invalid features', async () => {
-      const { id, accessToken } = await mockAcessToken();
+      const accessToken = await mockAcessToken();
 
       await request(app)
-        .put(`/api/${id}/ideia`)
+        .post('/api/ideia')
         .set('x-access-token', accessToken)
         .send({
           title: 'Great ideia',
@@ -83,7 +83,6 @@ describe('User Routes', () => {
             {
               name: 'A not so great feature',
               description: 'A great feature for a great ideia',
-              // finished: false,
             },
           ],
         })
