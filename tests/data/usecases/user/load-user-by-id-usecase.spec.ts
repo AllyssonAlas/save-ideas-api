@@ -1,5 +1,6 @@
 import { LoadUserByIdUsecase } from '@/data/usecases';
 
+import { mockLoadUserByIdParams } from '@/tests/domain/mocks';
 import { LoadUserByIdRepositorySpy } from '@/tests/data/mocks';
 
 interface SutTypes {
@@ -17,7 +18,7 @@ describe('LoadUserByIdUsecase', () => {
   test('Should call LoadUserByIdRepository with correct value', async () => {
     const { sut, loadUserByIdRepositorySpy } = makeSut();
 
-    await sut.perform({ id: 'any_id' });
+    await sut.perform(mockLoadUserByIdParams());
 
     expect(loadUserByIdRepositorySpy.params).toEqual({ id: 'any_id' });
     expect(loadUserByIdRepositorySpy.callsCount).toBe(1);
@@ -29,7 +30,7 @@ describe('LoadUserByIdUsecase', () => {
       throw new Error();
     });
 
-    const promise = sut.perform({ id: 'any_id' });
+    const promise = sut.perform(mockLoadUserByIdParams());
 
     await expect(promise).rejects.toThrow();
   });
@@ -38,7 +39,7 @@ describe('LoadUserByIdUsecase', () => {
     const { sut, loadUserByIdRepositorySpy } = makeSut();
     loadUserByIdRepositorySpy.result = null;
 
-    const loadUserResult = await sut.perform({ id: 'any_id' });
+    const loadUserResult = await sut.perform(mockLoadUserByIdParams());
 
     expect(loadUserResult).toBeNull();
   });
@@ -46,7 +47,7 @@ describe('LoadUserByIdUsecase', () => {
   test('Should return an user on success', async () => {
     const { sut } = makeSut();
 
-    const loadUserResult = await sut.perform({ id: 'any_id' });
+    const loadUserResult = await sut.perform(mockLoadUserByIdParams());
 
     expect(loadUserResult).toEqual({
       id: 'any_id',

@@ -7,7 +7,7 @@ const makeSut = (): UserRepository => {
   return new UserRepository();
 };
 
-describe('UsersRepository', () => {
+describe('UserRepository', () => {
   let usersCollection: CollectionReference;
 
   beforeAll(() => {
@@ -16,8 +16,7 @@ describe('UsersRepository', () => {
   });
 
   afterEach(async () => {
-    const userCollection = FirestoreHelper.getCollection('users');
-    const users = await userCollection.listDocuments();
+    const users = await usersCollection.listDocuments();
 
     for (let index = 0; index < users.length; index++) {
       await users[index].delete();

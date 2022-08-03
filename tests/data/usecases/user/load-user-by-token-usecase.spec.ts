@@ -1,5 +1,6 @@
 import { LoadUserByTokenUsecase } from '@/data/usecases';
 
+import { mockLoadUserByTokenParams } from '@/tests/domain/mocks';
 import { DecrypterSpy, LoadUserByEmailRepositorySpy } from '@/tests/data/mocks';
 interface SutTypes {
   sut: LoadUserByTokenUsecase;
@@ -18,7 +19,7 @@ describe('LoadUserByTokenUsecase', () => {
   test('Should call Decryter with correct value', async () => {
     const { sut, decrypterSpy } = makeSut();
 
-    await sut.perform({ accessToken: 'any_token' });
+    await sut.perform(mockLoadUserByTokenParams());
 
     expect(decrypterSpy.params).toEqual({ ciphertext: 'any_token' });
     expect(decrypterSpy.callsCount).toBe(1);
@@ -30,7 +31,7 @@ describe('LoadUserByTokenUsecase', () => {
       throw new Error();
     });
 
-    const promise = sut.perform({ accessToken: 'any_token' });
+    const promise = sut.perform(mockLoadUserByTokenParams());
 
     await expect(promise).rejects.toThrow();
   });
@@ -39,7 +40,7 @@ describe('LoadUserByTokenUsecase', () => {
     const { sut, decrypterSpy } = makeSut();
     decrypterSpy.result = { isTokenValid: false };
 
-    const loadUserResult = await sut.perform({ accessToken: 'any_token' });
+    const loadUserResult = await sut.perform(mockLoadUserByTokenParams());
 
     expect(loadUserResult).toBeNull();
   });
@@ -47,7 +48,7 @@ describe('LoadUserByTokenUsecase', () => {
   test('Should call LoadUserByFieldRepository with correct value', async () => {
     const { sut, loadUserByEmailRepositorySpy } = makeSut();
 
-    await sut.perform({ accessToken: 'any_token' });
+    await sut.perform(mockLoadUserByTokenParams());
 
     expect(loadUserByEmailRepositorySpy.params).toEqual({ accessToken: 'any_token' });
     expect(loadUserByEmailRepositorySpy.callsCount).toBe(1);
@@ -59,7 +60,7 @@ describe('LoadUserByTokenUsecase', () => {
       throw new Error();
     });
 
-    const promise = sut.perform({ accessToken: 'any_token' });
+    const promise = sut.perform(mockLoadUserByTokenParams());
 
     await expect(promise).rejects.toThrow();
   });
@@ -68,7 +69,7 @@ describe('LoadUserByTokenUsecase', () => {
     const { sut, loadUserByEmailRepositorySpy } = makeSut();
     loadUserByEmailRepositorySpy.result = null;
 
-    const loadUserResult = await sut.perform({ accessToken: 'any_token' });
+    const loadUserResult = await sut.perform(mockLoadUserByTokenParams());
 
     expect(loadUserResult).toBeNull();
   });
@@ -76,7 +77,7 @@ describe('LoadUserByTokenUsecase', () => {
   test('Should return an user on success', async () => {
     const { sut } = makeSut();
 
-    const loadUserResult = await sut.perform({ accessToken: 'any_token' });
+    const loadUserResult = await sut.perform(mockLoadUserByTokenParams());
 
     expect(loadUserResult).toEqual({ id: 'any_id' });
   });

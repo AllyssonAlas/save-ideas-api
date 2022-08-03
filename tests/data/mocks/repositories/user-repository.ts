@@ -2,7 +2,6 @@ import {
   CreateUserRepository,
   LoadUserByIdRepository,
   LoadUserByFieldRepository,
-  LogErrorRepository,
   UpdateUserRepository,
 } from '@/data/protocols/repositories';
 
@@ -65,15 +64,6 @@ export class UpdateUserRepositorySpy implements UpdateUserRepository {
 
   async update(params: UpdateUserRepository.Params): Promise<UpdateUserRepository.Result> {
     this.callsCount++;
-    this.params = params;
-    return Promise.resolve();
-  }
-}
-
-export class LogErrorRepositorySpy implements LogErrorRepository {
-  params?: LogErrorRepository.Params;
-
-  async logError(params: LogErrorRepository.Params): Promise<void> {
     this.params = params;
     return Promise.resolve();
   }

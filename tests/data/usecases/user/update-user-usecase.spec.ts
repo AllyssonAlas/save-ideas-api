@@ -1,6 +1,7 @@
 import { UpdateUserUsecase } from '@/data/usecases';
 
 import { mockUpdaterUserParams, mockUpdaterUserParamsWithNewPassword } from '@/tests/domain/mocks';
+
 import {
   HasherComparerSpy,
   HasherSpy,
