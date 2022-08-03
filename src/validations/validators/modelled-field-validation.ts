@@ -6,13 +6,15 @@ export class ModelledFieldValidation implements Validation {
 
   validate(input: any): Error | undefined {
     const fieldValue = input[this.fieldName];
-    if (!Array.isArray(fieldValue)) {
-      return new InvalidParamError(this.fieldName);
-    }
-    for (const field of fieldValue) {
-      const subFieldsKeys = Object.keys(field);
-      if (!subFieldsKeys.some((subFieldKey) => this.subFields.includes(subFieldKey))) {
+    if (Object.keys(input).includes(this.fieldName)) {
+      if (!Array.isArray(fieldValue)) {
         return new InvalidParamError(this.fieldName);
+      }
+      for (const field of fieldValue) {
+        const subFieldsKeys = Object.keys(field);
+        if (JSON.stringify(this.subFields.sort()) !== JSON.stringify(subFieldsKeys.sort())) {
+          return new InvalidParamError(this.fieldName);
+        }
       }
     }
   }

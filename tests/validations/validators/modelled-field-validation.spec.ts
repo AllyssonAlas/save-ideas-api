@@ -17,10 +17,7 @@ describe('CompareFieldsValidation', () => {
   test('Should return an InvalidParamError if subfields are incorrect', () => {
     const sut = makeSut();
 
-    const error = sut.validate({
-      field: [{ wrongSubField: 'any_value' }],
-      subfields: ['wrongSubField'],
-    });
+    const error = sut.validate({ field: [{ wrongSubField: 'any_value' }] });
 
     expect(error).toEqual(new InvalidParamError('field'));
   });
@@ -28,10 +25,7 @@ describe('CompareFieldsValidation', () => {
   test('Should not return an error if validation succeeds', () => {
     const sut = makeSut();
 
-    const error = sut.validate({
-      field: [{ subfieldOne: 'any_value' }],
-      subfields: ['subfieldOne'],
-    });
+    const error = sut.validate({ field: [{ subfieldOne: 'any_value' }] });
 
     expect(error).toBeFalsy();
   });
