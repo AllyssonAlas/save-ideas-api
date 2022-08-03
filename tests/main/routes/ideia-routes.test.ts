@@ -64,5 +64,30 @@ describe('User Routes', () => {
         })
         .expect(200);
     });
+
+    test('Should return 400 on invalid features', async () => {
+      const { id, accessToken } = await mockAcessToken();
+
+      await request(app)
+        .put(`/api/${id}/ideia`)
+        .set('x-access-token', accessToken)
+        .send({
+          title: 'Great ideia',
+          description: 'A great ideia made by great features',
+          features: [
+            {
+              name: 'A great feature',
+              description: 'A great feature for a great ideia',
+              finished: false,
+            },
+            {
+              name: 'A not so great feature',
+              description: 'A great feature for a great ideia',
+              // finished: false,
+            },
+          ],
+        })
+        .expect(400);
+    });
   });
 });
