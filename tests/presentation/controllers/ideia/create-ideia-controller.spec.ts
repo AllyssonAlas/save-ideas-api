@@ -1,12 +1,8 @@
 import { CreateIdeiaController } from '@/presentation/controllers';
-import { InvalidParamError, MissingParamError } from '@/presentation/errors';
-import { badRequest, forbidden, ok, serverError } from '@/presentation/helpers';
+import { MissingParamError } from '@/presentation/errors';
+import { badRequest, ok, serverError } from '@/presentation/helpers';
 
-import {
-  ValidationSpy,
-  LoadUserByIdUsecaseSpy,
-  CreateIdeiaUsecaseSpy,
-} from '@/tests/presentation/mocks';
+import { ValidationSpy, CreateIdeiaUsecaseSpy } from '@/tests/presentation/mocks';
 
 const mockRequest = (): CreateIdeiaController.Request => ({
   userId: 'any_id',
@@ -24,20 +20,14 @@ const mockRequest = (): CreateIdeiaController.Request => ({
 interface SutTypes {
   sut: CreateIdeiaController;
   validationSpy: ValidationSpy;
-  loadUserByIdUsecaseSpy: LoadUserByIdUsecaseSpy;
   createIdeiaUsecaseSpy: CreateIdeiaUsecaseSpy;
 }
 
 const makeSut = (): SutTypes => {
   const createIdeiaUsecaseSpy = new CreateIdeiaUsecaseSpy();
-  const loadUserByIdUsecaseSpy = new LoadUserByIdUsecaseSpy();
   const validationSpy = new ValidationSpy();
-  const sut = new CreateIdeiaController(
-    validationSpy,
-    loadUserByIdUsecaseSpy,
-    createIdeiaUsecaseSpy,
-  );
-  return { sut, validationSpy, loadUserByIdUsecaseSpy, createIdeiaUsecaseSpy };
+  const sut = new CreateIdeiaController(validationSpy, createIdeiaUsecaseSpy);
+  return { sut, validationSpy, createIdeiaUsecaseSpy };
 };
 
 describe('CreateIdeiaController', () => {
@@ -69,35 +59,6 @@ describe('CreateIdeiaController', () => {
     const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(badRequest(new MissingParamError('field')));
-  });
-
-  test('Should call LoadUserByIdUsecase with correct values', async () => {
-    const { sut, loadUserByIdUsecaseSpy } = makeSut();
-
-    await sut.handle(mockRequest());
-
-    expect(loadUserByIdUsecaseSpy.params).toEqual({ id: 'any_id' });
-    expect(loadUserByIdUsecaseSpy.callsCount).toBe(1);
-  });
-
-  test('Should return 500 if LoadUserByIdUsecaseSpy throws', async () => {
-    const { sut, loadUserByIdUsecaseSpy } = makeSut();
-    jest.spyOn(loadUserByIdUsecaseSpy, 'perform').mockImplementationOnce(() => {
-      throw new Error();
-    });
-
-    const httpResponse = await sut.handle(mockRequest());
-
-    expect(httpResponse).toEqual(serverError(new Error()));
-  });
-
-  test('Should return 403 if invalid id is provided', async () => {
-    const { sut, loadUserByIdUsecaseSpy } = makeSut();
-    loadUserByIdUsecaseSpy.result = null;
-
-    const httpResponse = await sut.handle(mockRequest());
-
-    expect(httpResponse).toEqual(forbidden(new InvalidParamError('id')));
   });
 
   test('Should call CreateIdeiaUsecase with correct values', async () => {

@@ -1,24 +1,15 @@
-import { LoadUserById, CreateIdeia } from '@/domain/usecases';
+import { CreateIdeia } from '@/domain/usecases';
 import { Controller, Validation, HttpResponse } from '@/presentation/protocols';
-import { badRequest, forbidden, ok, serverError } from '@/presentation/helpers';
-import { InvalidParamError } from '@/presentation/errors';
+import { badRequest, ok, serverError } from '@/presentation/helpers';
 
 export class CreateIdeiaController implements Controller {
-  constructor(
-    private readonly validation: Validation,
-    private readonly loadUserById: LoadUserById,
-    private readonly createIdeia: CreateIdeia,
-  ) {}
+  constructor(private readonly validation: Validation, private readonly createIdeia: CreateIdeia) {}
 
   async handle(request: CreateIdeiaController.Request): Promise<HttpResponse> {
     try {
       const error = this.validation.validate(request);
       if (error) {
         return badRequest(error);
-      }
-      const userData = await this.loadUserById.perform({ id: request.userId });
-      if (!userData) {
-        return forbidden(new InvalidParamError('id'));
       }
       const ideiaData = await this.createIdeia.perform(request);
       return ok(ideiaData);
