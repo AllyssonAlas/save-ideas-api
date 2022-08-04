@@ -71,7 +71,7 @@ describe('UpdateUserUsecase', () => {
     await expect(promise).rejects.toThrow();
   });
 
-  test('Should return succes false if LoadUserByFieldRepository returns an user', async () => {
+  test('Should return success false if LoadUserByFieldRepository returns an user', async () => {
     const { sut, loadUserByFieldRepositorySpy } = makeSut();
     loadUserByFieldRepositorySpy.result = {
       id: 'any_id',
@@ -107,5 +107,14 @@ describe('UpdateUserUsecase', () => {
     const promise = sut.perform(mockUpdateUserWithDifferentValuesParams());
 
     await expect(promise).rejects.toThrow();
+  });
+
+  test('Should return success false if HasherComparer returns isValid false', async () => {
+    const { sut, hasherComparerSpy } = makeSut();
+    hasherComparerSpy.result = { isValid: false };
+
+    const updateUserResult = await sut.perform(mockUpdateUserWithDifferentValuesParams());
+
+    expect(updateUserResult).toEqual({ success: false, invalidField: 'password' });
   });
 });
