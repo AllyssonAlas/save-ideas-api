@@ -59,4 +59,12 @@ describe('UpdateUserUsecase', () => {
 
     await expect(promise).rejects.toThrow();
   });
+
+  test('Should return succes false if LoadUserByFieldRepository returns an user', async () => {
+    const { sut } = makeSut();
+
+    const updateUserResult = await sut.perform(mockUpdateUserWithDifferentValuesParams());
+
+    expect(updateUserResult).toEqual({ success: false, invalidField: 'email' });
+  });
 });
