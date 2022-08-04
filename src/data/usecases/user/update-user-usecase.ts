@@ -9,9 +9,12 @@ export class UpdateUserUsecase implements UpdateUser {
 
   async perform(params: UpdateUser.Params): Promise<any> {
     const { userId, email } = params;
-    const userData = await this.loadUserByIdRepository.loadById({ id: userId });
-    if (userData?.email !== email) {
-      await this.loadUserByFieldRepository.loadByField({ email });
+    const authedUserData = await this.loadUserByIdRepository.loadById({ id: userId });
+    if (authedUserData?.email !== email) {
+      const userData = await this.loadUserByFieldRepository.loadByField({ email });
+      if (userData) {
+        return { success: false, invalidField: 'email' };
+      }
     }
   }
 }
