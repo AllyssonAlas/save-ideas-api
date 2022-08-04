@@ -1,18 +1,18 @@
 import { LoadUserByTokenUsecase } from '@/data/usecases';
 
 import { mockLoadUserByTokenParams } from '@/tests/domain/mocks';
-import { DecrypterSpy, LoadUserByEmailRepositorySpy } from '@/tests/data/mocks';
+import { DecrypterSpy, LoadUserByFielRepositorySpy } from '@/tests/data/mocks';
 interface SutTypes {
   sut: LoadUserByTokenUsecase;
   decrypterSpy: DecrypterSpy;
-  loadUserByEmailRepositorySpy: LoadUserByEmailRepositorySpy;
+  loadUserByFielRepositorySpy: LoadUserByFielRepositorySpy;
 }
 
 const makeSut = (): SutTypes => {
-  const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy();
+  const loadUserByFielRepositorySpy = new LoadUserByFielRepositorySpy();
   const decrypterSpy = new DecrypterSpy();
-  const sut = new LoadUserByTokenUsecase(decrypterSpy, loadUserByEmailRepositorySpy);
-  return { sut, decrypterSpy, loadUserByEmailRepositorySpy };
+  const sut = new LoadUserByTokenUsecase(decrypterSpy, loadUserByFielRepositorySpy);
+  return { sut, decrypterSpy, loadUserByFielRepositorySpy };
 };
 
 describe('LoadUserByTokenUsecase', () => {
@@ -46,17 +46,17 @@ describe('LoadUserByTokenUsecase', () => {
   });
 
   test('Should call LoadUserByFieldRepository with correct value', async () => {
-    const { sut, loadUserByEmailRepositorySpy } = makeSut();
+    const { sut, loadUserByFielRepositorySpy } = makeSut();
 
     await sut.perform(mockLoadUserByTokenParams());
 
-    expect(loadUserByEmailRepositorySpy.params).toEqual({ accessToken: 'any_token' });
-    expect(loadUserByEmailRepositorySpy.callsCount).toBe(1);
+    expect(loadUserByFielRepositorySpy.params).toEqual({ accessToken: 'any_token' });
+    expect(loadUserByFielRepositorySpy.callsCount).toBe(1);
   });
 
   test('Should throw if LoadUserByFieldRepository throws', async () => {
-    const { sut, loadUserByEmailRepositorySpy } = makeSut();
-    jest.spyOn(loadUserByEmailRepositorySpy, 'loadByField').mockImplementationOnce(() => {
+    const { sut, loadUserByFielRepositorySpy } = makeSut();
+    jest.spyOn(loadUserByFielRepositorySpy, 'loadByField').mockImplementationOnce(() => {
       throw new Error();
     });
 
@@ -66,8 +66,8 @@ describe('LoadUserByTokenUsecase', () => {
   });
 
   test('Should return null if LoadUserByFieldRepository returns null', async () => {
-    const { sut, loadUserByEmailRepositorySpy } = makeSut();
-    loadUserByEmailRepositorySpy.result = null;
+    const { sut, loadUserByFielRepositorySpy } = makeSut();
+    loadUserByFielRepositorySpy.result = null;
 
     const loadUserResult = await sut.perform(mockLoadUserByTokenParams());
 
