@@ -8,6 +8,7 @@ import {
   LoadUserByIdRepositorySpy,
   LoadUserByFielRepositorySpy,
   HasherComparerSpy,
+  HasherSpy,
 } from '@/tests/data/mocks';
 
 interface SutTypes {
@@ -15,9 +16,11 @@ interface SutTypes {
   loadUserByIdRepositorySpy: LoadUserByIdRepositorySpy;
   loadUserByFieldRepositorySpy: LoadUserByFielRepositorySpy;
   hasherComparerSpy: HasherComparerSpy;
+  hasherSpy: HasherSpy;
 }
 
 const makeSut = (): SutTypes => {
+  const hasherSpy = new HasherSpy();
   const hasherComparerSpy = new HasherComparerSpy();
   const loadUserByFieldRepositorySpy = new LoadUserByFielRepositorySpy();
   loadUserByFieldRepositorySpy.result = null;
@@ -26,8 +29,15 @@ const makeSut = (): SutTypes => {
     loadUserByIdRepositorySpy,
     loadUserByFieldRepositorySpy,
     hasherComparerSpy,
+    hasherSpy,
   );
-  return { sut, loadUserByIdRepositorySpy, loadUserByFieldRepositorySpy, hasherComparerSpy };
+  return {
+    sut,
+    loadUserByIdRepositorySpy,
+    loadUserByFieldRepositorySpy,
+    hasherComparerSpy,
+    hasherSpy,
+  };
 };
 
 describe('UpdateUserUsecase', () => {
@@ -116,5 +126,14 @@ describe('UpdateUserUsecase', () => {
     const updateUserResult = await sut.perform(mockUpdateUserWithDifferentValuesParams());
 
     expect(updateUserResult).toEqual({ success: false, invalidField: 'password' });
+  });
+
+  test('Should call Hasher with correct value', async () => {
+    const { sut, hasherSpy } = makeSut();
+
+    await sut.perform(mockUpdateUserWithDifferentValuesParams());
+
+    expect(hasherSpy.params).toEqual({ plaintext: 'other_password' });
+    expect(hasherSpy.callsCount).toBe(1);
   });
 });
