@@ -1,17 +1,22 @@
 import { UpdateUserUsecase } from '@/data/usecases';
 
-import { mockUpdateUserParams } from '@/tests/domain/mocks';
-import { LoadUserByIdRepositorySpy } from '@/tests/data/mocks';
+import {
+  mockUpdateUserParams,
+  mockUpdateUserWithDifferentValuesParams,
+} from '@/tests/domain/mocks';
+import { LoadUserByIdRepositorySpy, LoadUserByFielRepositorySpy } from '@/tests/data/mocks';
 
 interface SutTypes {
   sut: UpdateUserUsecase;
   loadUserByIdRepositorySpy: LoadUserByIdRepositorySpy;
+  loadUserByFieldRepositorySpy: LoadUserByFielRepositorySpy;
 }
 
 const makeSut = (): SutTypes => {
+  const loadUserByFieldRepositorySpy = new LoadUserByFielRepositorySpy();
   const loadUserByIdRepositorySpy = new LoadUserByIdRepositorySpy();
-  const sut = new UpdateUserUsecase(loadUserByIdRepositorySpy);
-  return { sut, loadUserByIdRepositorySpy };
+  const sut = new UpdateUserUsecase(loadUserByIdRepositorySpy, loadUserByFieldRepositorySpy);
+  return { sut, loadUserByIdRepositorySpy, loadUserByFieldRepositorySpy };
 };
 
 describe('UpdateUserUsecase', () => {
@@ -33,5 +38,14 @@ describe('UpdateUserUsecase', () => {
     const promise = sut.perform(mockUpdateUserParams());
 
     await expect(promise).rejects.toThrow();
+  });
+
+  test('Should call LoadUserByFieldRepository with correct value if different email is received', async () => {
+    const { sut, loadUserByFieldRepositorySpy } = makeSut();
+
+    await sut.perform(mockUpdateUserWithDifferentValuesParams());
+
+    expect(loadUserByFieldRepositorySpy.params).toEqual({ email: 'other_email@mail.com' });
+    expect(loadUserByFieldRepositorySpy.callsCount).toBe(1);
   });
 });
