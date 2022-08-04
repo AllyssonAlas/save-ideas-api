@@ -48,4 +48,15 @@ describe('UpdateUserUsecase', () => {
     expect(loadUserByFieldRepositorySpy.params).toEqual({ email: 'other_email@mail.com' });
     expect(loadUserByFieldRepositorySpy.callsCount).toBe(1);
   });
+
+  test('Should throw if LoadUserByFieldRepository throws', async () => {
+    const { sut, loadUserByFieldRepositorySpy } = makeSut();
+    jest.spyOn(loadUserByFieldRepositorySpy, 'loadByField').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const promise = sut.perform(mockUpdateUserWithDifferentValuesParams());
+
+    await expect(promise).rejects.toThrow();
+  });
 });
