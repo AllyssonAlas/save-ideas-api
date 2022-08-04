@@ -4,19 +4,30 @@ import {
   mockUpdateUserParams,
   mockUpdateUserWithDifferentValuesParams,
 } from '@/tests/domain/mocks';
-import { LoadUserByIdRepositorySpy, LoadUserByFielRepositorySpy } from '@/tests/data/mocks';
+import {
+  LoadUserByIdRepositorySpy,
+  LoadUserByFielRepositorySpy,
+  HasherComparerSpy,
+} from '@/tests/data/mocks';
 
 interface SutTypes {
   sut: UpdateUserUsecase;
   loadUserByIdRepositorySpy: LoadUserByIdRepositorySpy;
   loadUserByFieldRepositorySpy: LoadUserByFielRepositorySpy;
+  hasherComparerSpy: HasherComparerSpy;
 }
 
 const makeSut = (): SutTypes => {
+  const hasherComparerSpy = new HasherComparerSpy();
   const loadUserByFieldRepositorySpy = new LoadUserByFielRepositorySpy();
+  loadUserByFieldRepositorySpy.result = null;
   const loadUserByIdRepositorySpy = new LoadUserByIdRepositorySpy();
-  const sut = new UpdateUserUsecase(loadUserByIdRepositorySpy, loadUserByFieldRepositorySpy);
-  return { sut, loadUserByIdRepositorySpy, loadUserByFieldRepositorySpy };
+  const sut = new UpdateUserUsecase(
+    loadUserByIdRepositorySpy,
+    loadUserByFieldRepositorySpy,
+    hasherComparerSpy,
+  );
+  return { sut, loadUserByIdRepositorySpy, loadUserByFieldRepositorySpy, hasherComparerSpy };
 };
 
 describe('UpdateUserUsecase', () => {
@@ -61,10 +72,29 @@ describe('UpdateUserUsecase', () => {
   });
 
   test('Should return succes false if LoadUserByFieldRepository returns an user', async () => {
-    const { sut } = makeSut();
+    const { sut, loadUserByFieldRepositorySpy } = makeSut();
+    loadUserByFieldRepositorySpy.result = {
+      id: 'any_id',
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      password: 'any_password',
+      accessToken: 'any_access_token',
+    };
 
     const updateUserResult = await sut.perform(mockUpdateUserWithDifferentValuesParams());
 
     expect(updateUserResult).toEqual({ success: false, invalidField: 'email' });
+  });
+
+  test('Should call HasherComparer with correct values if password is received', async () => {
+    const { sut, loadUserByIdRepositorySpy, hasherComparerSpy } = makeSut();
+
+    await sut.perform(mockUpdateUserWithDifferentValuesParams());
+
+    expect(hasherComparerSpy.params).toEqual({
+      plaintext: 'any_password',
+      digest: loadUserByIdRepositorySpy.result?.password,
+    });
+    expect(hasherComparerSpy.callsCount).toBe(1);
   });
 });

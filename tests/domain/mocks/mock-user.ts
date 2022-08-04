@@ -35,4 +35,6 @@ export const mockUpdateUserWithDifferentValuesParams = (): UpdateUser.Params => 
   userId: 'any_id',
   name: 'any_name',
   email: 'other_email@mail.com',
+  password: 'any_password',
+  newPassword: 'other_email',
 });
