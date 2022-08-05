@@ -136,4 +136,15 @@ describe('UpdateUserUsecase', () => {
     expect(hasherSpy.params).toEqual({ plaintext: 'other_password' });
     expect(hasherSpy.callsCount).toBe(1);
   });
+
+  test('Should throw if Hasher throws', async () => {
+    const { sut, hasherSpy } = makeSut();
+    jest.spyOn(hasherSpy, 'hash').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const promise = sut.perform(mockUpdateUserWithDifferentValuesParams());
+
+    await expect(promise).rejects.toThrow();
+  });
 });
