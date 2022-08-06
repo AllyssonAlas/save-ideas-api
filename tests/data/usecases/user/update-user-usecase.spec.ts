@@ -2,7 +2,7 @@ import { UpdateUserUsecase } from '@/data/usecases';
 
 import {
   mockUpdateUserParams,
-  mockUpdateUserWithDifferentValuesParams,
+  mockUpdateUserWithAdditionalValuesParams,
 } from '@/tests/domain/mocks';
 import {
   LoadUserByIdRepositorySpy,
@@ -69,7 +69,7 @@ describe('UpdateUserUsecase', () => {
   test('Should call LoadUserByFieldRepository with correct value if different email is received', async () => {
     const { sut, loadUserByFieldRepositorySpy } = makeSut();
 
-    await sut.perform(mockUpdateUserWithDifferentValuesParams());
+    await sut.perform(mockUpdateUserWithAdditionalValuesParams());
 
     expect(loadUserByFieldRepositorySpy.params).toEqual({ email: 'other_email@mail.com' });
     expect(loadUserByFieldRepositorySpy.callsCount).toBe(1);
@@ -81,7 +81,7 @@ describe('UpdateUserUsecase', () => {
       throw new Error();
     });
 
-    const promise = sut.perform(mockUpdateUserWithDifferentValuesParams());
+    const promise = sut.perform(mockUpdateUserWithAdditionalValuesParams());
 
     await expect(promise).rejects.toThrow();
   });
@@ -96,7 +96,7 @@ describe('UpdateUserUsecase', () => {
       accessToken: 'any_access_token',
     };
 
-    const updateUserResult = await sut.perform(mockUpdateUserWithDifferentValuesParams());
+    const updateUserResult = await sut.perform(mockUpdateUserWithAdditionalValuesParams());
 
     expect(updateUserResult).toEqual({ success: false, invalidField: 'email' });
   });
@@ -104,7 +104,7 @@ describe('UpdateUserUsecase', () => {
   test('Should call HasherComparer with correct values if password is received', async () => {
     const { sut, loadUserByIdRepositorySpy, hasherComparerSpy } = makeSut();
 
-    await sut.perform(mockUpdateUserWithDifferentValuesParams());
+    await sut.perform(mockUpdateUserWithAdditionalValuesParams());
 
     expect(hasherComparerSpy.params).toEqual({
       plaintext: 'any_password',
@@ -119,7 +119,7 @@ describe('UpdateUserUsecase', () => {
       throw new Error();
     });
 
-    const promise = sut.perform(mockUpdateUserWithDifferentValuesParams());
+    const promise = sut.perform(mockUpdateUserWithAdditionalValuesParams());
 
     await expect(promise).rejects.toThrow();
   });
@@ -128,7 +128,7 @@ describe('UpdateUserUsecase', () => {
     const { sut, hasherComparerSpy } = makeSut();
     hasherComparerSpy.result = { isValid: false };
 
-    const updateUserResult = await sut.perform(mockUpdateUserWithDifferentValuesParams());
+    const updateUserResult = await sut.perform(mockUpdateUserWithAdditionalValuesParams());
 
     expect(updateUserResult).toEqual({ success: false, invalidField: 'password' });
   });
@@ -136,7 +136,7 @@ describe('UpdateUserUsecase', () => {
   test('Should call Hasher with correct value', async () => {
     const { sut, hasherSpy } = makeSut();
 
-    await sut.perform(mockUpdateUserWithDifferentValuesParams());
+    await sut.perform(mockUpdateUserWithAdditionalValuesParams());
 
     expect(hasherSpy.params).toEqual({ plaintext: 'other_password' });
     expect(hasherSpy.callsCount).toBe(1);
@@ -148,7 +148,7 @@ describe('UpdateUserUsecase', () => {
       throw new Error();
     });
 
-    const promise = sut.perform(mockUpdateUserWithDifferentValuesParams());
+    const promise = sut.perform(mockUpdateUserWithAdditionalValuesParams());
 
     await expect(promise).rejects.toThrow();
   });
