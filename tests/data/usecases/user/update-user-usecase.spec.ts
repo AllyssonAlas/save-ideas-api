@@ -165,4 +165,18 @@ describe('UpdateUserUsecase', () => {
     });
     expect(updateUserRepositorySpy.callsCount).toBe(1);
   });
+
+  test('Should call UpdateUserRepository with addtional correct values', async () => {
+    const { sut, updateUserRepositorySpy } = makeSut();
+
+    await sut.perform(mockUpdateUserWithAdditionalValuesParams());
+
+    expect(updateUserRepositorySpy.params).toEqual({
+      id: 'any_id',
+      name: 'other_name',
+      email: 'other_email@mail.com',
+      password: 'hashed_password',
+    });
+    expect(updateUserRepositorySpy.callsCount).toBe(1);
+  });
 });

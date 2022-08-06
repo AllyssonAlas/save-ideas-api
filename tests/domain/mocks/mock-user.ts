@@ -33,7 +33,7 @@ export const mockUpdateUserParams = (): UpdateUser.Params => ({
 
 export const mockUpdateUserWithAdditionalValuesParams = (): UpdateUser.Params => ({
   userId: 'any_id',
-  name: 'any_name',
+  name: 'other_name',
   email: 'other_email@mail.com',
   password: 'any_password',
   newPassword: 'other_password',
