@@ -15,7 +15,7 @@ export class UpdateUserUsecase implements UpdateUser {
     private readonly updateUserRepository: UpdateUserRepository,
   ) {}
 
-  async perform(params: UpdateUser.Params): Promise<any> {
+  async perform(params: UpdateUser.Params): Promise<UpdateUser.Result> {
     const { userId, name, email, password, newPassword } = params;
     const authedUserData = await this.loadUserByIdRepository.loadById({ id: userId });
     const newUserData: UpdateUserRepository.Params = {
@@ -41,7 +41,7 @@ export class UpdateUserUsecase implements UpdateUser {
       const { ciphertext } = await this.hasher.hash({ plaintext: newPassword });
       newUserData.password = ciphertext;
     }
-
     await this.updateUserRepository.update(newUserData);
+    return { success: true };
   }
 }
