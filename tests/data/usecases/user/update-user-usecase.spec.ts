@@ -179,4 +179,15 @@ describe('UpdateUserUsecase', () => {
     });
     expect(updateUserRepositorySpy.callsCount).toBe(1);
   });
+
+  test('Should throw if UpdateUserRepository throws', async () => {
+    const { sut, updateUserRepositorySpy } = makeSut();
+    jest.spyOn(updateUserRepositorySpy, 'update').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const promise = sut.perform(mockUpdateUserParams());
+
+    await expect(promise).rejects.toThrow();
+  });
 });
