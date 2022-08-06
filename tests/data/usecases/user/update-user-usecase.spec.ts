@@ -190,4 +190,12 @@ describe('UpdateUserUsecase', () => {
 
     await expect(promise).rejects.toThrow();
   });
+
+  test('Should return success true on success', async () => {
+    const { sut } = makeSut();
+
+    const updateUserResult = await sut.perform(mockUpdateUserParams());
+
+    expect(updateUserResult).toEqual({ success: true });
+  });
 });
