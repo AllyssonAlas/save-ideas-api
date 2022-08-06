@@ -27,7 +27,7 @@ export const mockSignUpParams = (): SignUp.Params => ({
 
 export const mockUpdateUserParams = (): UpdateUser.Params => ({
   userId: 'any_id',
-  name: 'any_name',
+  name: 'other_name',
   email: 'any_email@mail.com',
 });
 

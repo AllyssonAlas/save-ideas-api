@@ -9,6 +9,7 @@ import {
   LoadUserByFielRepositorySpy,
   HasherComparerSpy,
   HasherSpy,
+  UpdateUserRepositorySpy,
 } from '@/tests/data/mocks';
 
 interface SutTypes {
@@ -17,9 +18,11 @@ interface SutTypes {
   loadUserByFieldRepositorySpy: LoadUserByFielRepositorySpy;
   hasherComparerSpy: HasherComparerSpy;
   hasherSpy: HasherSpy;
+  updateUserRepositorySpy: UpdateUserRepositorySpy;
 }
 
 const makeSut = (): SutTypes => {
+  const updateUserRepositorySpy = new UpdateUserRepositorySpy();
   const hasherSpy = new HasherSpy();
   const hasherComparerSpy = new HasherComparerSpy();
   const loadUserByFieldRepositorySpy = new LoadUserByFielRepositorySpy();
@@ -30,6 +33,7 @@ const makeSut = (): SutTypes => {
     loadUserByFieldRepositorySpy,
     hasherComparerSpy,
     hasherSpy,
+    updateUserRepositorySpy,
   );
   return {
     sut,
@@ -37,6 +41,7 @@ const makeSut = (): SutTypes => {
     loadUserByFieldRepositorySpy,
     hasherComparerSpy,
     hasherSpy,
+    updateUserRepositorySpy,
   };
 };
 
@@ -146,5 +151,18 @@ describe('UpdateUserUsecase', () => {
     const promise = sut.perform(mockUpdateUserWithDifferentValuesParams());
 
     await expect(promise).rejects.toThrow();
+  });
+
+  test('Should call UpdateUserRepository with correct values', async () => {
+    const { sut, updateUserRepositorySpy } = makeSut();
+
+    await sut.perform(mockUpdateUserParams());
+
+    expect(updateUserRepositorySpy.params).toEqual({
+      id: 'any_id',
+      name: 'other_name',
+      email: 'any_email@mail.com',
+    });
+    expect(updateUserRepositorySpy.callsCount).toBe(1);
   });
 });
