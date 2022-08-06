@@ -46,7 +46,13 @@ export interface UpdateUserRepository {
 }
 
 export namespace UpdateUserRepository {
-  export type Params = User;
+  export type Params = {
+    id: string;
+    name: string;
+    email: string;
+    password?: string;
+    accessToken?: string;
+  };
 
   export type Result = void;
 }
