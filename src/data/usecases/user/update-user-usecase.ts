@@ -32,7 +32,7 @@ export class UpdateUserUsecase implements UpdateUser {
     if (password && newPassword) {
       const { isValid } = await this.hasherComparer.compare({
         plaintext: password,
-        digest: authedUserData?.password || '',
+        digest: authedUserData.password,
       });
       if (!isValid) {
         return { success: false, invalidField: 'password' };

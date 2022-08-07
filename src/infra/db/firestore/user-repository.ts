@@ -41,9 +41,6 @@ export class UserRepository implements
   async loadById(params: LoadUserByIdRepository.Params): Promise<LoadUserByIdRepository.Result> {
     const usersCollection = FirestoreHelper.getCollection('users');
     const docData = await usersCollection.doc(params.id).get();
-    if (!docData.exists) {
-      return null;
-    }
     return FirestoreHelper.documentMapper(docData);
   }
 }

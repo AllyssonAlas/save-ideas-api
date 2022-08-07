@@ -24,7 +24,7 @@ export namespace LoadUserByIdRepository {
     id: string;
   };
 
-  export type Result = null | User;
+  export type Result = User;
 }
 
 export interface CreateUserRepository {
