@@ -1,4 +1,5 @@
 import { UpdateUserController } from '@/presentation/controllers';
+import { serverError } from '@/presentation/helpers';
 
 import { ValidationSpy } from '@/tests/presentation/mocks';
 
@@ -28,5 +29,16 @@ describe('UpdateUserController', () => {
 
     expect(validationSpy.input).toEqual(request);
     expect(validationSpy.callsCount).toBe(1);
+  });
+
+  test('Should return 500 if Validation throws', async () => {
+    const { sut, validationSpy } = makeSut();
+    jest.spyOn(validationSpy, 'validate').mockImplementation(() => {
+      throw new Error();
+    });
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(serverError(new Error()));
   });
 });
