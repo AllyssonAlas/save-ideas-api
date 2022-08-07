@@ -1,6 +1,7 @@
 import { UpdateUser } from '@/domain/usecases';
 import { Controller, Validation } from '@/presentation/protocols';
-import { badRequest, serverError } from '@/presentation/helpers';
+import { badRequest, forbidden, serverError } from '@/presentation/helpers';
+import { EmailInUseError } from '@/presentation/errors';
 
 export class UpdateUserController implements Controller {
   constructor(private readonly validation: Validation, private readonly updateUser: UpdateUser) {}
@@ -11,7 +12,10 @@ export class UpdateUserController implements Controller {
       if (error) {
         return badRequest(error);
       }
-      await this.updateUser.perform(request);
+      const updateUserData = await this.updateUser.perform(request);
+      if (updateUserData.invalidField === 'email') {
+        return forbidden(new EmailInUseError());
+      }
     } catch (error) {
       return serverError(error);
     }
