@@ -1,6 +1,6 @@
 import { UpdateUser } from '@/domain/usecases';
 import { Controller, Validation } from '@/presentation/protocols';
-import { badRequest, forbidden, serverError } from '@/presentation/helpers';
+import { badRequest, forbidden, noContent, serverError } from '@/presentation/helpers';
 import { EmailInUseError, InvalidParamError } from '@/presentation/errors';
 
 export class UpdateUserController implements Controller {
@@ -18,6 +18,7 @@ export class UpdateUserController implements Controller {
       } else if (updateUserData.invalidField === 'password') {
         return forbidden(new InvalidParamError('password'));
       }
+      return noContent();
     } catch (error) {
       return serverError(error);
     }
