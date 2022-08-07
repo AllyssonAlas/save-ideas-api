@@ -20,4 +20,16 @@ describe('RelatedRequiredFieldsValidation', () => {
 
     expect(error).toEqual(new MissingParamError('relatedFieldTwo'));
   });
+
+  test('Should not return if validation succeeds', () => {
+    const sut = makeSut();
+
+    const error = sut.validate({
+      relatedFieldOne: 'any_value',
+      relatedFieldTwo: 'any_value',
+      relatedFieldThree: 'any_value',
+    });
+
+    expect(error).toBeFalsy();
+  });
 });
