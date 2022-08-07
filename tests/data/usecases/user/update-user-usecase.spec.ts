@@ -1,52 +1,114 @@
 import { UpdateUserUsecase } from '@/data/usecases';
 
-import { mockUpdaterUserParams, mockUpdaterUserParamsWithNewPassword } from '@/tests/domain/mocks';
-
 import {
+  mockUpdateUserParams,
+  mockUpdateUserWithAdditionalValuesParams,
+} from '@/tests/domain/mocks';
+import {
+  LoadUserByIdRepositorySpy,
+  LoadUserByFielRepositorySpy,
   HasherComparerSpy,
   HasherSpy,
-  LoadUserByEmailRepositorySpy,
   UpdateUserRepositorySpy,
 } from '@/tests/data/mocks';
 
 interface SutTypes {
   sut: UpdateUserUsecase;
+  loadUserByIdRepositorySpy: LoadUserByIdRepositorySpy;
+  loadUserByFieldRepositorySpy: LoadUserByFielRepositorySpy;
   hasherComparerSpy: HasherComparerSpy;
   hasherSpy: HasherSpy;
-  loadUserByEmailRepositorySpy: LoadUserByEmailRepositorySpy;
   updateUserRepositorySpy: UpdateUserRepositorySpy;
 }
 
 const makeSut = (): SutTypes => {
   const updateUserRepositorySpy = new UpdateUserRepositorySpy();
-  const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy();
   const hasherSpy = new HasherSpy();
   const hasherComparerSpy = new HasherComparerSpy();
+  const loadUserByFieldRepositorySpy = new LoadUserByFielRepositorySpy();
+  loadUserByFieldRepositorySpy.result = null;
+  const loadUserByIdRepositorySpy = new LoadUserByIdRepositorySpy();
   const sut = new UpdateUserUsecase(
+    loadUserByIdRepositorySpy,
+    loadUserByFieldRepositorySpy,
     hasherComparerSpy,
     hasherSpy,
-    loadUserByEmailRepositorySpy,
     updateUserRepositorySpy,
   );
-
   return {
     sut,
+    loadUserByIdRepositorySpy,
+    loadUserByFieldRepositorySpy,
     hasherComparerSpy,
     hasherSpy,
-    loadUserByEmailRepositorySpy,
     updateUserRepositorySpy,
   };
 };
 
 describe('UpdateUserUsecase', () => {
-  test('Should call HasherComparer with correct value if newPassword is received', async () => {
-    const { sut, hasherComparerSpy } = makeSut();
+  test('Should call LoadUserByIdRepository with correct value', async () => {
+    const { sut, loadUserByIdRepositorySpy } = makeSut();
 
-    await sut.perform(mockUpdaterUserParamsWithNewPassword());
+    await sut.perform(mockUpdateUserParams());
+
+    expect(loadUserByIdRepositorySpy.params).toEqual({ id: 'any_id' });
+    expect(loadUserByIdRepositorySpy.callsCount).toBe(1);
+  });
+
+  test('Should throw if LoadUserByIdRepository throws', async () => {
+    const { sut, loadUserByIdRepositorySpy } = makeSut();
+    jest.spyOn(loadUserByIdRepositorySpy, 'loadById').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const promise = sut.perform(mockUpdateUserParams());
+
+    await expect(promise).rejects.toThrow();
+  });
+
+  test('Should call LoadUserByFieldRepository with correct value if different email is received', async () => {
+    const { sut, loadUserByFieldRepositorySpy } = makeSut();
+
+    await sut.perform(mockUpdateUserWithAdditionalValuesParams());
+
+    expect(loadUserByFieldRepositorySpy.params).toEqual({ email: 'other_email@mail.com' });
+    expect(loadUserByFieldRepositorySpy.callsCount).toBe(1);
+  });
+
+  test('Should throw if LoadUserByFieldRepository throws', async () => {
+    const { sut, loadUserByFieldRepositorySpy } = makeSut();
+    jest.spyOn(loadUserByFieldRepositorySpy, 'loadByField').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const promise = sut.perform(mockUpdateUserWithAdditionalValuesParams());
+
+    await expect(promise).rejects.toThrow();
+  });
+
+  test('Should return success false if LoadUserByFieldRepository returns an user', async () => {
+    const { sut, loadUserByFieldRepositorySpy } = makeSut();
+    loadUserByFieldRepositorySpy.result = {
+      id: 'any_id',
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      password: 'any_password',
+      accessToken: 'any_access_token',
+    };
+
+    const updateUserResult = await sut.perform(mockUpdateUserWithAdditionalValuesParams());
+
+    expect(updateUserResult).toEqual({ success: false, invalidField: 'email' });
+  });
+
+  test('Should call HasherComparer with correct values if password is received', async () => {
+    const { sut, loadUserByIdRepositorySpy, hasherComparerSpy } = makeSut();
+
+    await sut.perform(mockUpdateUserWithAdditionalValuesParams());
 
     expect(hasherComparerSpy.params).toEqual({
       plaintext: 'any_password',
-      digest: 'any_hashed_password',
+      digest: loadUserByIdRepositorySpy.result?.password,
     });
     expect(hasherComparerSpy.callsCount).toBe(1);
   });
@@ -57,106 +119,63 @@ describe('UpdateUserUsecase', () => {
       throw new Error();
     });
 
-    const promise = sut.perform(mockUpdaterUserParamsWithNewPassword());
+    const promise = sut.perform(mockUpdateUserWithAdditionalValuesParams());
 
     await expect(promise).rejects.toThrow();
   });
 
-  test('Should return success false if HasherComparer returns false', async () => {
+  test('Should return success false if HasherComparer returns isValid false', async () => {
     const { sut, hasherComparerSpy } = makeSut();
     hasherComparerSpy.result = { isValid: false };
 
-    const updateUserResult = await sut.perform(mockUpdaterUserParamsWithNewPassword());
+    const updateUserResult = await sut.perform(mockUpdateUserWithAdditionalValuesParams());
 
     expect(updateUserResult).toEqual({ success: false, invalidField: 'password' });
   });
 
-  test('Should call Hasher with correct value if HasherComparer returns true', async () => {
+  test('Should call Hasher with correct value', async () => {
     const { sut, hasherSpy } = makeSut();
-    const userData = mockUpdaterUserParamsWithNewPassword();
 
-    await sut.perform(userData);
+    await sut.perform(mockUpdateUserWithAdditionalValuesParams());
 
     expect(hasherSpy.params).toEqual({ plaintext: 'other_password' });
     expect(hasherSpy.callsCount).toBe(1);
   });
 
-  test('Should not call HasherComparer if newPassword is not received', async () => {
-    const { sut, hasherComparerSpy } = makeSut();
-
-    await sut.perform(mockUpdaterUserParams());
-
-    expect(hasherComparerSpy.callsCount).toBe(0);
-  });
-
-  test('Should not call Hasher if newPassword is not received', async () => {
+  test('Should throw if Hasher throws', async () => {
     const { sut, hasherSpy } = makeSut();
-
-    await sut.perform(mockUpdaterUserParams());
-
-    expect(hasherSpy.callsCount).toBe(0);
-  });
-
-  test('Should call LoadUserByFieldRepository with correct values', async () => {
-    const { sut, loadUserByEmailRepositorySpy } = makeSut();
-
-    await sut.perform(mockUpdaterUserParamsWithNewPassword());
-
-    expect(loadUserByEmailRepositorySpy.params).toEqual({ email: 'any_email@mail.com' });
-    expect(loadUserByEmailRepositorySpy.callsCount).toBe(1);
-  });
-
-  test('Should throw if LoadUserByFieldRepository throws', async () => {
-    const { sut, loadUserByEmailRepositorySpy } = makeSut();
-    jest.spyOn(loadUserByEmailRepositorySpy, 'loadByField').mockImplementationOnce(() => {
+    jest.spyOn(hasherSpy, 'hash').mockImplementationOnce(() => {
       throw new Error();
     });
 
-    const promise = sut.perform(mockUpdaterUserParamsWithNewPassword());
+    const promise = sut.perform(mockUpdateUserWithAdditionalValuesParams());
 
     await expect(promise).rejects.toThrow();
   });
 
-  test('Should return success false and email as invalid field if LoadUserByFieldRepository return an user with different id', async () => {
-    const { sut, loadUserByEmailRepositorySpy } = makeSut();
-    loadUserByEmailRepositorySpy.result = {
-      id: 'other_id',
-      name: 'any_name',
-      email: 'any_email@mail.com',
-      password: 'any_password',
-      accessToken: 'any_access_token',
-    };
-
-    const updateUserResult = await sut.perform(mockUpdaterUserParamsWithNewPassword());
-
-    await expect(updateUserResult).toEqual({ success: false, invalidField: 'email' });
-  });
-
   test('Should call UpdateUserRepository with correct values', async () => {
-    const { sut, updateUserRepositorySpy, hasherSpy } = makeSut();
-    const hashedPassword = hasherSpy.result;
+    const { sut, updateUserRepositorySpy } = makeSut();
 
-    await sut.perform(mockUpdaterUserParamsWithNewPassword());
+    await sut.perform(mockUpdateUserParams());
 
     expect(updateUserRepositorySpy.params).toEqual({
       id: 'any_id',
-      name: 'any_name',
+      name: 'other_name',
       email: 'any_email@mail.com',
-      password: hashedPassword.ciphertext,
     });
     expect(updateUserRepositorySpy.callsCount).toBe(1);
   });
 
-  test('Should call UpdateUserRepository with passwordHash if newPassword is not receive', async () => {
+  test('Should call UpdateUserRepository with addtional correct values', async () => {
     const { sut, updateUserRepositorySpy } = makeSut();
 
-    await sut.perform(mockUpdaterUserParams());
+    await sut.perform(mockUpdateUserWithAdditionalValuesParams());
 
     expect(updateUserRepositorySpy.params).toEqual({
       id: 'any_id',
-      name: 'any_name',
-      email: 'any_email@mail.com',
-      password: 'any_hashed_password',
+      name: 'other_name',
+      email: 'other_email@mail.com',
+      password: 'hashed_password',
     });
     expect(updateUserRepositorySpy.callsCount).toBe(1);
   });
@@ -167,7 +186,7 @@ describe('UpdateUserUsecase', () => {
       throw new Error();
     });
 
-    const promise = sut.perform(mockUpdaterUserParamsWithNewPassword());
+    const promise = sut.perform(mockUpdateUserParams());
 
     await expect(promise).rejects.toThrow();
   });
@@ -175,8 +194,8 @@ describe('UpdateUserUsecase', () => {
   test('Should return success true on success', async () => {
     const { sut } = makeSut();
 
-    const updateUserResult = await sut.perform(mockUpdaterUserParamsWithNewPassword());
+    const updateUserResult = await sut.perform(mockUpdateUserParams());
 
-    await expect(updateUserResult).toEqual({ success: true });
+    expect(updateUserResult).toEqual({ success: true });
   });
 });

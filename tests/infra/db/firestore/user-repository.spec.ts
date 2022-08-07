@@ -104,13 +104,5 @@ describe('UserRepository', () => {
       expect(user?.password).toBe('any_password');
       expect(user?.accessToken).toBe('any_access_token');
     });
-
-    test('Should return null if id is invalid', async () => {
-      const sut = makeSut();
-
-      const user = await sut.loadById({ id: 'any_id' });
-
-      expect(user).toBeNull();
-    });
   });
 });

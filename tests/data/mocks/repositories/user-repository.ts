@@ -5,7 +5,7 @@ import {
   UpdateUserRepository,
 } from '@/data/protocols/repositories';
 
-export class LoadUserByEmailRepositorySpy implements LoadUserByFieldRepository {
+export class LoadUserByFielRepositorySpy implements LoadUserByFieldRepository {
   params?: LoadUserByFieldRepository.Params;
   result: LoadUserByFieldRepository.Result = {
     id: 'any_id',

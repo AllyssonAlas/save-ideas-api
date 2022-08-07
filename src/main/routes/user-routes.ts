@@ -11,5 +11,5 @@ import {
 export default (router: Router): void => {
   router.post('/signup', adaptRoute(makeSignUpController()));
   router.post('/login', adaptRoute(makeAuthenticationController()));
-  router.put('/update-user/:userId', auth, adaptRoute(makeUpdateUserController()));
+  router.put('/update-user', auth, adaptRoute(makeUpdateUserController()));
 };

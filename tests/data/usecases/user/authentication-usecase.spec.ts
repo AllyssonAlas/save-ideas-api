@@ -2,7 +2,7 @@ import { AuthenticationUsecase } from '@/data/usecases';
 
 import { mockAuthenticationParams } from '@/tests/domain/mocks';
 import {
-  LoadUserByEmailRepositorySpy,
+  LoadUserByFielRepositorySpy,
   HasherComparerSpy,
   EncrypterSpy,
   UpdateUserRepositorySpy,
@@ -10,20 +10,20 @@ import {
 
 interface SutTypes {
   sut: AuthenticationUsecase;
-  loadUserByEmailRepositorySpy: LoadUserByEmailRepositorySpy;
+  loadUserByFielRepositorySpy: LoadUserByFielRepositorySpy;
   hasherComparerSpy: HasherComparerSpy;
   encrypterSpy: EncrypterSpy;
   updateUserRepositorySpy: UpdateUserRepositorySpy;
 }
 
 const makeSut = (): SutTypes => {
-  const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy();
+  const loadUserByFielRepositorySpy = new LoadUserByFielRepositorySpy();
   const hasherComparerSpy = new HasherComparerSpy();
   const encrypterSpy = new EncrypterSpy();
   encrypterSpy.result = { ciphertext: 'any_access_token' };
   const updateUserRepositorySpy = new UpdateUserRepositorySpy();
   const sut = new AuthenticationUsecase(
-    loadUserByEmailRepositorySpy,
+    loadUserByFielRepositorySpy,
     hasherComparerSpy,
     encrypterSpy,
     updateUserRepositorySpy,
@@ -31,7 +31,7 @@ const makeSut = (): SutTypes => {
 
   return {
     sut,
-    loadUserByEmailRepositorySpy,
+    loadUserByFielRepositorySpy,
     hasherComparerSpy,
     encrypterSpy,
     updateUserRepositorySpy,
@@ -40,17 +40,17 @@ const makeSut = (): SutTypes => {
 
 describe('AuthenticationUsecase', () => {
   test('Should call LoadUserByFieldRepository with correct value', async () => {
-    const { sut, loadUserByEmailRepositorySpy } = makeSut();
+    const { sut, loadUserByFielRepositorySpy } = makeSut();
 
     await sut.perform(mockAuthenticationParams());
 
-    expect(loadUserByEmailRepositorySpy.params).toEqual({ email: 'any_email@email.com' });
-    expect(loadUserByEmailRepositorySpy.callsCount).toBe(1);
+    expect(loadUserByFielRepositorySpy.params).toEqual({ email: 'any_email@email.com' });
+    expect(loadUserByFielRepositorySpy.callsCount).toBe(1);
   });
 
   test('Should throw if LoadUserByFieldRepository throws', async () => {
-    const { sut, loadUserByEmailRepositorySpy } = makeSut();
-    jest.spyOn(loadUserByEmailRepositorySpy, 'loadByField').mockImplementationOnce(() => {
+    const { sut, loadUserByFielRepositorySpy } = makeSut();
+    jest.spyOn(loadUserByFielRepositorySpy, 'loadByField').mockImplementationOnce(() => {
       throw new Error();
     });
 
@@ -60,8 +60,8 @@ describe('AuthenticationUsecase', () => {
   });
 
   test('Should return null if LoadUserByFieldRepository returns null', async () => {
-    const { sut, loadUserByEmailRepositorySpy } = makeSut();
-    loadUserByEmailRepositorySpy.result = null;
+    const { sut, loadUserByFielRepositorySpy } = makeSut();
+    loadUserByFielRepositorySpy.result = null;
 
     const authenticationResult = await sut.perform(mockAuthenticationParams());
 
@@ -69,13 +69,13 @@ describe('AuthenticationUsecase', () => {
   });
 
   test('Should call HasherComparer with correct values', async () => {
-    const { sut, loadUserByEmailRepositorySpy, hasherComparerSpy } = makeSut();
+    const { sut, loadUserByFielRepositorySpy, hasherComparerSpy } = makeSut();
 
     await sut.perform(mockAuthenticationParams());
 
     expect(hasherComparerSpy.params).toEqual({
       plaintext: 'any_password',
-      digest: loadUserByEmailRepositorySpy.result?.password,
+      digest: loadUserByFielRepositorySpy.result?.password,
     });
     expect(hasherComparerSpy.callsCount).toBe(1);
   });
@@ -101,11 +101,11 @@ describe('AuthenticationUsecase', () => {
   });
 
   test('Should call Encrypter with correct value', async () => {
-    const { sut, loadUserByEmailRepositorySpy, encrypterSpy } = makeSut();
+    const { sut, loadUserByFielRepositorySpy, encrypterSpy } = makeSut();
 
     await sut.perform(mockAuthenticationParams());
 
-    expect(encrypterSpy.params).toEqual({ plaintext: loadUserByEmailRepositorySpy.result?.id });
+    expect(encrypterSpy.params).toEqual({ plaintext: loadUserByFielRepositorySpy.result?.id });
     expect(encrypterSpy.callsCount).toBe(1);
   });
 
@@ -121,12 +121,12 @@ describe('AuthenticationUsecase', () => {
   });
 
   test('Should call UpdateUserRepository with correct values', async () => {
-    const { sut, updateUserRepositorySpy, loadUserByEmailRepositorySpy, encrypterSpy } = makeSut();
+    const { sut, updateUserRepositorySpy, loadUserByFielRepositorySpy, encrypterSpy } = makeSut();
 
     await sut.perform(mockAuthenticationParams());
 
     expect(updateUserRepositorySpy.params).toEqual({
-      ...loadUserByEmailRepositorySpy.result,
+      ...loadUserByFielRepositorySpy.result,
       accessToken: encrypterSpy.result.ciphertext,
     });
     expect(updateUserRepositorySpy.callsCount).toBe(1);

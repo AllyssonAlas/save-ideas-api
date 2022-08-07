@@ -7,7 +7,7 @@ import { FirestoreHelper } from '@/infra/db';
 import app from '@/main/config/app';
 import env from '@/main/config/env';
 
-const mockAcessToken = async () => {
+const mockAcessToken = async (): Promise<string> => {
   const password = await hash('jhon_doe@123', 12);
   const usersCollection = FirestoreHelper.getCollection('users');
 
@@ -21,7 +21,7 @@ const mockAcessToken = async () => {
 
   user.update({ accessToken });
 
-  return { id: user.id, accessToken };
+  return accessToken;
 };
 
 describe('User Routes', () => {
@@ -80,28 +80,18 @@ describe('User Routes', () => {
     });
   });
 
-  describe('/update-user/:userId', () => {
+  describe('/update-user', () => {
     test('Should return 204 on success', async () => {
-      const { id, accessToken } = await mockAcessToken();
+      const accessToken = await mockAcessToken();
 
       await request(app)
-        .put(`/api/update-user/${id}`)
+        .put('/api/update-user')
         .set('x-access-token', accessToken)
         .send({
           name: 'Johnny Doe',
           email: 'jhon_doe@mail.com',
         })
         .expect(204);
-    });
-
-    test('Should return 403 on invalid id', async () => {
-      await request(app)
-        .put('/api/update-user/any_id')
-        .send({
-          name: 'Johnny Doe',
-          email: 'jhon_doe@mail.com',
-        })
-        .expect(403);
     });
   });
 });
