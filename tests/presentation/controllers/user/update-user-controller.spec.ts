@@ -1,5 +1,5 @@
 import { UpdateUserController } from '@/presentation/controllers';
-import { EmailInUseError, MissingParamError } from '@/presentation/errors';
+import { EmailInUseError, InvalidParamError, MissingParamError } from '@/presentation/errors';
 import { badRequest, forbidden, serverError } from '@/presentation/helpers';
 
 import { ValidationSpy, UpdateUserUsecaseSpy } from '@/tests/presentation/mocks';
@@ -85,5 +85,14 @@ describe('UpdateUserController', () => {
     const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(forbidden(new EmailInUseError()));
+  });
+
+  test('Should return 403 if UpdateUserUsecase returns password as invalid field', async () => {
+    const { sut, updateUserUsecaseSpy } = makeSut();
+    updateUserUsecaseSpy.result = { success: false, invalidField: 'password' };
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(forbidden(new InvalidParamError('password')));
   });
 });
