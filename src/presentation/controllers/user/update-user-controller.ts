@@ -1,8 +1,9 @@
+import { UpdateUser } from '@/domain/usecases';
 import { Controller, Validation } from '@/presentation/protocols';
 import { badRequest, serverError } from '@/presentation/helpers';
 
 export class UpdateUserController implements Controller {
-  constructor(private readonly validation: Validation) {}
+  constructor(private readonly validation: Validation, private readonly updateUser: UpdateUser) {}
 
   async handle(request: UpdateUserController.Request): Promise<any> {
     try {
@@ -10,7 +11,7 @@ export class UpdateUserController implements Controller {
       if (error) {
         return badRequest(error);
       }
-      return Promise.resolve();
+      await this.updateUser.perform(request);
     } catch (error) {
       return serverError(error);
     }
