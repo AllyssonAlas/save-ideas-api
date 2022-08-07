@@ -1,18 +1,8 @@
-import {
-  Authentication,
-  LoadUserById,
-  LoadUserByToken,
-  SignUp,
-  UpdateUser,
-} from '@/domain/usecases';
+import { Authentication, LoadUserByToken, SignUp, UpdateUser } from '@/domain/usecases';
 
 export const mockAuthenticationParams = (): Authentication.Params => ({
   email: 'any_email@email.com',
   password: 'any_password',
-});
-
-export const mockLoadUserByIdParams = (): LoadUserById.Params => ({
-  id: 'any_id',
 });
 
 export const mockLoadUserByTokenParams = (): LoadUserByToken.Params => ({
