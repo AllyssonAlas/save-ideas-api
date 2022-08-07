@@ -23,7 +23,6 @@ export class UpdateUserUsecase implements UpdateUser {
       name,
       email,
     };
-
     if (authedUserData?.email !== email) {
       const userData = await this.loadUserByFieldRepository.loadByField({ email });
       if (userData) {
