@@ -2,7 +2,7 @@ import { UpdateUserController } from '@/presentation/controllers';
 import { MissingParamError } from '@/presentation/errors';
 import { badRequest, serverError } from '@/presentation/helpers';
 
-import { ValidationSpy } from '@/tests/presentation/mocks';
+import { ValidationSpy, UpdateUserUsecaseSpy } from '@/tests/presentation/mocks';
 
 const mockRequest = (): UpdateUserController.Request => ({
   userId: 'any_id',
@@ -13,12 +13,14 @@ const mockRequest = (): UpdateUserController.Request => ({
 interface SutTypes {
   sut: UpdateUserController;
   validationSpy: ValidationSpy;
+  updateUserUsecaseSpy: UpdateUserUsecaseSpy;
 }
 
 const makeSut = (): SutTypes => {
+  const updateUserUsecaseSpy = new UpdateUserUsecaseSpy();
   const validationSpy = new ValidationSpy();
-  const sut = new UpdateUserController(validationSpy);
-  return { sut, validationSpy };
+  const sut = new UpdateUserController(validationSpy, updateUserUsecaseSpy);
+  return { sut, validationSpy, updateUserUsecaseSpy };
 };
 
 describe('UpdateUserController', () => {
@@ -50,5 +52,18 @@ describe('UpdateUserController', () => {
     const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(badRequest(new MissingParamError('field')));
+  });
+
+  test('Should call UpdateUserUsecase with correct values', async () => {
+    const { sut, updateUserUsecaseSpy } = makeSut();
+
+    await sut.handle(mockRequest());
+
+    expect(updateUserUsecaseSpy.params).toEqual({
+      userId: 'any_id',
+      name: 'other_name',
+      email: 'any_email@mail.com',
+    });
+    expect(updateUserUsecaseSpy.callsCount).toBe(1);
   });
 });
