@@ -9,3 +9,13 @@ export namespace CreateIdeiaRepository {
 
   export type Result = Ideia;
 }
+
+export interface ListIdeiasRepository {
+  list: (params: ListIdeiasRepository.Params) => Promise<ListIdeiasRepository.Result>;
+}
+
+export namespace ListIdeiasRepository {
+  export type Params = { userId: string };
+
+  export type Result = Ideia[];
+}
