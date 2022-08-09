@@ -23,4 +23,26 @@ describe('ListIdeiasUsecase', () => {
     expect(listIdeiasRepositorySpy.params).toEqual({ userId: 'any_user_id' });
     expect(listIdeiasRepositorySpy.callsCount).toBe(1);
   });
+
+  test('Should throw if CreateIdeiaRepository throws', async () => {
+    const { sut, listIdeiasRepositorySpy } = makeSut();
+    jest.spyOn(listIdeiasRepositorySpy, 'list').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const promise = sut.perform(mockListIdeiasParams());
+
+    await expect(promise).rejects.toThrow();
+  });
+
+  test('Should throw if ListIdeiasRepository throws', async () => {
+    const { sut, listIdeiasRepositorySpy } = makeSut();
+    jest.spyOn(listIdeiasRepositorySpy, 'list').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const promise = sut.perform(mockListIdeiasParams());
+
+    await expect(promise).rejects.toThrow();
+  });
 });
