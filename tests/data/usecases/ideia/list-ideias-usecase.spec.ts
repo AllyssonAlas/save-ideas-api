@@ -45,4 +45,35 @@ describe('ListIdeiasUsecase', () => {
 
     await expect(promise).rejects.toThrow();
   });
+
+  test('Should return an empty list of ideias on success', async () => {
+    const { sut, listIdeiasRepositorySpy } = makeSut();
+    listIdeiasRepositorySpy.result = [];
+
+    const listIdeiasResult = await sut.perform(mockListIdeiasParams());
+
+    expect(listIdeiasResult).toHaveLength(0);
+    expect(listIdeiasResult).toEqual([]);
+  });
+
+  test('Should return a list of ideias on success', async () => {
+    const { sut } = makeSut();
+
+    const listIdeiasResult = await sut.perform(mockListIdeiasParams());
+
+    expect(listIdeiasResult).toHaveLength(2);
+    expect(listIdeiasResult[0]).toEqual({
+      id: 'any_id',
+      ownerId: 'any_user_id',
+      title: 'any_title_ideia',
+      description: 'any_description_ideia',
+      features: [
+        {
+          name: 'any_feature_name',
+          description: 'any_feature_description',
+          finished: false,
+        },
+      ],
+    });
+  });
 });
