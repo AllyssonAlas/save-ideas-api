@@ -1,4 +1,5 @@
 import { ListIdeiasController } from '@/presentation/controllers';
+import { serverError } from '@/presentation/helpers';
 
 import { ListIdeiasUsecaseSpy } from '@/tests/presentation/mocks';
 
@@ -26,5 +27,16 @@ describe('ListIdeiasController', () => {
 
     expect(listIdeiasUsecaseSpy.params).toEqual(request);
     expect(listIdeiasUsecaseSpy.callsCount).toBe(1);
+  });
+
+  test('Should return 500 if ListIdeiasUsecase throws', async () => {
+    const { sut, listIdeiasUsecaseSpy } = makeSut();
+    jest.spyOn(listIdeiasUsecaseSpy, 'perform').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(serverError(new Error()));
   });
 });
