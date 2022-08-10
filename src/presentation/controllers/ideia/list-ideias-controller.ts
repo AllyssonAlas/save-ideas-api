@@ -1,13 +1,14 @@
 import { ListIdeias } from '@/domain/usecases';
 import { Controller } from '@/presentation/protocols';
-import { serverError } from '@/presentation/helpers';
+import { ok, serverError } from '@/presentation/helpers';
 
 export class ListIdeiasController implements Controller {
   constructor(private readonly listIdeias: ListIdeias) {}
 
   async handle(request: ListIdeiasController.Request): Promise<any> {
     try {
-      await this.listIdeias.perform(request);
+      const listIdeiasData = await this.listIdeias.perform(request);
+      return ok(listIdeiasData);
     } catch (error) {
       return serverError(error);
     }
