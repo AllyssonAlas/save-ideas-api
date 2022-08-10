@@ -24,7 +24,7 @@ const mockAcessToken = async (): Promise<string> => {
   return accessToken;
 };
 
-describe('User Routes', () => {
+describe('Ideia Routes', () => {
   beforeAll(() => {
     FirestoreHelper.connect();
   });
@@ -87,6 +87,14 @@ describe('User Routes', () => {
           ],
         })
         .expect(400);
+    });
+  });
+
+  describe('/ideias', () => {
+    test('Should return 204 on empty ideias list', async () => {
+      const accessToken = await mockAcessToken();
+
+      await request(app).get('/api/ideias').set('x-access-token', accessToken).expect(204);
     });
   });
 });
