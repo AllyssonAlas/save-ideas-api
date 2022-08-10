@@ -1,5 +1,5 @@
 import { ListIdeiasController } from '@/presentation/controllers';
-import { ok, serverError } from '@/presentation/helpers';
+import { noContent, ok, serverError } from '@/presentation/helpers';
 
 import { ListIdeiasUsecaseSpy } from '@/tests/presentation/mocks';
 
@@ -38,6 +38,15 @@ describe('ListIdeiasController', () => {
     const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(serverError(new Error()));
+  });
+
+  test('Should return 204 on empty ideas list', async () => {
+    const { sut, listIdeiasUsecaseSpy } = makeSut();
+    listIdeiasUsecaseSpy.result = [];
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(noContent());
   });
 
   test('Should return 200 on success', async () => {
