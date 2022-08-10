@@ -60,7 +60,7 @@ describe('UpdateUserController', () => {
     await sut.handle(mockRequest());
 
     expect(updateUserUsecaseSpy.params).toEqual({
-      userId: 'any_id',
+      id: 'any_id',
       name: 'other_name',
       email: 'any_email@mail.com',
     });

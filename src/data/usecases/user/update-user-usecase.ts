@@ -16,13 +16,9 @@ export class UpdateUserUsecase implements UpdateUser {
   ) {}
 
   async perform(params: UpdateUser.Params): Promise<UpdateUser.Result> {
-    const { userId, name, email, password, newPassword } = params;
-    const authedUserData = await this.loadUserByIdRepository.loadById({ id: userId });
-    const newUserData: UpdateUserRepository.Params = {
-      id: userId,
-      name,
-      email,
-    };
+    const { id, name, email, password, newPassword } = params;
+    const authedUserData = await this.loadUserByIdRepository.loadById({ id });
+    const newUserData: UpdateUserRepository.Params = { id, name, email };
     if (authedUserData?.email !== email) {
       const userData = await this.loadUserByFieldRepository.loadByField({ email });
       if (userData) {
