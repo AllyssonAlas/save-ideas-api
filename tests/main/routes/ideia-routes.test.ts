@@ -1,32 +1,18 @@
-import { hash } from 'bcrypt';
-import { sign } from 'jsonwebtoken';
+import { CollectionReference } from 'firebase-admin/firestore';
 import request from 'supertest';
 
 import { FirestoreHelper } from '@/infra/db';
 
 import app from '@/main/config/app';
-import env from '@/main/config/env';
 
-const mockAcessToken = async (): Promise<string> => {
-  const password = await hash('jhon_doe@123', 12);
-  const usersCollection = FirestoreHelper.getCollection('users');
-
-  const user = await usersCollection.add({
-    name: 'John Doe',
-    email: 'jhon_doe@mail.com',
-    password,
-  });
-
-  const accessToken = sign(user.id, env.jwtSecret);
-
-  user.update({ accessToken });
-
-  return accessToken;
-};
+import { mockAcessToken } from '@/tests/main/mocks';
 
 describe('Ideia Routes', () => {
+  let ideiasCollection: CollectionReference;
+
   beforeAll(() => {
     FirestoreHelper.connect();
+    ideiasCollection = FirestoreHelper.getCollection('ideias');
   });
 
   afterEach(async () => {
@@ -39,8 +25,7 @@ describe('Ideia Routes', () => {
   });
 
   afterEach(async () => {
-    const ideiaCollection = FirestoreHelper.getCollection('ideias');
-    const ideias = await ideiaCollection.listDocuments();
+    const ideias = await ideiasCollection.listDocuments();
 
     for (let index = 0; index < ideias.length; index++) {
       await ideias[index].delete();
