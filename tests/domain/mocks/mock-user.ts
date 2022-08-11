@@ -16,13 +16,13 @@ export const mockSignUpParams = (): SignUp.Params => ({
 });
 
 export const mockUpdateUserParams = (): UpdateUser.Params => ({
-  userId: 'any_id',
+  id: 'any_id',
   name: 'other_name',
   email: 'any_email@mail.com',
 });
 
 export const mockUpdateUserWithAdditionalValuesParams = (): UpdateUser.Params => ({
-  userId: 'any_id',
+  id: 'any_id',
   name: 'other_name',
   email: 'other_email@mail.com',
   password: 'any_password',

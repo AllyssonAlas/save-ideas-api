@@ -1,37 +1,25 @@
-import { hash } from 'bcrypt';
-import { sign } from 'jsonwebtoken';
+import { CollectionReference } from 'firebase-admin/firestore';
 import request from 'supertest';
 
 import { FirestoreHelper } from '@/infra/db';
 
 import app from '@/main/config/app';
-import env from '@/main/config/env';
 
-const mockAcessToken = async (): Promise<string> => {
-  const password = await hash('jhon_doe@123', 12);
-  const usersCollection = FirestoreHelper.getCollection('users');
+import { mockCreateIdeiaParams } from '@/tests/domain/mocks';
+import { mockAcessToken } from '@/tests/main/mocks';
 
-  const user = await usersCollection.add({
-    name: 'John Doe',
-    email: 'jhon_doe@mail.com',
-    password,
-  });
+describe('Ideia Routes', () => {
+  let usersCollection: CollectionReference;
+  let ideiasCollection: CollectionReference;
 
-  const accessToken = sign(user.id, env.jwtSecret);
-
-  user.update({ accessToken });
-
-  return accessToken;
-};
-
-describe('User Routes', () => {
   beforeAll(() => {
     FirestoreHelper.connect();
+    ideiasCollection = FirestoreHelper.getCollection('ideias');
+    usersCollection = FirestoreHelper.getCollection('users');
   });
 
   afterEach(async () => {
-    const userCollection = FirestoreHelper.getCollection('users');
-    const users = await userCollection.listDocuments();
+    const users = await usersCollection.listDocuments();
 
     for (let index = 0; index < users.length; index++) {
       await users[index].delete();
@@ -39,8 +27,7 @@ describe('User Routes', () => {
   });
 
   afterEach(async () => {
-    const ideiaCollection = FirestoreHelper.getCollection('ideias');
-    const ideias = await ideiaCollection.listDocuments();
+    const ideias = await ideiasCollection.listDocuments();
 
     for (let index = 0; index < ideias.length; index++) {
       await ideias[index].delete();
@@ -87,6 +74,25 @@ describe('User Routes', () => {
           ],
         })
         .expect(400);
+    });
+  });
+
+  describe('/ideias', () => {
+    test('Should return 204 on empty ideias list', async () => {
+      const accessToken = await mockAcessToken();
+
+      await request(app).get('/api/ideias').set('x-access-token', accessToken).expect(204);
+    });
+
+    test('Should return 200 on success', async () => {
+      const accessToken = await mockAcessToken();
+
+      const usersSnapshot = await usersCollection.get();
+      const users = FirestoreHelper.collectionMapper(usersSnapshot);
+      const ideiaData = { ownerId: users[0].id, ...mockCreateIdeiaParams() };
+      await ideiasCollection.add(ideiaData);
+
+      await request(app).get('/api/ideias').set('x-access-token', accessToken).expect(200);
     });
   });
 });

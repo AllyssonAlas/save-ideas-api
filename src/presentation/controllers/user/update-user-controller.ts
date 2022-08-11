@@ -12,7 +12,8 @@ export class UpdateUserController implements Controller {
       if (error) {
         return badRequest(error);
       }
-      const updateUserData = await this.updateUser.perform(request);
+      const { userId, ...requestData } = request;
+      const updateUserData = await this.updateUser.perform({ id: userId, ...requestData });
       if (updateUserData.invalidField === 'email') {
         return forbidden(new EmailInUseError());
       } else if (updateUserData.invalidField === 'password') {
