@@ -5,6 +5,6 @@ export class LoadIdeiaByIdUsecase implements LoadIdeiaById {
   constructor(private readonly loadIdeiaByIdRepository: LoadIdeiaByIdRepository) {}
 
   async perform(params: LoadIdeiaById.Params): Promise<any> {
-    await this.loadIdeiaByIdRepository.load(params);
+    return this.loadIdeiaByIdRepository.load(params);
   }
 }
