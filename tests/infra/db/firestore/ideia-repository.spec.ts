@@ -77,4 +77,17 @@ describe('IdeiaRepository', () => {
       expect(ideias[0].features).toHaveLength(1);
     });
   });
+
+  describe('load()', () => {
+    test('Should return an ideia on success', async () => {
+      const sut = makeSut();
+
+      await ideiasCollection.doc('any_id').set(mockCreateIdeiaParams());
+      const ideia = await sut.load({ ideiaId: 'any_id' });
+
+      expect(ideia).toBeTruthy();
+      expect(ideia?.title).toBe('any_title_ideia');
+      expect(ideia?.description).toBe('any_description_ideia');
+    });
+  });
 });
