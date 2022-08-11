@@ -23,4 +23,15 @@ describe('LoadIdeiaByIdUsecase', () => {
     expect(loadIdeiaByIdRepositorySpy.params).toEqual({ ideiaId: 'any_ideia_id' });
     expect(loadIdeiaByIdRepositorySpy.callsCount).toBe(1);
   });
+
+  test('Should throw if LoadIdeiaByIdRepository throws', async () => {
+    const { sut, loadIdeiaByIdRepositorySpy } = makeSut();
+    jest.spyOn(loadIdeiaByIdRepositorySpy, 'load').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const promise = sut.perform(mockLoadIdeiaByIdParams());
+
+    await expect(promise).rejects.toThrow();
+  });
 });
