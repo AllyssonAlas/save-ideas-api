@@ -43,4 +43,14 @@ describe('LoadIdeiaByIdUsecase', () => {
 
     expect(loadIdeiaByIdResult).toBeNull();
   });
+
+  test('Should return an ideia on success', async () => {
+    const { sut } = makeSut();
+
+    const loadIdeiaByIdResult = await sut.perform(mockLoadIdeiaByIdParams());
+
+    expect(loadIdeiaByIdResult?.id).toBe('any_id');
+    expect(loadIdeiaByIdResult?.ownerId).toBe('any_user_id');
+    expect(loadIdeiaByIdResult?.title).toBe('any_title_ideia');
+  });
 });
