@@ -24,6 +24,6 @@ export class IdeiaRepository implements CreateIdeiaRepository, ListIdeiasReposit
   async load(params: LoadIdeiaByIdRepository.Params): Promise<LoadIdeiaByIdRepository.Result> {
     const ideiasCollection = FirestoreHelper.getCollection('ideias');
     const docData = await ideiasCollection.doc(params.ideiaId).get();
-    return FirestoreHelper.documentMapper(docData);
+    return docData.exists ? FirestoreHelper.documentMapper(docData) : null;
   }
 }
