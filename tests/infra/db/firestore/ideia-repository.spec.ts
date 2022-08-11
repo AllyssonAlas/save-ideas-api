@@ -89,5 +89,13 @@ describe('IdeiaRepository', () => {
       expect(ideia?.title).toBe('any_title_ideia');
       expect(ideia?.description).toBe('any_description_ideia');
     });
+
+    test('Should return null if ideia does not exists', async () => {
+      const sut = makeSut();
+
+      const ideia = await sut.load({ ideiaId: 'any_ideia_id' });
+
+      expect(ideia).toBeNull();
+    });
   });
 });
