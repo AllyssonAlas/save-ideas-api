@@ -1,4 +1,4 @@
-import { CreateIdeia, ListIdeias } from '@/domain/usecases';
+import { CreateIdeia, ListIdeias, LoadIdeiaById } from '@/domain/usecases';
 
 export const mockCreateIdeiaParams = (): CreateIdeia.Params => ({
   userId: 'any_user_id',
@@ -15,4 +15,8 @@ export const mockCreateIdeiaParams = (): CreateIdeia.Params => ({
 
 export const mockListIdeiasParams = (): ListIdeias.Params => ({
   userId: 'any_user_id',
+});
+
+export const mockLoadIdeiaByIdParams = (): LoadIdeiaById.Params => ({
+  ideiaId: 'any_ideia_id',
 });
