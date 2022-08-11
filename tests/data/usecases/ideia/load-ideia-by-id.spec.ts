@@ -34,4 +34,13 @@ describe('LoadIdeiaByIdUsecase', () => {
 
     await expect(promise).rejects.toThrow();
   });
+
+  test('Should return null if LoadIdeiaByIdRepository returns null', async () => {
+    const { sut, loadIdeiaByIdRepositorySpy } = makeSut();
+    loadIdeiaByIdRepositorySpy.result = null;
+
+    const loadIdeiaByIdResult = await sut.perform(mockLoadIdeiaByIdParams());
+
+    expect(loadIdeiaByIdResult).toBeNull();
+  });
 });
