@@ -19,3 +19,13 @@ export namespace ListIdeiasRepository {
 
   export type Result = Ideia[];
 }
+
+export interface LoadIdeiaByIdRepository {
+  load: (params: LoadIdeiaByIdRepository.Params) => Promise<LoadIdeiaByIdRepository.Result>;
+}
+
+export namespace LoadIdeiaByIdRepository {
+  export type Params = { ideiaId: string };
+
+  export type Result = Ideia | null;
+}
