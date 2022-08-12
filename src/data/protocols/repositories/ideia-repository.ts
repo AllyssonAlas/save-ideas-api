@@ -29,3 +29,15 @@ export namespace LoadIdeiaByIdRepository {
 
   export type Result = Ideia | null;
 }
+
+export interface DeleteIdeiaByIdRepository {
+  deleteById: (
+    params: DeleteIdeiaByIdRepository.Params,
+  ) => Promise<DeleteIdeiaByIdRepository.Result>;
+}
+
+export namespace DeleteIdeiaByIdRepository {
+  export type Params = { ideiaId: string };
+
+  export type Result = void;
+}
