@@ -98,4 +98,21 @@ describe('IdeiaRepository', () => {
       expect(ideia).toBeNull();
     });
   });
+
+  describe('deleteById()', () => {
+    test('Should not find an ideia with given id', async () => {
+      const sut = makeSut();
+      await ideiasCollection.doc('any_ideia_id').set(mockCreateIdeiaParams());
+
+      const docData = await ideiasCollection.doc('any_ideia_id').get();
+      const ideiaData = FirestoreHelper.documentMapper(docData);
+      expect(ideiaData).toBeTruthy();
+      expect(ideiaData.title).toBe('any_title_ideia');
+      expect(ideiaData.description).toBe('any_description_ideia');
+      await sut.deleteById({ ideiaId: 'any_ideia_id' });
+      const ideia = await ideiasCollection.doc('any_ideia_id').get();
+
+      expect(ideia.exists).toBe(false);
+    });
+  });
 });
