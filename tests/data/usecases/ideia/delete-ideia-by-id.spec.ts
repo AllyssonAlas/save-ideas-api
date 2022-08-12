@@ -23,4 +23,15 @@ describe('DeleteIdeiaByIdUsecase', () => {
     expect(deleteIdeiaByIdRepositorySpy.params).toEqual({ ideiaId: 'any_ideia_id' });
     expect(deleteIdeiaByIdRepositorySpy.callsCount).toBe(1);
   });
+
+  test('Should throw if DeleteIdeiaRepository throws', async () => {
+    const { sut, deleteIdeiaByIdRepositorySpy } = makeSut();
+    jest.spyOn(deleteIdeiaByIdRepositorySpy, 'deleteById').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const promise = sut.perform(mockLoadIdeiaByIdParams());
+
+    await expect(promise).rejects.toThrow();
+  });
 });
