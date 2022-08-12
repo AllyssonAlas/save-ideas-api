@@ -2,6 +2,7 @@ import {
   CreateIdeiaRepository,
   ListIdeiasRepository,
   LoadIdeiaByIdRepository,
+  DeleteIdeiaByIdRepository,
 } from '@/data/protocols/repositories';
 
 export class CreateIdeiaRepositorySpy implements CreateIdeiaRepository {
@@ -77,5 +78,18 @@ export class LoadIdeiaByIdRepositorySpy implements LoadIdeiaByIdRepository {
     this.callsCount++;
     this.params = params;
     return Promise.resolve(this.result);
+  }
+}
+
+export class DeleteIdeiaByIdRepositorySpy implements DeleteIdeiaByIdRepository {
+  params?: DeleteIdeiaByIdRepository.Params;
+  callsCount = 0;
+
+  async deleteById(
+    params: DeleteIdeiaByIdRepository.Params,
+  ): Promise<DeleteIdeiaByIdRepository.Result> {
+    this.callsCount++;
+    this.params = params;
+    return Promise.resolve();
   }
 }
