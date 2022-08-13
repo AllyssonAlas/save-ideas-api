@@ -1,6 +1,6 @@
 import { ValidateIdeiaIdMiddleware } from '@/presentation/middlewares';
 import { MissingParamError } from '@/presentation/errors';
-import { forbidden } from '@/presentation/helpers';
+import { forbidden, serverError } from '@/presentation/helpers';
 
 import { LoadIdeiaByIdUsecaseSpy } from '@/tests/presentation/mocks';
 
@@ -32,5 +32,16 @@ describe('AuthMiddleware', () => {
     await sut.handle(mockRequest());
 
     expect(loadIdeiaByIdUsecaseSpy.params).toEqual({ ideiaId: 'any_ideia_id' });
+  });
+
+  test('Should return 500 if LoadIdeiaByIdUsescase throws', async () => {
+    const { sut, loadIdeiaByIdUsecaseSpy } = makeSut();
+    jest.spyOn(loadIdeiaByIdUsecaseSpy, 'perform').mockImplementation(() => {
+      throw new Error();
+    });
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(serverError(new Error()));
   });
 });
