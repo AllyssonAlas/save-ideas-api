@@ -8,14 +8,14 @@ export class ValidateIdeiaIdMiddleware implements Middleware {
 
   async handle(request: ValidateIdeiaIdMiddleware.Request): Promise<HttpResponse> {
     try {
-      if (request.ideiaId) {
-        const ideia = await this.loadIdeiaById.perform({ ideiaId: request.ideiaId });
-        if (!ideia || ideia.ownerId !== request.userId) {
-          return forbidden(new InvalidParamError('ideiaId'));
-        }
-        return ok({ ideiaId: request.ideiaId });
+      if (!request.ideiaId) {
+        return forbidden(new MissingParamError('ideiaId'));
       }
-      return forbidden(new MissingParamError('ideiaId'));
+      const ideia = await this.loadIdeiaById.perform({ ideiaId: request.ideiaId });
+      if (!ideia || ideia.ownerId !== request.userId) {
+        return forbidden(new InvalidParamError('ideiaId'));
+      }
+      return ok({ ideiaId: request.ideiaId });
     } catch (error) {
       return serverError(error);
     }
