@@ -4,7 +4,10 @@ import { forbidden, serverError } from '@/presentation/helpers';
 
 import { LoadIdeiaByIdUsecaseSpy } from '@/tests/presentation/mocks';
 
-const mockRequest = (): ValidateIdeiaIdMiddleware.Request => ({ ideiaId: 'any_ideia_id' });
+const mockRequest = (): ValidateIdeiaIdMiddleware.Request => ({
+  ideiaId: 'any_ideia_id',
+  userId: 'any_user_id',
+});
 
 interface SutTypes {
   sut: ValidateIdeiaIdMiddleware;
@@ -21,7 +24,7 @@ describe('ValidateIdeiaIdMiddleware', () => {
   test('Should return 403 if there is no ideiaId on request', async () => {
     const { sut } = makeSut();
 
-    const httpResponse = await sut.handle({});
+    const httpResponse = await sut.handle({ userId: 'any_user_id' });
 
     expect(httpResponse).toEqual(forbidden(new MissingParamError('ideiaId')));
   });
@@ -48,6 +51,15 @@ describe('ValidateIdeiaIdMiddleware', () => {
   test('Should return 403 if ideiaId is invalid', async () => {
     const { sut, loadIdeiaByIdUsecaseSpy } = makeSut();
     loadIdeiaByIdUsecaseSpy.result = null;
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(forbidden(new InvalidParamError('ideiaId')));
+  });
+
+  test('Should return 403 if ideia ownerId is different from userId', async () => {
+    const { sut, loadIdeiaByIdUsecaseSpy } = makeSut();
+    loadIdeiaByIdUsecaseSpy.result!.ownerId = 'other_user_id';
 
     const httpResponse = await sut.handle(mockRequest());
 
