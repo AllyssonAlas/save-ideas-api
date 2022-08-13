@@ -1,6 +1,6 @@
 import { ValidateIdeiaIdMiddleware } from '@/presentation/middlewares';
 import { InvalidParamError, MissingParamError } from '@/presentation/errors';
-import { forbidden, serverError } from '@/presentation/helpers';
+import { forbidden, ok, serverError } from '@/presentation/helpers';
 
 import { LoadIdeiaByIdUsecaseSpy } from '@/tests/presentation/mocks';
 
@@ -64,5 +64,13 @@ describe('ValidateIdeiaIdMiddleware', () => {
     const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(forbidden(new InvalidParamError('ideiaId')));
+  });
+
+  test('Should return 200 on success', async () => {
+    const { sut } = makeSut();
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(ok({ ideiaId: 'any_ideia_id' }));
   });
 });
