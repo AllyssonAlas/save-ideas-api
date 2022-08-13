@@ -1,6 +1,6 @@
 import { LoadIdeiaById } from '@/domain/usecases';
 import { HttpResponse, Middleware } from '@/presentation/protocols';
-import { forbidden, serverError } from '@/presentation/helpers';
+import { forbidden, ok, serverError } from '@/presentation/helpers';
 import { InvalidParamError, MissingParamError } from '@/presentation/errors';
 
 export class ValidateIdeiaIdMiddleware implements Middleware {
@@ -13,6 +13,7 @@ export class ValidateIdeiaIdMiddleware implements Middleware {
         if (!ideia || ideia.ownerId !== request.userId) {
           return forbidden(new InvalidParamError('ideiaId'));
         }
+        return ok({ ideiaId: request.ideiaId });
       }
       return forbidden(new MissingParamError('ideiaId'));
     } catch (error) {
