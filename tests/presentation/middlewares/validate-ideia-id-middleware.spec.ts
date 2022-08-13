@@ -1,5 +1,5 @@
 import { ValidateIdeiaIdMiddleware } from '@/presentation/middlewares';
-import { MissingParamError } from '@/presentation/errors';
+import { InvalidParamError, MissingParamError } from '@/presentation/errors';
 import { forbidden, serverError } from '@/presentation/helpers';
 
 import { LoadIdeiaByIdUsecaseSpy } from '@/tests/presentation/mocks';
@@ -17,7 +17,7 @@ const makeSut = (): SutTypes => {
   return { sut, loadIdeiaByIdUsecaseSpy };
 };
 
-describe('AuthMiddleware', () => {
+describe('ValidateIdeiaIdMiddleware', () => {
   test('Should return 403 if there is no ideiaId on request', async () => {
     const { sut } = makeSut();
 
@@ -43,5 +43,14 @@ describe('AuthMiddleware', () => {
     const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(serverError(new Error()));
+  });
+
+  test('Should return 403 if ideiaId is invalid', async () => {
+    const { sut, loadIdeiaByIdUsecaseSpy } = makeSut();
+    loadIdeiaByIdUsecaseSpy.result = null;
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(forbidden(new InvalidParamError('ideiaId')));
   });
 });

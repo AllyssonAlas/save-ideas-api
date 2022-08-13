@@ -67,7 +67,7 @@ export class ListIdeiasUsecaseSpy implements ListIdeias {
 
 export class LoadIdeiaByIdUsecaseSpy implements LoadIdeiaById {
   params?: LoadIdeiaById.Params;
-  result = {
+  result: LoadIdeiaById.Result = {
     id: 'any_ideia_id',
     ownerId: 'any_user_id',
     title: 'any_title_ideia',
