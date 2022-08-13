@@ -1,7 +1,7 @@
 import { LoadIdeiaById } from '@/domain/usecases';
 import { HttpResponse, Middleware } from '@/presentation/protocols';
 import { forbidden, serverError } from '@/presentation/helpers';
-import { MissingParamError } from '@/presentation/errors';
+import { InvalidParamError, MissingParamError } from '@/presentation/errors';
 
 export class ValidateIdeiaIdMiddleware implements Middleware {
   constructor(private readonly loadIdeiaById: LoadIdeiaById) {}
@@ -9,9 +9,12 @@ export class ValidateIdeiaIdMiddleware implements Middleware {
   async handle(request: ValidateIdeiaIdMiddleware.Request): Promise<HttpResponse> {
     try {
       if (request.ideiaId) {
-        await this.loadIdeiaById.perform({ ideiaId: request.ideiaId });
+        const ideia = await this.loadIdeiaById.perform({ ideiaId: request.ideiaId });
+        if (!ideia) {
+          return forbidden(new InvalidParamError('ideiaId'));
+        }
       }
-      return Promise.resolve(forbidden(new MissingParamError('ideiaId')));
+      return forbidden(new MissingParamError('ideiaId'));
     } catch (error) {
       return serverError(error);
     }
