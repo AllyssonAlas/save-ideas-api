@@ -10,7 +10,7 @@ export class ValidateIdeiaIdMiddleware implements Middleware {
     try {
       if (request.ideiaId) {
         const ideia = await this.loadIdeiaById.perform({ ideiaId: request.ideiaId });
-        if (!ideia) {
+        if (!ideia || ideia.ownerId !== request.userId) {
           return forbidden(new InvalidParamError('ideiaId'));
         }
       }
@@ -23,7 +23,7 @@ export class ValidateIdeiaIdMiddleware implements Middleware {
 
 export namespace ValidateIdeiaIdMiddleware {
   export type Request = {
-    userId?: string;
+    userId: string;
     ideiaId?: string;
   };
 }
