@@ -27,4 +27,15 @@ describe('UpdateIdeaUsecase', () => {
     });
     expect(updateIdeaRepositorySpy.callsCount).toBe(1);
   });
+
+  test('Should throw if UpdateIdeaRepository throws', async () => {
+    const { sut, updateIdeaRepositorySpy } = makeSut();
+    jest.spyOn(updateIdeaRepositorySpy, 'update').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const promise = sut.perform(mockUpdateIdeaParams());
+
+    await expect(promise).rejects.toThrow();
+  });
 });
