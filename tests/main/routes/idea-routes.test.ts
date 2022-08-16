@@ -38,7 +38,7 @@ describe('Idea Routes', () => {
     await FirestoreHelper.disconnect();
   });
 
-  describe('/idea', () => {
+  describe('POST /idea', () => {
     test('Should return 200 on success', async () => {
       const accessToken = await mockAcessToken();
 
@@ -77,7 +77,7 @@ describe('Idea Routes', () => {
     });
   });
 
-  describe('/ideas', () => {
+  describe('GET /ideas', () => {
     test('Should return 204 on empty ideas list', async () => {
       const accessToken = await mockAcessToken();
 
