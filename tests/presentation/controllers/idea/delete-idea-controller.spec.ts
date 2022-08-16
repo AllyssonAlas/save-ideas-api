@@ -1,4 +1,5 @@
 import { DeleteIdeaController } from '@/presentation/controllers';
+import { serverError } from '@/presentation/helpers';
 
 import { DeleteIdeaByIdUsecaseSpy } from '@/tests/presentation/mocks';
 
@@ -26,5 +27,16 @@ describe('DeleteIdeaController', () => {
 
     expect(deleteIdeaByIdUsecaseSpy.params).toEqual(request);
     expect(deleteIdeaByIdUsecaseSpy.callsCount).toBe(1);
+  });
+
+  test('Should return 500 if DeleteIdeaUsecase throws', async () => {
+    const { sut, deleteIdeaByIdUsecaseSpy } = makeSut();
+    jest.spyOn(deleteIdeaByIdUsecaseSpy, 'perform').mockImplementation(() => {
+      throw new Error();
+    });
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(serverError(new Error()));
   });
 });
