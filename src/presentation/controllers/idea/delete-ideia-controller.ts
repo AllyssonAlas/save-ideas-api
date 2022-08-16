@@ -1,11 +1,16 @@
 import { DeleteIdeaById } from '@/domain/usecases';
 import { Controller } from '@/presentation/protocols';
+import { serverError } from '@/presentation/helpers';
 
 export class DeleteIdeaController implements Controller {
   constructor(private readonly deleteIdeaById: DeleteIdeaById) {}
 
   async handle(request: DeleteIdeaController.Request): Promise<any> {
-    await this.deleteIdeaById.perform(request);
+    try {
+      await this.deleteIdeaById.perform(request);
+    } catch (error) {
+      return serverError(error);
+    }
   }
 }
 
