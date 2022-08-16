@@ -3,6 +3,7 @@ import {
   ListIdeasRepository,
   LoadIdeaByIdRepository,
   DeleteIdeaByIdRepository,
+  UpdateIdeaRepository,
 } from '@/data/protocols/repositories';
 
 export class CreateIdeaRepositorySpy implements CreateIdeaRepository {
@@ -88,6 +89,17 @@ export class DeleteIdeaByIdRepositorySpy implements DeleteIdeaByIdRepository {
   async deleteById(
     params: DeleteIdeaByIdRepository.Params,
   ): Promise<DeleteIdeaByIdRepository.Result> {
+    this.callsCount++;
+    this.params = params;
+    return Promise.resolve();
+  }
+}
+
+export class UpdateIdeaRepositorySpy implements UpdateIdeaRepository {
+  params?: UpdateIdeaRepository.Params;
+  callsCount = 0;
+
+  async update(params: UpdateIdeaRepository.Params): Promise<UpdateIdeaRepository.Result> {
     this.callsCount++;
     this.params = params;
     return Promise.resolve();
