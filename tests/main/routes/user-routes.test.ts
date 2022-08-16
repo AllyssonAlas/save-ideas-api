@@ -24,7 +24,7 @@ describe('User Routes', () => {
     await FirestoreHelper.disconnect();
   });
 
-  describe('/signup', () => {
+  describe('POST /signup', () => {
     test('Should return an user on success', async () => {
       await request(app)
         .post('/api/signup')
@@ -38,7 +38,7 @@ describe('User Routes', () => {
     });
   });
 
-  describe('/login', () => {
+  describe('POST /login', () => {
     test('Should return 200 on success', async () => {
       await mockAcessToken();
 
@@ -62,7 +62,7 @@ describe('User Routes', () => {
     });
   });
 
-  describe('/update-user', () => {
+  describe('PUT /update-user', () => {
     test('Should return 204 on success', async () => {
       const accessToken = await mockAcessToken();
 

@@ -1,2 +1,2 @@
-export * from './ideia';
+export * from './idea';
 export * from './user';
