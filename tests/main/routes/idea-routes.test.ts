@@ -110,5 +110,14 @@ describe('Idea Routes', () => {
         .set('x-access-token', accessToken)
         .expect(204);
     });
+
+    test('Should return 403 on invalid id', async () => {
+      const accessToken = await mockAcessToken();
+
+      await request(app)
+        .delete('/api/idea/invalid_idea_id')
+        .set('x-access-token', accessToken)
+        .expect(403);
+    });
   });
 });
