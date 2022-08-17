@@ -1,12 +1,17 @@
 import { UpdateIdea } from '@/domain/usecases';
 import { Controller, Validation } from '@/presentation/protocols';
+import { serverError } from '@/presentation/helpers';
 
 export class UpdateIdeaController implements Controller {
   constructor(private readonly validation: Validation) {}
 
   async handle(request: UpdateIdeaController.Request): Promise<any> {
-    this.validation.validate(request);
-    return Promise.resolve();
+    try {
+      this.validation.validate(request);
+      return Promise.resolve();
+    } catch (error) {
+      return serverError(error);
+    }
   }
 }
 
