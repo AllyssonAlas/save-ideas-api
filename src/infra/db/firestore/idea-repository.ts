@@ -3,11 +3,18 @@ import {
   ListIdeasRepository,
   LoadIdeaByIdRepository,
   DeleteIdeaByIdRepository,
+  UpdateIdeaRepository,
 } from '@/data/protocols/repositories';
 import { FirestoreHelper } from '@/infra/db';
 
 // eslint-disable-next-line prettier/prettier
-export class IdeaRepository implements CreateIdeaRepository, ListIdeasRepository, LoadIdeaByIdRepository, DeleteIdeaByIdRepository {
+export class IdeaRepository implements
+    CreateIdeaRepository,
+    ListIdeasRepository,
+    LoadIdeaByIdRepository,
+    DeleteIdeaByIdRepository,
+    UpdateIdeaRepository
+{
   async create(params: CreateIdeaRepository.Params): Promise<CreateIdeaRepository.Result> {
     const ideasCollection = FirestoreHelper.getCollection('ideas');
     const ideaRef = await ideasCollection.add(params);
@@ -28,8 +35,16 @@ export class IdeaRepository implements CreateIdeaRepository, ListIdeasRepository
     return docData.exists ? FirestoreHelper.documentMapper(docData) : null;
   }
 
-  async deleteById(params: DeleteIdeaByIdRepository.Params): Promise<void> {
+  async deleteById(
+    params: DeleteIdeaByIdRepository.Params,
+  ): Promise<DeleteIdeaByIdRepository.Result> {
     const ideasCollection = FirestoreHelper.getCollection('ideas');
     await ideasCollection.doc(params.ideaId).delete();
+  }
+
+  async update(params: UpdateIdeaRepository.Params): Promise<UpdateIdeaRepository.Result> {
+    const { id, ...ideaData } = params;
+    const ideasCollection = FirestoreHelper.getCollection('ideas');
+    await ideasCollection.doc(params.id).update(ideaData);
   }
 }
