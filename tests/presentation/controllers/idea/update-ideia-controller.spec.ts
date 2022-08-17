@@ -1,5 +1,6 @@
 import { UpdateIdeaController } from '@/presentation/controllers';
-import { serverError } from '@/presentation/helpers';
+import { MissingParamError } from '@/presentation/errors';
+import { badRequest, serverError } from '@/presentation/helpers';
 
 import { ValidationSpy } from '@/tests/presentation/mocks';
 
@@ -40,5 +41,14 @@ describe('UpdateIdeaController', () => {
     const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(serverError(new Error()));
+  });
+
+  test('Should call return 400 if Validation returns an error', async () => {
+    const { sut, validationSpy } = makeSut();
+    validationSpy.error = new MissingParamError('field');
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('field')));
   });
 });
