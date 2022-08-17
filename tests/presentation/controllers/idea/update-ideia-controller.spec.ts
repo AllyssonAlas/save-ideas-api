@@ -66,4 +66,15 @@ describe('UpdateIdeaController', () => {
     });
     expect(updateIdeaUsecaseSpy.callsCount).toBe(1);
   });
+
+  test('Should return 500 if UpdateIdeaUsecase throws', async () => {
+    const { sut, updateIdeaUsecaseSpy } = makeSut();
+    jest.spyOn(updateIdeaUsecaseSpy, 'perform').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(serverError(new Error()));
+  });
 });
