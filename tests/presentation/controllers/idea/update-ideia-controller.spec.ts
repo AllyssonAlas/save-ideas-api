@@ -1,6 +1,6 @@
 import { UpdateIdeaController } from '@/presentation/controllers';
 import { MissingParamError } from '@/presentation/errors';
-import { badRequest, serverError } from '@/presentation/helpers';
+import { badRequest, noContent, serverError } from '@/presentation/helpers';
 
 import { ValidationSpy, UpdateIdeaUsecaseSpy } from '@/tests/presentation/mocks';
 
@@ -76,5 +76,13 @@ describe('UpdateIdeaController', () => {
     const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(serverError(new Error()));
+  });
+
+  test('Should return 204 on success', async () => {
+    const { sut } = makeSut();
+
+    const httpResponse = await sut.handle(mockRequest());
+
+    expect(httpResponse).toEqual(noContent());
   });
 });
