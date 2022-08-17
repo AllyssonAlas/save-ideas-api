@@ -1,4 +1,4 @@
-import { CreateIdea, ListIdeas, LoadIdeaById, DeleteIdeaById } from '@/domain/usecases';
+import { CreateIdea, ListIdeas, LoadIdeaById, DeleteIdeaById, UpdateIdea } from '@/domain/usecases';
 
 export class CreateIdeaUsecaseSpy implements CreateIdea {
   params?: CreateIdea.Params;
@@ -95,6 +95,18 @@ export class DeleteIdeaByIdUsecaseSpy implements DeleteIdeaById {
   callsCount = 0;
 
   async perform(params: DeleteIdeaById.Params): Promise<DeleteIdeaById.Result> {
+    this.params = params;
+    this.callsCount++;
+    return Promise.resolve();
+  }
+}
+
+export class UpdateIdeaUsecaseSpy implements UpdateIdea {
+  params?: UpdateIdea.Params;
+
+  callsCount = 0;
+
+  async perform(params: UpdateIdea.Params): Promise<UpdateIdea.Result> {
     this.params = params;
     this.callsCount++;
     return Promise.resolve();

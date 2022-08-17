@@ -2,7 +2,7 @@ import { UpdateIdeaController } from '@/presentation/controllers';
 import { MissingParamError } from '@/presentation/errors';
 import { badRequest, serverError } from '@/presentation/helpers';
 
-import { ValidationSpy } from '@/tests/presentation/mocks';
+import { ValidationSpy, UpdateIdeaUsecaseSpy } from '@/tests/presentation/mocks';
 
 const mockRequest = (): UpdateIdeaController.Request => ({
   ideaId: 'any_idea_id',
@@ -13,12 +13,14 @@ const mockRequest = (): UpdateIdeaController.Request => ({
 interface SutTypes {
   sut: UpdateIdeaController;
   validationSpy: ValidationSpy;
+  updateIdeaUsecaseSpy: UpdateIdeaUsecaseSpy;
 }
 
 const makeSut = (): SutTypes => {
+  const updateIdeaUsecaseSpy = new UpdateIdeaUsecaseSpy();
   const validationSpy = new ValidationSpy();
-  const sut = new UpdateIdeaController(validationSpy);
-  return { sut, validationSpy };
+  const sut = new UpdateIdeaController(validationSpy, updateIdeaUsecaseSpy);
+  return { sut, validationSpy, updateIdeaUsecaseSpy };
 };
 
 describe('UpdateIdeaController', () => {
@@ -50,5 +52,18 @@ describe('UpdateIdeaController', () => {
     const httpResponse = await sut.handle(mockRequest());
 
     expect(httpResponse).toEqual(badRequest(new MissingParamError('field')));
+  });
+
+  test('Should call UpdateIdeaUsecase with correct values', async () => {
+    const { sut, updateIdeaUsecaseSpy } = makeSut();
+
+    await sut.handle(mockRequest());
+
+    expect(updateIdeaUsecaseSpy.params).toEqual({
+      id: 'any_idea_id',
+      title: 'other_title',
+      description: 'other_description',
+    });
+    expect(updateIdeaUsecaseSpy.callsCount).toBe(1);
   });
 });
