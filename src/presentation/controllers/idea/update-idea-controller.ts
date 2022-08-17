@@ -1,6 +1,6 @@
 import { UpdateIdea } from '@/domain/usecases';
 import { Controller, Validation } from '@/presentation/protocols';
-import { badRequest, serverError } from '@/presentation/helpers';
+import { badRequest, noContent, serverError } from '@/presentation/helpers';
 
 export class UpdateIdeaController implements Controller {
   constructor(private readonly validation: Validation, private readonly updateIdea: UpdateIdea) {}
@@ -13,6 +13,7 @@ export class UpdateIdeaController implements Controller {
       }
       const { ideaId: id, ...ideaData } = request;
       await this.updateIdea.perform({ id, ...ideaData });
+      return noContent();
     } catch (error) {
       return serverError(error);
     }
