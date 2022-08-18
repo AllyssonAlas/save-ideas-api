@@ -7,8 +7,8 @@
 > ## Case of success
 1. Receive and validate the data
 2. Verify if user is authenticated
-2. Verify if idea exists
-3. Delete idea
+3. Verify if idea exists
+4. Delete idea
 
 > ## Case of failure
 1. Invalid data received
