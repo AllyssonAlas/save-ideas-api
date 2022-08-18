@@ -1,17 +1,19 @@
 import { DeleteUserUsecase } from '@/data/usecases';
 
 import { mockDeleteUserParams } from '@/tests/domain/mocks';
-import { DeleteIdeasByOwnerIdRepositorySpy } from '@/tests/data/mocks';
+import { DeleteIdeasByOwnerIdRepositorySpy, DeleteUserRepositorySpy } from '@/tests/data/mocks';
 
 interface SutTypes {
   sut: DeleteUserUsecase;
   deleteIdeasByOwnerIdRepositorySpy: DeleteIdeasByOwnerIdRepositorySpy;
+  deleteUserRepositorySpy: DeleteUserRepositorySpy;
 }
 
 const makeSut = (): SutTypes => {
+  const deleteUserRepositorySpy = new DeleteUserRepositorySpy();
   const deleteIdeasByOwnerIdRepositorySpy = new DeleteIdeasByOwnerIdRepositorySpy();
-  const sut = new DeleteUserUsecase(deleteIdeasByOwnerIdRepositorySpy);
-  return { sut, deleteIdeasByOwnerIdRepositorySpy };
+  const sut = new DeleteUserUsecase(deleteIdeasByOwnerIdRepositorySpy, deleteUserRepositorySpy);
+  return { sut, deleteIdeasByOwnerIdRepositorySpy, deleteUserRepositorySpy };
 };
 
 describe('DeleteUserUsecase', () => {
@@ -33,5 +35,14 @@ describe('DeleteUserUsecase', () => {
     const promise = sut.perform(mockDeleteUserParams());
 
     await expect(promise).rejects.toThrow();
+  });
+
+  test('Should call DeleteUserRepository with correct value', async () => {
+    const { sut, deleteUserRepositorySpy } = makeSut();
+
+    await sut.perform(mockDeleteUserParams());
+
+    expect(deleteUserRepositorySpy.params).toEqual({ id: 'any_user_id' });
+    expect(deleteUserRepositorySpy.callsCount).toBe(1);
   });
 });

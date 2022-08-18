@@ -3,6 +3,7 @@ import {
   LoadUserByIdRepository,
   LoadUserByFieldRepository,
   UpdateUserRepository,
+  DeleteUserRepository,
 } from '@/data/protocols/repositories';
 
 export class LoadUserByFielRepositorySpy implements LoadUserByFieldRepository {
@@ -63,6 +64,18 @@ export class UpdateUserRepositorySpy implements UpdateUserRepository {
   callsCount = 0;
 
   async update(params: UpdateUserRepository.Params): Promise<UpdateUserRepository.Result> {
+    this.callsCount++;
+    this.params = params;
+    return Promise.resolve();
+  }
+}
+
+export class DeleteUserRepositorySpy implements DeleteUserRepository {
+  params?: DeleteUserRepository.Params;
+
+  callsCount = 0;
+
+  async delete(params: DeleteUserRepository.Params): Promise<DeleteUserRepository.Result> {
     this.callsCount++;
     this.params = params;
     return Promise.resolve();
