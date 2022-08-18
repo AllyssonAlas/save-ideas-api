@@ -154,5 +154,20 @@ describe('IdeaRepository', () => {
 
       expect(collection.size).toBe(0);
     });
+
+    test('Should delete only ideas with given ownerId', async () => {
+      const sut = makeSut();
+      const ideaData = { ownerId: 'any_user_id', ...mockCreateIdeaParams() };
+      await ideasCollection.add(ideaData);
+      await ideasCollection.add(ideaData);
+      await ideasCollection.add({ ownerId: 'another_user_id', ...mockCreateIdeaParams() });
+
+      let collection = await ideasCollection.get();
+      expect(collection.size).toBe(3);
+      await sut.deleteByOwnerId({ ownerId: ideaData.ownerId });
+      collection = await ideasCollection.get();
+
+      expect(collection.size).toBe(1);
+    });
   });
 });
