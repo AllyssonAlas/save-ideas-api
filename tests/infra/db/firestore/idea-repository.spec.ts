@@ -115,4 +115,28 @@ describe('IdeaRepository', () => {
       expect(idea.exists).toBe(false);
     });
   });
+
+  describe('UpdateIdea()', () => {
+    test('Should not find an idea with given id', async () => {
+      const sut = makeSut();
+      await ideasCollection.doc('any_idea_id').set(mockCreateIdeaParams());
+
+      let docData = await ideasCollection.doc('any_idea_id').get();
+      const ideaData = FirestoreHelper.documentMapper(docData);
+      expect(ideaData.title).toBe('any_title_idea');
+      expect(ideaData.description).toBe('any_description_idea');
+      expect(ideaData.features).toHaveLength(1);
+      await sut.update({
+        id: 'any_idea_id',
+        title: 'other_title_idea',
+        description: 'other_description_idea',
+      });
+      docData = await ideasCollection.doc('any_idea_id').get();
+      const ideaDataUpdated = FirestoreHelper.documentMapper(docData);
+
+      expect(ideaDataUpdated.title).toBe('other_title_idea');
+      expect(ideaDataUpdated.description).toBe('other_description_idea');
+      expect(ideaDataUpdated.features).toHaveLength(1);
+    });
+  });
 });

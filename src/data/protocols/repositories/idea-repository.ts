@@ -39,3 +39,13 @@ export namespace DeleteIdeaByIdRepository {
 
   export type Result = void;
 }
+
+export interface UpdateIdeaRepository {
+  update: (params: UpdateIdeaRepository.Params) => Promise<UpdateIdeaRepository.Result>;
+}
+
+export namespace UpdateIdeaRepository {
+  export type Params = Omit<Idea, 'ownerId'>;
+
+  export type Result = void;
+}

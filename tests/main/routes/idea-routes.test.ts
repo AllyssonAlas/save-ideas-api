@@ -120,4 +120,24 @@ describe('Idea Routes', () => {
         .expect(403);
     });
   });
+
+  describe('PUT /idea', () => {
+    test('Should return 204 on success', async () => {
+      const accessToken = await mockAcessToken();
+
+      const usersSnapshot = await usersCollection.get();
+      const users = FirestoreHelper.collectionMapper(usersSnapshot);
+      const ideaData = { ownerId: users[0].id, ...mockCreateIdeaParams() };
+      await ideasCollection.doc('any_idea_id').set(ideaData);
+
+      await request(app)
+        .put('/api/idea/any_idea_id')
+        .set('x-access-token', accessToken)
+        .send({
+          title: 'other_title',
+          description: 'other_description',
+        })
+        .expect(204);
+    });
+  });
 });
