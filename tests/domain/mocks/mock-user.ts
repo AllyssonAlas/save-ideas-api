@@ -1,4 +1,4 @@
-import { Authentication, LoadUserByToken, SignUp, UpdateUser } from '@/domain/usecases';
+import { Authentication, LoadUserByToken, SignUp, UpdateUser, DeleteUser } from '@/domain/usecases';
 
 export const mockAuthenticationParams = (): Authentication.Params => ({
   email: 'any_email@email.com',
@@ -27,4 +27,8 @@ export const mockUpdateUserWithAdditionalValuesParams = (): UpdateUser.Params =>
   email: 'other_email@mail.com',
   password: 'any_password',
   newPassword: 'other_password',
+});
+
+export const mockDeleteUserParams = (): DeleteUser.Params => ({
+  id: 'any_user_id',
 });
