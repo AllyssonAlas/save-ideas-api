@@ -45,4 +45,15 @@ describe('DeleteUserUsecase', () => {
     expect(deleteUserRepositorySpy.params).toEqual({ id: 'any_user_id' });
     expect(deleteUserRepositorySpy.callsCount).toBe(1);
   });
+
+  test('Should throw if DeleteUserRepository throws', async () => {
+    const { sut, deleteUserRepositorySpy } = makeSut();
+    jest.spyOn(deleteUserRepositorySpy, 'delete').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const promise = sut.perform(mockDeleteUserParams());
+
+    await expect(promise).rejects.toThrow();
+  });
 });
