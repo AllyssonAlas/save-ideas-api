@@ -23,4 +23,15 @@ describe('DeleteUserUsecase', () => {
     expect(deleteIdeasByOwnerIdRepositorySpy.params).toEqual({ ownerId: 'any_user_id' });
     expect(deleteIdeasByOwnerIdRepositorySpy.callsCount).toBe(1);
   });
+
+  test('Should throw if DeleteIdeasByOwnerIdRepository throws', async () => {
+    const { sut, deleteIdeasByOwnerIdRepositorySpy } = makeSut();
+    jest.spyOn(deleteIdeasByOwnerIdRepositorySpy, 'deleteByOwnerId').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const promise = sut.perform(mockDeleteUserParams());
+
+    await expect(promise).rejects.toThrow();
+  });
 });
