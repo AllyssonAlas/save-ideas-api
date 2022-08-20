@@ -1,5 +1,5 @@
 import { ValidateIdeaIdMiddleware } from '@/presentation/middlewares';
-import { InvalidParamError, MissingParamError } from '@/presentation/errors';
+import { InvalidParamError } from '@/presentation/errors';
 import { forbidden, ok, serverError } from '@/presentation/helpers';
 
 import { LoadIdeaByIdUsecaseSpy } from '@/tests/presentation/mocks';
@@ -21,14 +21,6 @@ const makeSut = (): SutTypes => {
 };
 
 describe('ValidateIdeaIdMiddleware', () => {
-  test('Should return 403 if there is no ideaId on request', async () => {
-    const { sut } = makeSut();
-
-    const httpResponse = await sut.handle({ userId: 'any_user_id' });
-
-    expect(httpResponse).toEqual(forbidden(new MissingParamError('ideaId')));
-  });
-
   test('Should call LoadIdeaByIdUsescase with correct ideaId', async () => {
     const { sut, loadIdeaByIdUsecaseSpy } = makeSut();
 
