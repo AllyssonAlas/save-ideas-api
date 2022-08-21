@@ -1,7 +1,6 @@
 import { LoadIdeaByIdUsecase } from '@/data/usecases';
-import { IdeaRepository } from '@/infra/db';
+import { makeIdeaRepository } from '@/main/factories/repositories';
 
 export const makeLoadIdeaByIdUsecase = (): LoadIdeaByIdUsecase => {
-  const ideaRepository = new IdeaRepository();
-  return new LoadIdeaByIdUsecase(ideaRepository);
+  return new LoadIdeaByIdUsecase(makeIdeaRepository());
 };

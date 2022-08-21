@@ -1,14 +1,13 @@
 import { UpdateUserUsecase } from '@/data/usecases';
-import { UserRepository } from '@/infra/db';
+import { makeUserRepository } from '@/main/factories/repositories';
 import { makeBcryptAdapter } from '@/main/factories/gateways';
 
 export const makeUpdateUserUsecase = (): UpdateUserUsecase => {
-  const userRepository = new UserRepository();
   return new UpdateUserUsecase(
-    userRepository,
-    userRepository,
+    makeUserRepository(),
+    makeUserRepository(),
     makeBcryptAdapter(),
     makeBcryptAdapter(),
-    userRepository,
+    makeUserRepository(),
   );
 };

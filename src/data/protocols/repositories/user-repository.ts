@@ -56,3 +56,13 @@ export namespace UpdateUserRepository {
 
   export type Result = void;
 }
+
+export interface DeleteUserRepository {
+  delete: (params: DeleteUserRepository.Params) => Promise<DeleteUserRepository.Result>;
+}
+
+export namespace DeleteUserRepository {
+  export type Params = { id: string };
+
+  export type Result = void;
+}

@@ -85,4 +85,41 @@ describe('UserRepository', () => {
       expect(user.email).toBe('any_email@mail.com');
     });
   });
+
+  describe('delete()', () => {
+    test('Should delete an user with given id', async () => {
+      const sut = makeSut();
+      await usersCollection.doc('any_id').set(mockSignUpParams());
+
+      let collection = await usersCollection.get();
+      const [userData] = FirestoreHelper.collectionMapper(collection);
+      expect(collection.size).toBe(1);
+      expect(userData.name).toBe('any_name');
+      expect(userData.email).toBe('any_email@mail.com');
+      expect(userData.password).toBe('any_password');
+      await sut.delete({ id: 'any_id' });
+
+      collection = await usersCollection.get();
+      expect(collection.size).toBe(0);
+      expect(collection.empty).toBe(true);
+    });
+
+    test('Should only delete the user with the given id', async () => {
+      const sut = makeSut();
+      await usersCollection.doc('any_id').set(mockSignUpParams());
+      await usersCollection.doc('another_id').set(mockSignUpParams());
+
+      let collection = await usersCollection.get();
+      const [userData] = FirestoreHelper.collectionMapper(collection);
+      expect(collection.size).toBe(2);
+      expect(userData.name).toBe('any_name');
+      expect(userData.email).toBe('any_email@mail.com');
+      expect(userData.password).toBe('any_password');
+      await sut.delete({ id: 'any_id' });
+
+      collection = await usersCollection.get();
+      expect(collection.size).toBe(1);
+      expect(collection.empty).toBe(false);
+    });
+  });
 });

@@ -3,6 +3,7 @@ import {
   LoadUserByFieldRepository,
   UpdateUserRepository,
   LoadUserByIdRepository,
+  DeleteUserRepository,
 } from '@/data/protocols/repositories';
 import { FirestoreHelper } from '@/infra/db';
 
@@ -11,7 +12,8 @@ export class UserRepository implements
     CreateUserRepository,
     LoadUserByFieldRepository,
     UpdateUserRepository,
-    LoadUserByIdRepository
+    LoadUserByIdRepository,
+    DeleteUserRepository
 {
   async create(params: CreateUserRepository.Params): Promise<CreateUserRepository.Result> {
     const usersCollection = FirestoreHelper.getCollection('users');
@@ -42,5 +44,11 @@ export class UserRepository implements
     const usersCollection = FirestoreHelper.getCollection('users');
     const docData = await usersCollection.doc(params.id).get();
     return FirestoreHelper.documentMapper(docData);
+  }
+
+  async delete(params: DeleteUserRepository.Params): Promise<DeleteUserRepository.Result> {
+    const usersCollection = FirestoreHelper.getCollection('users');
+    const docData = await usersCollection.doc(params.id).get();
+    await docData.ref.delete();
   }
 }

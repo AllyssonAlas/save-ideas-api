@@ -1,12 +1,12 @@
 import { UpdateUser } from '@/domain/usecases';
-import { Controller, Validation } from '@/presentation/protocols';
+import { Controller, HttpResponse, Validation } from '@/presentation/protocols';
 import { badRequest, forbidden, noContent, serverError } from '@/presentation/helpers';
 import { EmailInUseError, InvalidParamError } from '@/presentation/errors';
 
 export class UpdateUserController implements Controller {
   constructor(private readonly validation: Validation, private readonly updateUser: UpdateUser) {}
 
-  async handle(request: UpdateUserController.Request): Promise<any> {
+  async handle(request: UpdateUserController.Request): Promise<HttpResponse> {
     try {
       const error = this.validation.validate(request);
       if (error) {

@@ -1,4 +1,4 @@
-import { Authentication, SignUp, LoadUserByToken, UpdateUser } from '@/domain/usecases';
+import { Authentication, SignUp, LoadUserByToken, UpdateUser, DeleteUser } from '@/domain/usecases';
 
 export class SignUpUsecaseSpy implements SignUp {
   params?: SignUp.Params;
@@ -57,5 +57,17 @@ export class UpdateUserUsecaseSpy implements UpdateUser {
     this.params = params;
     this.callsCount++;
     return Promise.resolve(this.result);
+  }
+}
+
+export class DeleteUserUsecaseSpy implements DeleteUser {
+  params?: DeleteUser.Params;
+
+  callsCount = 0;
+
+  async perform(params: DeleteUser.Params): Promise<DeleteUser.Result> {
+    this.params = params;
+    this.callsCount++;
+    return Promise.resolve();
   }
 }

@@ -1,8 +1,7 @@
 import { SignUpUsecase } from '@/data/usecases';
-import { UserRepository } from '@/infra/db';
+import { makeUserRepository } from '@/main/factories/repositories';
 import { makeBcryptAdapter } from '@/main/factories/gateways';
 
 export const makeSignUpUseCase = (): SignUpUsecase => {
-  const userRepository = new UserRepository();
-  return new SignUpUsecase(makeBcryptAdapter(), userRepository, userRepository);
+  return new SignUpUsecase(makeBcryptAdapter(), makeUserRepository(), makeUserRepository());
 };

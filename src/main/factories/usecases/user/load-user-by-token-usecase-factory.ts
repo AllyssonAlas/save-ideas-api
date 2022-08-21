@@ -1,8 +1,7 @@
 import { LoadUserByTokenUsecase } from '@/data/usecases';
-import { UserRepository } from '@/infra/db';
+import { makeUserRepository } from '@/main/factories/repositories';
 import { makeJwtAdapter } from '@/main/factories/gateways';
 
 export const makeLoadUserByTokenUseCase = (): LoadUserByTokenUsecase => {
-  const userRepository = new UserRepository();
-  return new LoadUserByTokenUsecase(makeJwtAdapter(), userRepository);
+  return new LoadUserByTokenUsecase(makeJwtAdapter(), makeUserRepository());
 };

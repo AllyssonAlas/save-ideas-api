@@ -4,6 +4,7 @@ import {
   LoadIdeaByIdRepository,
   DeleteIdeaByIdRepository,
   UpdateIdeaRepository,
+  DeleteIdeasByOwnerIdRepository,
 } from '@/data/protocols/repositories';
 import { FirestoreHelper } from '@/infra/db';
 
@@ -13,7 +14,8 @@ export class IdeaRepository implements
     ListIdeasRepository,
     LoadIdeaByIdRepository,
     DeleteIdeaByIdRepository,
-    UpdateIdeaRepository
+    UpdateIdeaRepository,
+    DeleteIdeasByOwnerIdRepository
 {
   async create(params: CreateIdeaRepository.Params): Promise<CreateIdeaRepository.Result> {
     const ideasCollection = FirestoreHelper.getCollection('ideas');
@@ -46,5 +48,17 @@ export class IdeaRepository implements
     const { id, ...ideaData } = params;
     const ideasCollection = FirestoreHelper.getCollection('ideas');
     await ideasCollection.doc(params.id).update(ideaData);
+  }
+
+  async deleteByOwnerId(
+    params: DeleteIdeasByOwnerIdRepository.Params,
+  ): Promise<DeleteIdeasByOwnerIdRepository.Result> {
+    const ideasCollection = FirestoreHelper.getCollection('ideas');
+    const ideas = await ideasCollection.where('ownerId', '==', params.ownerId).get();
+    if (!ideas.empty) {
+      await ideas.forEach(async (ideaDocument) => {
+        await ideaDocument.ref.delete();
+      });
+    }
   }
 }

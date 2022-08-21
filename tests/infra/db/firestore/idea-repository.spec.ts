@@ -116,7 +116,7 @@ describe('IdeaRepository', () => {
     });
   });
 
-  describe('UpdateIdea()', () => {
+  describe('updateIdea()', () => {
     test('Should not find an idea with given id', async () => {
       const sut = makeSut();
       await ideasCollection.doc('any_idea_id').set(mockCreateIdeaParams());
@@ -137,6 +137,37 @@ describe('IdeaRepository', () => {
       expect(ideaDataUpdated.title).toBe('other_title_idea');
       expect(ideaDataUpdated.description).toBe('other_description_idea');
       expect(ideaDataUpdated.features).toHaveLength(1);
+    });
+  });
+
+  describe('deleteByOwnerId()', () => {
+    test('Should delete all ideas with given ownerId', async () => {
+      const sut = makeSut();
+      const ideaData = { ownerId: 'any_user_id', ...mockCreateIdeaParams() };
+      await ideasCollection.add(ideaData);
+      await ideasCollection.add(ideaData);
+
+      let collection = await ideasCollection.get();
+      expect(collection.size).toBe(2);
+      await sut.deleteByOwnerId({ ownerId: ideaData.ownerId });
+      collection = await ideasCollection.get();
+
+      expect(collection.size).toBe(0);
+    });
+
+    test('Should delete only ideas with given ownerId', async () => {
+      const sut = makeSut();
+      const ideaData = { ownerId: 'any_user_id', ...mockCreateIdeaParams() };
+      await ideasCollection.add(ideaData);
+      await ideasCollection.add(ideaData);
+      await ideasCollection.add({ ownerId: 'another_user_id', ...mockCreateIdeaParams() });
+
+      let collection = await ideasCollection.get();
+      expect(collection.size).toBe(3);
+      await sut.deleteByOwnerId({ ownerId: ideaData.ownerId });
+      collection = await ideasCollection.get();
+
+      expect(collection.size).toBe(1);
     });
   });
 });
