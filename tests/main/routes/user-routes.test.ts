@@ -4,6 +4,7 @@ import { FirestoreHelper } from '@/infra/db';
 
 import app from '@/main/config/app';
 
+import { mockCreateIdeaParams } from '@/tests/domain/mocks';
 import { mockAcessToken } from '@/tests/main/mocks';
 
 describe('User Routes', () => {
@@ -74,6 +75,19 @@ describe('User Routes', () => {
           email: 'jhon_doe@mail.com',
         })
         .expect(204);
+    });
+  });
+
+  describe('DELETE /delete-user', () => {
+    test('Should return 204 on success', async () => {
+      const accessToken = await mockAcessToken();
+      const ideasCollection = FirestoreHelper.getCollection('ideas');
+
+      const ideaData = { ownerId: 'any_user_id', ...mockCreateIdeaParams() };
+      await ideasCollection.add(ideaData);
+      await ideasCollection.add(ideaData);
+
+      await request(app).put('/api/delete-user').set('x-access-token', accessToken).expect(204);
     });
   });
 });
