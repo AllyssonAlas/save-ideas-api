@@ -4,8 +4,7 @@ import { FirestoreHelper } from '@/infra/db';
 
 import app from '@/main/config/app';
 
-import { mockCreateIdeaParams } from '@/tests/domain/mocks';
-import { mockAcessToken } from '@/tests/main/mocks';
+import { mockAcessToken, mockIdea } from '@/tests/main/mocks';
 
 describe('User Routes', () => {
   beforeAll(() => {
@@ -13,11 +12,20 @@ describe('User Routes', () => {
   });
 
   afterEach(async () => {
-    const userCollection = FirestoreHelper.getCollection('users');
-    const users = await userCollection.listDocuments();
+    const usersCollection = FirestoreHelper.getCollection('users');
+    const users = await usersCollection.listDocuments();
 
     for (let index = 0; index < users.length; index++) {
       await users[index].delete();
+    }
+  });
+
+  afterEach(async () => {
+    const ideasCollection = FirestoreHelper.getCollection('ideas');
+    const ideas = await ideasCollection.listDocuments();
+
+    for (let index = 0; index < ideas.length; index++) {
+      await ideas[index].delete();
     }
   });
 
@@ -81,11 +89,9 @@ describe('User Routes', () => {
   describe('DELETE /delete-user', () => {
     test('Should return 204 on success', async () => {
       const accessToken = await mockAcessToken();
-      const ideasCollection = FirestoreHelper.getCollection('ideas');
 
-      const ideaData = { ownerId: 'any_user_id', ...mockCreateIdeaParams() };
-      await ideasCollection.add(ideaData);
-      await ideasCollection.add(ideaData);
+      await mockIdea();
+      await mockIdea();
 
       await request(app).put('/api/delete-user').set('x-access-token', accessToken).expect(204);
     });

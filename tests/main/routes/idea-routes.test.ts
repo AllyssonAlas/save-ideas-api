@@ -5,8 +5,7 @@ import { FirestoreHelper } from '@/infra/db';
 
 import app from '@/main/config/app';
 
-import { mockCreateIdeaParams } from '@/tests/domain/mocks';
-import { mockAcessToken } from '@/tests/main/mocks';
+import { mockAcessToken, mockIdea } from '@/tests/main/mocks';
 
 describe('Idea Routes', () => {
   let usersCollection: CollectionReference;
@@ -87,10 +86,8 @@ describe('Idea Routes', () => {
     test('Should return 200 on success', async () => {
       const accessToken = await mockAcessToken();
 
-      const usersSnapshot = await usersCollection.get();
-      const users = FirestoreHelper.collectionMapper(usersSnapshot);
-      const ideaData = { ownerId: users[0].id, ...mockCreateIdeaParams() };
-      await ideasCollection.add(ideaData);
+      await mockIdea();
+      await mockIdea();
 
       await request(app).get('/api/ideas').set('x-access-token', accessToken).expect(200);
     });
@@ -100,13 +97,10 @@ describe('Idea Routes', () => {
     test('Should return 204 on success', async () => {
       const accessToken = await mockAcessToken();
 
-      const usersSnapshot = await usersCollection.get();
-      const users = FirestoreHelper.collectionMapper(usersSnapshot);
-      const ideaData = { ownerId: users[0].id, ...mockCreateIdeaParams() };
-      await ideasCollection.doc('any_idea_id').set(ideaData);
+      const ideaId = await mockIdea();
 
       await request(app)
-        .delete('/api/idea/any_idea_id')
+        .delete(`/api/idea/${ideaId}`)
         .set('x-access-token', accessToken)
         .expect(204);
     });
@@ -125,13 +119,10 @@ describe('Idea Routes', () => {
     test('Should return 204 on success', async () => {
       const accessToken = await mockAcessToken();
 
-      const usersSnapshot = await usersCollection.get();
-      const users = FirestoreHelper.collectionMapper(usersSnapshot);
-      const ideaData = { ownerId: users[0].id, ...mockCreateIdeaParams() };
-      await ideasCollection.doc('any_idea_id').set(ideaData);
+      const ideaId = await mockIdea();
 
       await request(app)
-        .put('/api/idea/any_idea_id')
+        .put(`/api/idea/${ideaId}`)
         .set('x-access-token', accessToken)
         .send({
           title: 'other_title',
